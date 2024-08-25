@@ -262,10 +262,11 @@ MonoBehaviour:
   playerModel: {fileID: 9203897089796215321}
   playerHead: {fileID: 936149797210005971}
   playermodelAnimator: {fileID: 380414476587009012}
-  runAnimationTreshold: 5
+  runAnimationTreshold: 9
   jumpKey: 32
   sprintKey: 304
   inputEnabled: 0
+  initialized: 0
   debugLogs: 0
   debugLogSlope: 0
   debugLogStep: 0

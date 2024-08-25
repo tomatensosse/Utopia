@@ -16,6 +16,8 @@ public class MainMenu : MonoBehaviour
     public GameObject worldCreationUI;
     public GameObject joinSelectionUI;
     public Transform joinSelectionContent;
+    public GameObject titleScreenUI;
+    public GameObject settingsUI;
 
     [Header("Player Creation")]
     public TMP_InputField playerNameInput;
@@ -46,7 +48,7 @@ public class MainMenu : MonoBehaviour
 
     public void Start()
     {
-        ChangeTo("SelectionUI");
+        ChangeTo("TitleScreenUI");
         LoadSelectionMenuContent();
     }
 
@@ -61,24 +63,48 @@ public class MainMenu : MonoBehaviour
                 playerCreationUI.SetActive(false);
                 worldCreationUI.SetActive(false);
                 joinSelectionUI.SetActive(false);
+                titleScreenUI.SetActive(false);
+                settingsUI.SetActive(false);
                 break;
             case "PlayerCreationUI":
                 selectionUI.SetActive(false);
                 playerCreationUI.SetActive(true);
                 worldCreationUI.SetActive(false);
                 joinSelectionUI.SetActive(false);
+                titleScreenUI.SetActive(false);
+                settingsUI.SetActive(false);
                 break;
             case "WorldCreationUI":
                 selectionUI.SetActive(false);
                 playerCreationUI.SetActive(false);
                 worldCreationUI.SetActive(true);
                 joinSelectionUI.SetActive(false);
+                titleScreenUI.SetActive(false);
+                settingsUI.SetActive(false);
                 break;
             case "JoinSelectionUI":
                 selectionUI.SetActive(false);
                 playerCreationUI.SetActive(false);
                 worldCreationUI.SetActive(false);
                 joinSelectionUI.SetActive(true);
+                titleScreenUI.SetActive(false);
+                settingsUI.SetActive(false);
+                break;
+            case "TitleScreenUI":
+                selectionUI.SetActive(false);
+                playerCreationUI.SetActive(false);
+                worldCreationUI.SetActive(false);
+                joinSelectionUI.SetActive(false);
+                titleScreenUI.SetActive(true);
+                settingsUI.SetActive(false);
+                break;
+            case "SettingsUI":
+                selectionUI.SetActive(false);
+                playerCreationUI.SetActive(false);
+                worldCreationUI.SetActive(false);
+                joinSelectionUI.SetActive(false);
+                titleScreenUI.SetActive(false);
+                settingsUI.SetActive(true);
                 break;
         }
     }

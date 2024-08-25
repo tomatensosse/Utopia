@@ -105,7 +105,7 @@ public class World : NetworkBehaviour
     {
         foreach (Entity entity in worldState.v_activeEntities)
         {
-            yield return new WaitUntil(() => entity.wasLoadedBefore);
+            yield return new WaitUntil(() => entity.initialized);
             entity.CmdRequestAuthority(connectionToClient);
         }
     }

@@ -76,9 +76,8 @@ public class Entity : NetworkBehaviour
     [TargetRpc]
     public void RpcGrantedAuthority(NetworkConnection conn)
     {
-        Debug.Log("Authority granted to client: " + conn.connectionId);
-
         // Do something with the client that was granted authority
         entityRigidbody.isKinematic = false;
+        Debug.Log("Authority Granted To New Client");
     }
 }
