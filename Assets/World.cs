@@ -98,8 +98,14 @@ public class World : NetworkBehaviour
         // entities are already spawned
         // grant authority over entities
 
+        StartCoroutine(RequestAuthorityDelayed());
+    }
+
+    IEnumerator RequestAuthorityDelayed()
+    {
         foreach (Entity entity in worldState.v_activeEntities)
         {
+            yield return new WaitUntil(() => entity.isLoaded);
             entity.CmdRequestAuthority(connectionToClient);
         }
     }

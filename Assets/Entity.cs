@@ -16,7 +16,7 @@ public class Entity : NetworkBehaviour
     public string entityID;
     public EntityData entityData;
     [HideInInspector] public bool isLoaded;
-    public Rigidbody entityRigidbody; 
+    public Rigidbody entityRigidbody;
 
     public virtual void Awake()
     {
@@ -71,7 +71,7 @@ public class Entity : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void RpcGrantedAuthority(NetworkConnectionToClient conn)
+    public void RpcGrantedAuthority(NetworkConnection conn)
     {
         Debug.Log("Authority granted to client: " + conn.connectionId);
 
