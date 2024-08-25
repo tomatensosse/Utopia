@@ -16,7 +16,7 @@ public class Entity : NetworkBehaviour
     public string entityID;
     public EntityData entityData;
     [HideInInspector] public bool isLoaded;
-    private Rigidbody entityRigidbody; 
+    public Rigidbody entityRigidbody; 
 
     public virtual void Awake()
     {

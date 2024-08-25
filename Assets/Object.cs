@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class Object : Entity
 {
-    private Rigidbody entityRigidbody;
 
     public override void Start()
     {
         base.Start();
 
         if (isLoaded) { return; }
-
-        entityRigidbody = GetComponent<Rigidbody>();
 
         if (entityRigidbody == null)
         {
