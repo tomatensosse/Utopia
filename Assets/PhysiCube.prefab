@@ -16,14 +16,14 @@ GameObject:
   - component: {fileID: 6317799700913462284}
   - component: {fileID: 4736215793625856876}
   - component: {fileID: -7285399688856038388}
-  - component: {fileID: 2927412883429854652}
+  - component: {fileID: -2417059747730849297}
   m_Layer: 0
   m_Name: PhysiCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4645217346231701459
 Transform:
   m_ObjectHideFlags: 0
@@ -155,7 +155,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &4736215793625856876
@@ -209,7 +209,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
---- !u!114 &2927412883429854652
+--- !u!114 &-2417059747730849297
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

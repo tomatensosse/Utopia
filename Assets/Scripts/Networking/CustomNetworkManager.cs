@@ -10,23 +10,58 @@ public struct PlayerSaveMessage : NetworkMessage
     public string connectionID;
 }
 
-public struct WorldSaveMessage : NetworkMessage
-{
-    public WorldSave worldSave;
-}
-
 public struct PlayerStateMessage : NetworkMessage
 {
     public List<PlayerState> playerStates;
 }
 
+public struct WorldStateMessage : NetworkMessage
+{
+    public WorldState worldState;
+}
+
 public class CustomNetworkManager : NetworkManager
 {
     [Header("Custom Settings")]
+    public GameObject worldPrefab;
     public PlayerSave hostPlayerSave;
     public PlayerSave clientPlayerSave;
     public WorldSave hostWorldSave;
+    private SpawnPointManager spawnPointManager;
     private bool gameSceneLoaded = false;
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (gameSceneLoaded && NetworkServer.active)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                SaveAndQuit();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                SpawnEntity("entity_physicube", spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
+            }
+        }
+    }
+
+    private void SaveAndQuit()
+    {
+        World.Instance.SaveWorld();
+        // Save player
+        // Disconnect
+    }
+
+    private void SpawnEntity(string entityID, Vector3 spawnOrigin, float spawnRadMin = 4f, float spawnRadMax = 8f)
+    {
+        Vector3 spawnPosition = spawnOrigin + Random.insideUnitSphere * Random.Range(spawnRadMin, spawnRadMax);
+        GameObject entityGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID(entityID), spawnPosition, Quaternion.identity);
+        NetworkServer.Spawn(entityGameObject, NetworkServer.localConnection);
+        World.Instance.AddEntity(entityGameObject.GetComponent<Entity>());
+    }
 
     public override void OnStartHost()
     {
@@ -41,9 +76,7 @@ public class CustomNetworkManager : NetworkManager
         }
 
         NetworkServer.RegisterHandler<PlayerSaveMessage>(OnPlayerSaveMessageReceived);
-
-        // Load the world for the host
-        LoadWorld(hostWorldSave);
+        SceneManager.LoadScene("Game");
     }
 
     public override void OnStartClient()
@@ -58,7 +91,7 @@ public class CustomNetworkManager : NetworkManager
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Game") // Ensure this is your game scene's name
+        if (scene.name == "Game" && !gameSceneLoaded) // Ensure this is your game scene's name
         {
             gameSceneLoaded = true;
 
@@ -76,6 +109,8 @@ public class CustomNetworkManager : NetworkManager
                 // Client: Handle client-specific player initialization
                 OnClientSceneLoadedForPlayers();
             }
+
+            spawnPointManager = SpawnPointManager.Instance;
         }
     }
 
@@ -88,6 +123,10 @@ public class CustomNetworkManager : NetworkManager
         hostPlayerComponent.connectionID = "HOST";
 
         NetworkServer.AddPlayerForConnection(NetworkServer.localConnection, hostPlayer);
+
+        Debug.Log("[Server] Server scene loaded.");
+        World world = Instantiate(worldPrefab).GetComponent<World>();
+        world.LoadWorldSave(hostWorldSave);
     }
 
     private void OnClientSceneLoadedForPlayers()
@@ -135,7 +174,7 @@ public class CustomNetworkManager : NetworkManager
         conn.Send(playerStateMessage);
 
         // Send the world save to the player
-        //conn.Send(new WorldSaveMessage { worldSave = GameManager.Instance.worldSave });
+        conn.Send(new WorldStateMessage { worldState = World.Instance.worldState });
     } 
 
     private void OnClientPlayerSaveMessageRecieved(PlayerSaveMessage message)
@@ -201,12 +240,6 @@ public class CustomNetworkManager : NetworkManager
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void LoadWorld(WorldSave worldSave)
-    {
-        GameManager.Instance.SetWorld(worldSave);
-        GameManager.Instance.LoadGame();
-    }
-
     public void StartGameAsHost(PlayerSave playerSave, WorldSave worldSave)
     {
         hostPlayerSave = playerSave;
@@ -220,7 +253,6 @@ public class CustomNetworkManager : NetworkManager
         clientPlayerSave = playerSave;
 
         // Ensure the world is loaded after selection
-        LoadWorld(hostWorldSave);
     }
 
     public override void OnClientConnect()

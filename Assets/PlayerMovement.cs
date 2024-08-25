@@ -81,6 +81,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("External References")]
     public bool inputEnabled = false;
+    public bool initialized = false;
 
     [Header("Debug")]
     public bool debugLogs = false;
@@ -103,6 +104,8 @@ public class PlayerMovement : NetworkBehaviour
 
         if (inputEnabled) { MyInput(); }
 
+        if (!initialized) { return; }
+
         UpdateCamera();
         CameraEffect();
 
@@ -124,7 +127,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void InitializePlayer()
     {
-        // Initialize player
+        initialized = true;
     }
 
     public override void OnStartLocalPlayer()

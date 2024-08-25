@@ -20,7 +20,6 @@ public class Entity : NetworkBehaviour
     public virtual void Start()
     {
         if (isLoaded) { return; }
-        Game.Instance.entities.Add(this);
     }
 
     public EntityData SaveEntity()
