@@ -138,8 +138,6 @@ public class PlayerMovement : NetworkBehaviour
 
         playerCamera = cameraContainer.GetComponentInChildren<Camera>();
 
-        playerModel.GetComponentInChildren<SkinnedMeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
@@ -30,6 +31,10 @@ public class SaveSystem
     {
         playerSave.saveID = saveID;
         string json = JsonUtility.ToJson(playerSave);
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/PlayerSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/PlayerSaves/");
+        }
         System.IO.File.WriteAllText(Application.persistentDataPath + "/PlayerSaves/" + saveID + ".json", json);
     }
 
@@ -37,17 +42,29 @@ public class SaveSystem
     {
         worldSave.saveID = saveID;
         string json = JsonUtility.ToJson(worldSave);
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/WorldSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/WorldSaves/");
+        }
         System.IO.File.WriteAllText(Application.persistentDataPath + "/WorldSaves/" + saveID + ".json", json);
     }
 
     public PlayerSave LoadPlayer(string saveID)
     {
+        if (!System.IO.File.Exists(Application.persistentDataPath + "/PlayerSaves/" + saveID + ".json"))
+        {
+            return null;
+        }
         string json = System.IO.File.ReadAllText(Application.persistentDataPath + "/PlayerSaves/" + saveID + ".json");
         return JsonUtility.FromJson<PlayerSave>(json);
     }
 
     public WorldSave LoadWorld(string saveID)
     {
+        if (!System.IO.File.Exists(Application.persistentDataPath + "/WorldSaves/" + saveID + ".json"))
+        {
+            return null;
+        }
         string json = System.IO.File.ReadAllText(Application.persistentDataPath + "/WorldSaves/" + saveID + ".json");
         return JsonUtility.FromJson<WorldSave>(json);
     }
@@ -55,6 +72,11 @@ public class SaveSystem
     public List<PlayerSave> LoadAllPlayers()
     {
         List<PlayerSave> playerSaves = new List<PlayerSave>();
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/PlayerSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/PlayerSaves/");
+            return playerSaves;
+        }
         foreach (string path in System.IO.Directory.GetFiles(Application.persistentDataPath + "/PlayerSaves/"))
         {
             string json = System.IO.File.ReadAllText(path);
@@ -66,6 +88,11 @@ public class SaveSystem
     public List<WorldSave> LoadAllWorlds()
     {
         List<WorldSave> worldSaves = new List<WorldSave>();
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/WorldSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/WorldSaves/");
+            return worldSaves;
+        }
         foreach (string path in System.IO.Directory.GetFiles(Application.persistentDataPath + "/WorldSaves/"))
         {
             string json = System.IO.File.ReadAllText(path);
