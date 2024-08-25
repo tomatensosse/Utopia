@@ -15,7 +15,13 @@ public class Entity : NetworkBehaviour
 {
     public string entityID;
     public EntityData entityData;
-    [HideInInspector] public bool isLoaded; 
+    [HideInInspector] public bool isLoaded;
+    private Rigidbody entityRigidbody; 
+
+    public virtual void Awake()
+    {
+        entityRigidbody = GetComponent<Rigidbody>();
+    }
 
     public virtual void Start()
     {
@@ -55,11 +61,21 @@ public class Entity : NetworkBehaviour
 
         // Assign authority to the requesting client
         networkIdentity.AssignClientAuthority(conn);
+        RpcGrantedAuthority(conn);
     }
 
     [Command(requiresAuthority = false)]
     public void CmdRequestAuthority(NetworkConnectionToClient conn)
     {
         GrantAuthority(conn);
+    }
+
+    [TargetRpc]
+    public void RpcGrantedAuthority(NetworkConnectionToClient conn)
+    {
+        Debug.Log("Authority granted to client: " + conn.connectionId);
+
+        // Do something with the client that was granted authority
+        entityRigidbody.isKinematic = false;
     }
 }
