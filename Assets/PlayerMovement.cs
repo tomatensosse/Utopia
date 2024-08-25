@@ -112,7 +112,7 @@ public class PlayerMovement : NetworkBehaviour
         HandleSlope();
         WallJump();
 
-        //ControlAnimation(); disabled for now because of the lack of the animatorcontroller
+        ControlAnimation();
     }
 
     private void FixedUpdate()
@@ -146,12 +146,13 @@ public class PlayerMovement : NetworkBehaviour
         cameraContainer.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
-        CmdSyncRotation(xRotationSync, yRotationSync);
+        CmdSyncRotation(xRotation, yRotation);
     }
 
     [Command(requiresAuthority = false)]
     private void CmdSyncRotation(float x, float y)
     {
+        Debug.Log("Syncing rotation");
         xRotationSync = x;
         yRotationSync = y;
     }
