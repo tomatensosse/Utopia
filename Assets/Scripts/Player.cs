@@ -49,6 +49,9 @@ public class Player : NetworkBehaviour
     [SyncVar] public string connectionID;
     public PlayerState playerState = new PlayerState();
 
+    [Header("Player Scripts")]
+    public PlayerMovement playerMovement;
+
     public void Start()
     {
         // make sure it's not destroyed when we change scenes (FIX LATER)
@@ -71,17 +74,18 @@ public class Player : NetworkBehaviour
         isLoadedOrInitialized = true;
     }
 
-    public override void OnStartClient()
+    public override void OnStartLocalPlayer()
     {
-        base.OnStartClient();
         Debug.Log($"[Client] Player initialized on client with ID: {connectionID}");
 
         if (isLocalPlayer)
         {
             // Additional local player initialization if needed
+            playerMovement.inputEnabled = true;
         }
 
         // Initialize ui, camera, etc.
+        playerMovement.InitializePlayer();
     }
 
     private void Update()
