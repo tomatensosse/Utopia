@@ -249,6 +249,8 @@ MonoBehaviour:
   orientation: {fileID: 8857916033637471581}
   sensX: 2
   sensY: 2
+  xRotationSync: 0
+  yRotationSync: 0
   cameraSidewaysTilt: 0.01
   cameraSidewaysTiltTime: 0.05
   defaultFov: 70
@@ -257,6 +259,7 @@ MonoBehaviour:
   maximumFovIncrease: 4
   fovLerpTime: 0.05
   playerModel: {fileID: 9203897089796215321}
+  playerHead: {fileID: 936149797210005971}
   playermodelAnimator: {fileID: 0}
   runAnimationTreshold: 5
   jumpKey: 32
@@ -749,6 +752,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3bc3ef75d65dee64289ab48e2fd7d69d, type: 3}
+--- !u!1 &936149797210005971 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9189165361352838811, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8321427746907696968}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8426550527344396451 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
