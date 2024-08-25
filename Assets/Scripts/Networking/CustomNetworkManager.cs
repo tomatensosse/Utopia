@@ -87,6 +87,7 @@ public class CustomNetworkManager : NetworkManager
         Debug.Log("[Client] Registering handlers for PlayerSaveMessage and PlayerStateMessage.");
         NetworkClient.RegisterHandler<PlayerSaveMessage>(OnClientPlayerSaveMessageRecieved);
         NetworkClient.RegisterHandler<PlayerStateMessage>(OnPlayerStateMessageReceived);
+        NetworkClient.RegisterHandler<WorldStateMessage>(OnClientWorldStateMessageReceived);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -184,6 +185,11 @@ public class CustomNetworkManager : NetworkManager
         StartCoroutine(InitializeClientPlayer(message));
     }
 
+    private void OnClientWorldStateMessageReceived(WorldStateMessage message)
+    {
+        World.Instance.LoadWorldState(message.worldState);
+    }
+
     private void OnPlayerStateMessageReceived(PlayerStateMessage message)
     {
         foreach (var playerState in message.playerStates)
@@ -253,6 +259,7 @@ public class CustomNetworkManager : NetworkManager
         clientPlayerSave = playerSave;
 
         // Ensure the world is loaded after selection
+        SceneManager.LoadScene("Game");
     }
 
     public override void OnClientConnect()

@@ -90,6 +90,7 @@ public class World : NetworkBehaviour
     {
         Debug.Log("Loaded world : " + worldState.worldName);
 
+        /*
         foreach (Entity entity in worldState.v_activeEntities)
         {
             GameObject entityGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID(entity.entityID), entity.transform.position, entity.transform.rotation);
@@ -97,5 +98,6 @@ public class World : NetworkBehaviour
 
             NetworkServer.Spawn(entityGameObject, NetworkServer.localConnection);
         }
+        */
     }
 }
