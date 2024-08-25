@@ -148,7 +148,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4139335902471679491
 Transform:
   m_ObjectHideFlags: 0
@@ -260,7 +260,7 @@ MonoBehaviour:
   maximumFovIncrease: 4
   fovLerpTime: 0.05
   playerModel: {fileID: 9203897089796215321}
-  playerHead: {fileID: 936149797210005971}
+  playerHead: {fileID: 8160401056876515962}
   playermodelAnimator: {fileID: 380414476587009012}
   runAnimationTreshold: 9
   jumpKey: 32
@@ -375,7 +375,7 @@ MonoBehaviour:
   syncDirection: 1
   syncMode: 0
   syncInterval: 0
-  clientAuthority: 0
+  clientAuthority: 1
   animator: {fileID: 380414476587009012}
 --- !u!1 &6399177660380600282
 GameObject:
@@ -775,9 +775,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 380414476587009012}
   m_SourcePrefab: {fileID: 100100000, guid: 3bc3ef75d65dee64289ab48e2fd7d69d, type: 3}
---- !u!1 &936149797210005971 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9189165361352838811, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
+--- !u!4 &8160401056876515962 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 163317011451739442, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
     type: 3}
   m_PrefabInstance: {fileID: 8321427746907696968}
   m_PrefabAsset: {fileID: 0}
@@ -802,7 +802,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9203897089796215321}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 3bc3ef75d65dee64289ab48e2fd7d69d, type: 3}
   m_Controller: {fileID: 9100000, guid: 8ce5ffcf51e8d1542a4f829ac6e870cb, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0

@@ -71,7 +71,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Animation")]
     public GameObject playerModel;
-    public GameObject playerHead;
+    public Transform playerHead;
     public Animator playermodelAnimator;
     public float runAnimationTreshold = 5f;
     
@@ -97,7 +97,7 @@ public class PlayerMovement : NetworkBehaviour
         if (!isLocalPlayer)
         {
             orientation.rotation = Quaternion.Euler(0, yRotationSync, 0);
-            playerHead.transform.rotation = Quaternion.Euler(xRotationSync, yRotationSync, 0);
+            playerHead.rotation = Quaternion.Euler(xRotationSync, yRotationSync, 0);
 
             return;
         }
@@ -149,13 +149,14 @@ public class PlayerMovement : NetworkBehaviour
         cameraContainer.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
-        CmdSyncRotation(xRotation, yRotation);
+        playerHead.rotation = Quaternion.Euler(xRotation / 1.5f, yRotation, 0);
+
+        CmdSyncRotation(xRotation / 1.5f, yRotation);
     }
 
     [Command(requiresAuthority = false)]
     private void CmdSyncRotation(float x, float y)
     {
-        Debug.Log("Syncing rotation");
         xRotationSync = x;
         yRotationSync = y;
     }
