@@ -57,7 +57,7 @@ public class PlayerMovement : NetworkBehaviour
     private GameObject cameraContainer;
     private float xRotation, yRotation;
     private float mouseX, mouseY;
-    [SyncVar] private Vector3 orientationRotation;
+    [SyncVar] public float xRotationSync, yRotationSync;
 
     [Header("Camera Effects")]
     public float cameraSidewaysTilt = 0.01f;
@@ -92,9 +92,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!isOwned)
+        if (!isLocalPlayer)
         {
-            orientation.rotation = Quaternion.Euler(orientationRotation);
+            orientation.rotation = Quaternion.Euler(0, yRotationSync, 0);
 
             return;
         }
@@ -122,10 +122,10 @@ public class PlayerMovement : NetworkBehaviour
 
     public void InitializePlayer()
     {
-        if (isOwned) { IsOwned(); }
+        if (isLocalPlayer) { IsLocalPlayer(); }
     }
 
-    private void IsOwned()
+    private void IsLocalPlayer()
     {
         cameraContainer = GameObject.Find("CameraContainer");
         cameraContainer.GetComponent<MoveCamera>().cameraPosition = cameraPosition;
@@ -144,7 +144,8 @@ public class PlayerMovement : NetworkBehaviour
         cameraContainer.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
-        orientationRotation = orientation.rotation.eulerAngles;
+        xRotationSync = xRotation;
+        yRotationSync = yRotation;
     }
 
     private void CameraEffect()
