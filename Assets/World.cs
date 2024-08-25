@@ -43,7 +43,7 @@ public class World : NetworkBehaviour
 {
     public static World Instance { get; private set; }
     public WorldState worldState = new WorldState();
-    private bool initialized;
+    [HideInInspector] public bool initialized;
 
     private void Awake()
     {
@@ -87,13 +87,6 @@ public class World : NetworkBehaviour
 
             NetworkServer.Spawn(entity.gameObject, NetworkServer.localConnection);
         }
-    }
-
-    public IEnumerator LoadWorldStateDelayed(WorldState worldState)
-    {
-        yield return new WaitUntil(() => initialized);
-
-        LoadWorldState(worldState);
     }
 
     public void LoadWorldState(WorldState worldState)
