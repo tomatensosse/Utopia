@@ -187,7 +187,7 @@ public class CustomNetworkManager : NetworkManager
 
     private void OnClientWorldStateMessageReceived(WorldStateMessage message)
     {
-        World.Instance.LoadWorldState(message.worldState);
+        StartCoroutine(World.Instance.LoadWorldStateDelayed(message.worldState));
     }
 
     private void OnPlayerStateMessageReceived(PlayerStateMessage message)
