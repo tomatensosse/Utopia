@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
 using Mirror;
 using UnityEngine;
 
@@ -78,6 +79,8 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
+    public KeyCode interactKey = KeyCode.E;
+    public float interactRange = 5f;
 
     [Header("External References")]
     public bool inputEnabled = false;
@@ -197,6 +200,11 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKeyDown(jumpKey))
         {
             Jump();
+        }
+
+        if (Input.GetKeyDown(interactKey))
+        {
+            InteractCast();
         }
     }
 
@@ -474,6 +482,45 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerRigidbody.useGravity = true;
             isStepping = false;
+        }
+    }
+
+    private void InteractCast()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out hit, interactRange))
+        {
+            /*
+            if (hit.collider.GetComponent<Interactable>())
+            {
+                hit.collider.GetComponent<Interactable>().Interact();
+            }
+            */
+
+            if (hit.collider.GetComponent<ItemObject>())
+            {
+                hit.collider.GetComponent<ItemObject>().PickupItem();
+            }
+        }
+    }
+
+    // TBA for cursor
+    private void InteractDisplay()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out hit, interactRange))
+        {
+            /*
+            if (hit.collider.GetComponent<Interactable>())
+            {
+                hit.collider.GetComponent<Interactable>().Display();
+            }
+            */
+
+            if (hit.collider.GetComponent<ItemObject>()) // || hit.collider.GetComponent<Interactable>()
+            {
+                //draw interactable icon or sth like that
+            }
         }
     }
 

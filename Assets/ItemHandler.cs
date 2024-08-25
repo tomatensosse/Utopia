@@ -7,17 +7,24 @@ public class ItemHandler : MonoBehaviour
 {
     public Transform itemHolder;
     public Item heldItem;
+    private PlayerViewmodel playerViewmodel;
+
+    private void Awake()
+    {
+        playerViewmodel = PlayerViewmodel.Instance;
+    }
 
     public void HoldItem()
     {
         if (heldItem == null)
         {
-            PlayerViewmodel.Instance.DisableViewmodel();
+            playerViewmodel.DisableViewmodel();
         }
         {
-            PlayerViewmodel.Instance.EnableViewmodel();
+            playerViewmodel.EnableViewmodel();
         }
         ItemObject itemObject = Instantiate(heldItem.itemObject, itemHolder.position, itemHolder.rotation).GetComponent<ItemObject>();
-        PlayerViewmodel.Instance.AdjustFingerTargets(itemObject.itemHoldPoints);
+        playerViewmodel.AdjustFingerTargets(itemObject.itemHoldPoints);
+        playerViewmodel.Wield();
     }
 }

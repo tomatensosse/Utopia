@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerViewmodel : MonoBehaviour
 {
     public static PlayerViewmodel Instance;
-
+    public Animator viewmodelAnimator;
     [Header("Finger Target Transforms")]
     public SkinnedMeshRenderer viewmodelRenderer;
     public Transform[] fingerTipTargets; // Targets for each finger tip
@@ -32,6 +32,11 @@ public class PlayerViewmodel : MonoBehaviour
     public void EnableViewmodel()
     {
         viewmodelRenderer.enabled = true;
+    }
+
+    public void Wield()
+    {
+        viewmodelAnimator.SetTrigger("wield");
     }
 
     /*
