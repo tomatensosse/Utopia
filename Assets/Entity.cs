@@ -40,4 +40,26 @@ public class Entity : NetworkBehaviour
 
         isLoaded = true;
     }
+
+    [Server]
+    public void GrantAuthority(NetworkConnectionToClient conn)
+    {
+        // Make sure the current object has a NetworkIdentity component
+        NetworkIdentity networkIdentity = GetComponent<NetworkIdentity>();
+
+        // Remove authority from previous client, if any
+        if (networkIdentity.connectionToClient != null)
+        {
+            networkIdentity.RemoveClientAuthority();
+        }
+
+        // Assign authority to the requesting client
+        networkIdentity.AssignClientAuthority(conn);
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdRequestAuthority(NetworkConnectionToClient conn)
+    {
+        GrantAuthority(conn);
+    }
 }

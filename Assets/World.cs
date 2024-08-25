@@ -93,14 +93,14 @@ public class World : NetworkBehaviour
     {
         Debug.Log("Loaded world : " + worldState.worldName);
 
-        /*
+        this.worldState = worldState;
+
+        // entities are already spawned
+        // grant authority over entities
+
         foreach (Entity entity in worldState.v_activeEntities)
         {
-            GameObject entityGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID(entity.entityID), entity.transform.position, entity.transform.rotation);
-            entityGameObject.GetComponent<Entity>().LoadEntity(entity.SaveEntity());
-
-            NetworkServer.Spawn(entityGameObject, NetworkServer.localConnection);
+            entity.CmdRequestAuthority(connectionToClient);
         }
-        */
     }
 }

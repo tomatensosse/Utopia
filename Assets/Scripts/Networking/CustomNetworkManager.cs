@@ -128,6 +128,8 @@ public class CustomNetworkManager : NetworkManager
         Debug.Log("[Server] Server scene loaded.");
         World world = Instantiate(worldPrefab).GetComponent<World>();
         world.LoadWorldSave(hostWorldSave);
+
+        NetworkServer.Spawn(world.gameObject);
     }
 
     private void OnClientSceneLoadedForPlayers()
