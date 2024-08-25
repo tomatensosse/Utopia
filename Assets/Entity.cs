@@ -15,7 +15,8 @@ public class Entity : NetworkBehaviour
 {
     public string entityID;
     public EntityData entityData;
-    [HideInInspector] public bool isLoaded;
+    [HideInInspector] public bool wasLoadedBefore; // to prevent double loading
+    public bool initialized;
     public Rigidbody entityRigidbody;
 
     public virtual void Awake()
@@ -25,7 +26,9 @@ public class Entity : NetworkBehaviour
 
     public virtual void Start()
     {
-        if (isLoaded) { return; }
+        initialized = true;
+
+        if (wasLoadedBefore) { return; }
     }
 
     public EntityData SaveEntity()
@@ -44,7 +47,7 @@ public class Entity : NetworkBehaviour
         transform.position = entityData.position;
         transform.rotation = entityData.rotation;
 
-        isLoaded = true;
+        wasLoadedBefore = true;
     }
 
     [Server]

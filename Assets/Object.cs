@@ -9,7 +9,7 @@ public class Object : Entity
     {
         base.Start();
 
-        if (isLoaded) { return; }
+        if (wasLoadedBefore) { return; }
 
         if (entityRigidbody == null)
         {
