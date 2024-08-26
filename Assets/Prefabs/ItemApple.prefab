@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 1639410144974350159}
   - component: {fileID: 6621485668441408714}
   - component: {fileID: 3767459988257741183}
+  - component: {fileID: 6262526992298722808}
   m_Layer: 0
   m_Name: ItemApple
   m_TagString: Untagged
@@ -216,16 +217,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee67db552c55c79459e35ecb3f9f5bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemCollider: {fileID: 6621485668441408714}
   item: {fileID: 11400000, guid: 1a43a9350af34864a9fb74b1562c23d2, type: 2}
   dynamicItem: {fileID: 0}
-  itemBeingHeld: 0
   itemHoldPoints:
   - {fileID: 5563374191189097076}
   - {fileID: 5258620199060027652}
   - {fileID: 4655087950235746909}
   - {fileID: 7413457029354608456}
   - {fileID: 6380796153453895557}
+--- !u!114 &6262526992298722808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7216225707644642201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 2837843271
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &7253245630340544368
 GameObject:
   m_ObjectHideFlags: 0

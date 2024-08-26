@@ -1,6 +1,13 @@
 using UnityEngine;
 
 [System.Serializable]
+public class ItemData
+{
+    public string itemID;
+    public int itemAmount;
+    public int itemDurability;
+}
+
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Item")]
 public class Item : ScriptableObject
 {
@@ -20,5 +27,4 @@ public class Item : ScriptableObject
     [Header("Optional")]
     public int itemValue = 0;
     public int itemMaxDurability = 10;
-    public int itemCurrentDurability = 10;
 }

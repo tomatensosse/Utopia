@@ -2872,6 +2872,7 @@ MonoBehaviour:
     playerSaveName: 
     _demoPlayerClass: 
     playerScore: 0
+    inventory: []
   setWorld:
     saveID: 
     worldSaveName: 
@@ -8114,6 +8115,7 @@ MonoBehaviour:
   autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs:
+  - {fileID: 7216225707644642201, guid: 94289341e449cc549bff23ead485791b, type: 3}
   - {fileID: 8710009695634848317, guid: 9482590a307d10b419544607455bdde4, type: 3}
   - {fileID: 7341288090100755433, guid: a20ad2d2820ac0c42a900da0ec662702, type: 3}
   exceptionsDisconnect: 1
@@ -8138,16 +8140,20 @@ MonoBehaviour:
     playerSaveName: 
     _demoPlayerClass: 
     playerScore: 0
+    inventory: []
   clientPlayerSave:
     saveID: 
     playerSaveName: 
     _demoPlayerClass: 
     playerScore: 0
+    inventory: []
   hostWorldSave:
     saveID: 
     worldSaveName: 
     worldSeed: 0
     entityDatas: []
+  itemsToSpawn:
+  - {fileID: 7216225707644642201, guid: 94289341e449cc549bff23ead485791b, type: 3}
 --- !u!4 &1880743290
 Transform:
   m_ObjectHideFlags: 0

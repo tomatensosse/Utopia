@@ -490,16 +490,9 @@ public class PlayerMovement : NetworkBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out hit, interactRange))
         {
-            /*
             if (hit.collider.GetComponent<Interactable>())
             {
-                hit.collider.GetComponent<Interactable>().Interact();
-            }
-            */
-
-            if (hit.collider.GetComponent<ItemObject>())
-            {
-                hit.collider.GetComponent<ItemObject>().PickupItem();
+                hit.collider.GetComponent<Interactable>().CmdInteract(netId);
             }
         }
     }

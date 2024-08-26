@@ -27,6 +27,7 @@ public class CustomNetworkManager : NetworkManager
     public PlayerSave hostPlayerSave;
     public PlayerSave clientPlayerSave;
     public WorldSave hostWorldSave;
+    public List<GameObject> itemsToSpawn;
     private SpawnPointManager spawnPointManager;
     private bool gameSceneLoaded = false;
 
@@ -41,7 +42,7 @@ public class CustomNetworkManager : NetworkManager
                 SaveAndQuit();
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.P))
             {
                 SpawnEntity("entity_physicube", spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
             }
@@ -130,6 +131,17 @@ public class CustomNetworkManager : NetworkManager
         world.LoadWorldSave(hostWorldSave);
 
         NetworkServer.Spawn(world.gameObject);
+
+        SpawnDemoItems();
+    }
+
+    private void SpawnDemoItems()
+    {
+        foreach (GameObject item in itemsToSpawn)
+        {
+            GameObject spawnedItem = Instantiate(item);
+            NetworkServer.Spawn(spawnedItem);
+        }
     }
 
     private void OnClientSceneLoadedForPlayers()

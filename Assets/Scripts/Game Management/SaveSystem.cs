@@ -15,6 +15,7 @@ public class PlayerSave : SaveData
     public string playerSaveName;
     public string _demoPlayerClass;
     public int playerScore;
+    public ItemData[] inventory;
 }
 
 [System.Serializable]
