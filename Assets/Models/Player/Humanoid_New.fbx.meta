@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3bc3ef75d65dee64289ab48e2fd7d69d
+guid: 8f46849974eb3894b9e8c540d6d1952a
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -54,7 +54,7 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
-      bodyMask: 01000000010000000000000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      bodyMask: 01000000010000000000000001000000010000000100000000000000010000000000000001000000010000000100000001000000
       curves: []
       events: []
       transformMask:
@@ -123,43 +123,43 @@ ModelImporter:
       - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/Thumb.L/Thumb-Tip.L/Thumb-Tip.L_end
         weight: 1
       - path: Armature/Torso/Shoulder.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R/IndexFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R/MiddleFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R/PinkyFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R/RingFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R/Thumb-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Torso.001
         weight: 1
       - path: Armature/Torso/Torso.001/Torso.001_end
@@ -171,7 +171,7 @@ ModelImporter:
       - path: Cube
         weight: 1
       maskType: 1
-      maskSource: {fileID: 31900000, guid: 78184aac39dea664bbdad61b290310e5, type: 2}
+      maskSource: {fileID: 31900000, guid: 4e9cc05d283fc2f4db8d7a65b5d7a3ed, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Armature|playermodel_punch
@@ -195,36 +195,7 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Armature|playermodel_walk
-      takeName: Armature|playermodel_walk
-      internalID: -7978295744321933170
-      firstFrame: 0
-      lastFrame: 19
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000000000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      bodyMask: 01000000010000000000000001000000010000000100000000000000010000000000000001000000010000000100000001000000
       curves: []
       events: []
       transformMask:
@@ -293,43 +264,43 @@ ModelImporter:
       - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/Thumb.L/Thumb-Tip.L/Thumb-Tip.L_end
         weight: 1
       - path: Armature/Torso/Shoulder.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R/IndexFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R/MiddleFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R/PinkyFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R/RingFinger-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R/Thumb-Tip.R_end
-        weight: 1
+        weight: 0
       - path: Armature/Torso/Torso.001
         weight: 1
       - path: Armature/Torso/Torso.001/Torso.001_end
@@ -341,7 +312,148 @@ ModelImporter:
       - path: Cube
         weight: 1
       maskType: 1
-      maskSource: {fileID: 31900000, guid: 78184aac39dea664bbdad61b290310e5, type: 2}
+      maskSource: {fileID: 31900000, guid: 4e9cc05d283fc2f4db8d7a65b5d7a3ed, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Armature|playermodel_walk
+      takeName: Armature|playermodel_walk
+      internalID: -7978295744321933170
+      firstFrame: 0
+      lastFrame: 19
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000000000001000000010000000100000000000000010000000000000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Cheeks.L
+        weight: 1
+      - path: Armature/Cheeks.L/UpperLeg.L
+        weight: 1
+      - path: Armature/Cheeks.L/UpperLeg.L/LowerLeg.L
+        weight: 1
+      - path: Armature/Cheeks.L/UpperLeg.L/LowerLeg.L/LowerLeg.L_end
+        weight: 1
+      - path: Armature/Cheeks.R
+        weight: 1
+      - path: Armature/Cheeks.R/UpperLeg.R
+        weight: 1
+      - path: Armature/Cheeks.R/UpperLeg.R/LowerLeg.R
+        weight: 1
+      - path: Armature/Cheeks.R/UpperLeg.R/LowerLeg.R/LowerLeg.R_end
+        weight: 1
+      - path: Armature/Torso
+        weight: 1
+      - path: Armature/Torso/Head
+        weight: 0
+      - path: Armature/Torso/Head/Head_end
+        weight: 0
+      - path: Armature/Torso/Shoulder.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/IndexFinger.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/IndexFinger.L/IndexFinger-Tip.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/IndexFinger.L/IndexFinger-Tip.L/IndexFinger-Tip.L_end
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/MiddleFinger.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/MiddleFinger.L/MiddleFinger-Tip.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/MiddleFinger.L/MiddleFinger-Tip.L/MiddleFinger-Tip.L_end
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/PinkyFinger.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/PinkyFinger.L/PinkyFinger-Tip.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/PinkyFinger.L/PinkyFinger-Tip.L/PinkyFinger-Tip.L_end
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/RingFinger.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/RingFinger.L/RingFinger-Tip.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/RingFinger.L/RingFinger-Tip.L/RingFinger-Tip.L_end
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/Thumb.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/Thumb.L/Thumb-Tip.L
+        weight: 1
+      - path: Armature/Torso/Shoulder.L/UpperArm.L/LowerArm.L/Wrist.L/Thumb.L/Thumb-Tip.L/Thumb-Tip.L_end
+        weight: 1
+      - path: Armature/Torso/Shoulder.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/IndexFinger.R/IndexFinger-Tip.R/IndexFinger-Tip.R_end
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/MiddleFinger.R/MiddleFinger-Tip.R/MiddleFinger-Tip.R_end
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/PinkyFinger.R/PinkyFinger-Tip.R/PinkyFinger-Tip.R_end
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/RingFinger.R/RingFinger-Tip.R/RingFinger-Tip.R_end
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R
+        weight: 0
+      - path: Armature/Torso/Shoulder.R/UpperArm.R/LowerArm.R/Wrist.R/Thumb.R/Thumb-Tip.R/Thumb-Tip.R_end
+        weight: 0
+      - path: Armature/Torso/Torso.001
+        weight: 1
+      - path: Armature/Torso/Torso.001/Torso.001_end
+        weight: 1
+      - path: Armature/Torso/Torso.002
+        weight: 1
+      - path: Armature/Torso/Torso.002/Torso.002_end
+        weight: 1
+      - path: Cube
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 4e9cc05d283fc2f4db8d7a65b5d7a3ed, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
@@ -393,287 +505,7 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton:
-    - name: Humanoid(Clone)
-      parentName: 
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Cube
-      parentName: Humanoid(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
-    - name: Armature
-      parentName: Humanoid(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
-    - name: Torso
-      parentName: Armature
-      position: {x: -0.00022898572, y: 0.001802889, z: -0.08946732}
-      rotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-      scale: {x: 1, y: 0.9999998, z: 0.9999998}
-    - name: Head
-      parentName: Torso
-      position: {x: -0, y: 0.055017356, z: 0}
-      rotation: {x: 0.00000008940697, y: -0.000000041909516, z: -0.0037036282, w: 0.9999932}
-      scale: {x: 1.0000001, y: 1.0000001, z: 1}
-    - name: Head_end
-      parentName: Head
-      position: {x: -0, y: 0.03471545, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder.L
-      parentName: Torso
-      position: {x: -0, y: 0.055017356, z: 0}
-      rotation: {x: -0.06808832, y: 0.000000059604645, z: 0.74247104, w: 0.6664089}
-      scale: {x: 0.99999976, y: 0.9999999, z: 1}
-    - name: UpperArm.L
-      parentName: Shoulder.L
-      position: {x: -3.72529e-10, y: 0.016428296, z: -4.4703483e-10}
-      rotation: {x: 0.055460464, y: -0.041451856, z: -0.01569489, w: 0.9974766}
-      scale: {x: 1.0000004, y: 0.9999999, z: 1.0000001}
-    - name: LowerArm.L
-      parentName: UpperArm.L
-      position: {x: -0.0000000043958424, y: 0.03885122, z: 0}
-      rotation: {x: 0.0018297806, y: 0.12611236, z: -0.04423109, w: 0.9910278}
-      scale: {x: 1, y: 1, z: 0.9999999}
-    - name: Wrist.L
-      parentName: LowerArm.L
-      position: {x: 0.0000000017136335, y: 0.039968625, z: -0.0000000013411044}
-      rotation: {x: 0.03472216, y: -0.13490707, z: -0.054025825, w: 0.98877484}
-      scale: {x: 0.9999999, y: 1, z: 1}
-    - name: Thumb.L
-      parentName: Wrist.L
-      position: {x: -0.000050417406, y: 0.010880377, z: 0.007578938}
-      rotation: {x: 0.39573509, y: -0.008405969, z: 0.09707725, w: 0.91318077}
-      scale: {x: 1.0000006, y: 1.0000007, z: 1}
-    - name: Thumb-Tip.L
-      parentName: Thumb.L
-      position: {x: 0.0000000017881393, y: 0.005288692, z: -0.000000014305114}
-      rotation: {x: 0.035707794, y: -0.000000005587934, z: -0.011316311, w: 0.9992982}
-      scale: {x: 1.0000004, y: 1.0000006, z: 1.0000004}
-    - name: Thumb-Tip.L_end
-      parentName: Thumb-Tip.L
-      position: {x: -0, y: 0.005419752, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: PinkyFinger.L
-      parentName: Wrist.L
-      position: {x: -0.0029868467, y: 0.015440895, z: -0.0052132667}
-      rotation: {x: -0.028537631, y: -0.0046917046, z: 0.025946977, w: 0.9992449}
-      scale: {x: 1.0000002, y: 1.0000004, z: 1}
-    - name: PinkyFinger-Tip.L
-      parentName: PinkyFinger.L
-      position: {x: 0.00000000516884, y: 0.008895154, z: 0.0000000012293457}
-      rotation: {x: 0.023513447, y: -0.002476958, z: 0.028326496, w: 0.9993191}
-      scale: {x: 1.0000002, y: 1.0000001, z: 1}
-    - name: PinkyFinger-Tip.L_end
-      parentName: PinkyFinger-Tip.L
-      position: {x: -0, y: 0.006289397, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: RingFinger.L
-      parentName: Wrist.L
-      position: {x: -0.001745273, y: 0.017177295, z: -0.0025186331}
-      rotation: {x: 0.041663993, y: 0.00890865, z: 0.12729348, w: 0.99094963}
-      scale: {x: 1.0000002, y: 1.0000004, z: 1}
-    - name: RingFinger-Tip.L
-      parentName: RingFinger.L
-      position: {x: 0.00000000230968, y: 0.008438385, z: -0.0000000010430813}
-      rotation: {x: -0.01918529, y: 0.00056041294, z: -0.03299349, w: 0.99927133}
-      scale: {x: 1.0000001, y: 1, z: 1.0000001}
-    - name: RingFinger-Tip.L_end
-      parentName: RingFinger-Tip.L
-      position: {x: -0, y: 0.008024163, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: MiddleFinger.L
-      parentName: Wrist.L
-      position: {x: -0.0016883644, y: 0.01828877, z: 0.0015919687}
-      rotation: {x: -0.030171778, y: 0.0014086808, z: 0.03583193, w: 0.9989013}
-      scale: {x: 1.0000004, y: 1.0000002, z: 1.0000001}
-    - name: MiddleFinger-Tip.L
-      parentName: MiddleFinger.L
-      position: {x: 0.0000000019557773, y: 0.008740407, z: 0.000000001117587}
-      rotation: {x: 0.01137487, y: -0.013626321, z: 0.03224929, w: 0.99932224}
-      scale: {x: 1.0000004, y: 1.0000005, z: 1}
-    - name: MiddleFinger-Tip.L_end
-      parentName: MiddleFinger-Tip.L
-      position: {x: -0, y: 0.008293604, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IndexFinger.L
-      parentName: Wrist.L
-      position: {x: -0.0022796863, y: 0.018160747, z: 0.0045212703}
-      rotation: {x: 0.0020082404, y: -0.0214667, z: 0.094696246, w: 0.9952727}
-      scale: {x: 1.0000004, y: 1.0000002, z: 1.0000001}
-    - name: IndexFinger-Tip.L
-      parentName: IndexFinger.L
-      position: {x: 9.313226e-10, y: 0.0061929766, z: -1.4901161e-10}
-      rotation: {x: 0.02225405, y: -0.020558495, z: 0.034622177, w: 0.9989411}
-      scale: {x: 1.0000006, y: 1.0000004, z: 1}
-    - name: IndexFinger-Tip.L_end
-      parentName: IndexFinger-Tip.L
-      position: {x: -0, y: 0.009087766, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder.R
-      parentName: Torso
-      position: {x: 0.00045797144, y: 0.055017356, z: 0}
-      rotation: {x: -0.06808832, y: -0.000000059604645, z: -0.74247104, w: 0.6664089}
-      scale: {x: 0.99999976, y: 0.9999999, z: 1}
-    - name: UpperArm.R
-      parentName: Shoulder.R
-      position: {x: 3.72529e-10, y: 0.016428296, z: -4.4703483e-10}
-      rotation: {x: 0.05546043, y: 0.041451834, z: 0.01569477, w: 0.9974766}
-      scale: {x: 1.0000005, y: 1, z: 1.0000001}
-    - name: LowerArm.R
-      parentName: UpperArm.R
-      position: {x: 0.0000000026158522, y: 0.03885122, z: 3.72529e-10}
-      rotation: {x: 0.0018298177, y: -0.12611233, z: 0.044231, w: 0.9910277}
-      scale: {x: 1.0000006, y: 1.0000008, z: 0.9999998}
-    - name: Wrist.R
-      parentName: LowerArm.R
-      position: {x: -3.0267983e-10, y: 0.039968617, z: -0.0000000010989606}
-      rotation: {x: 0.03472212, y: 0.13490707, z: 0.05402591, w: 0.9887749}
-      scale: {x: 1.0000004, y: 1.0000006, z: 0.9999998}
-    - name: PinkyFinger.R
-      parentName: Wrist.R
-      position: {x: 0.0029868514, y: 0.0154409, z: -0.005213266}
-      rotation: {x: -0.028537627, y: 0.0046916897, z: -0.025946977, w: 0.9992449}
-      scale: {x: 0.9999994, y: 0.9999993, z: 0.9999999}
-    - name: PinkyFinger-Tip.R
-      parentName: PinkyFinger.R
-      position: {x: 0.000000002302695, y: 0.008895144, z: -5.5879353e-11}
-      rotation: {x: 0.023513904, y: 0.002476873, z: -0.028327744, w: 0.999319}
-      scale: {x: 1.0000004, y: 1.0000005, z: 1}
-    - name: PinkyFinger-Tip.R_end
-      parentName: PinkyFinger-Tip.R
-      position: {x: -0, y: 0.006289397, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: RingFinger.R
-      parentName: Wrist.R
-      position: {x: 0.0017452759, y: 0.017177308, z: -0.0025186338}
-      rotation: {x: 0.041664086, y: -0.008908732, z: -0.12729213, w: 0.99094975}
-      scale: {x: 0.99999946, y: 0.9999995, z: 1.0000001}
-    - name: RingFinger-Tip.R
-      parentName: RingFinger.R
-      position: {x: -3.4924597e-10, y: 0.008438401, z: 0}
-      rotation: {x: -0.019185, y: -0.00056037016, z: 0.03299274, w: 0.9992713}
-      scale: {x: 1.0000001, y: 1.0000006, z: 1.0000001}
-    - name: RingFinger-Tip.R_end
-      parentName: RingFinger-Tip.R
-      position: {x: -0, y: 0.008024163, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: MiddleFinger.R
-      parentName: Wrist.R
-      position: {x: 0.0016883641, y: 0.018288776, z: 0.001591968}
-      rotation: {x: -0.030171774, y: -0.0014086957, z: -0.03583192, w: 0.99890125}
-      scale: {x: 1, y: 0.9999999, z: 1}
-    - name: MiddleFinger-Tip.R
-      parentName: MiddleFinger.R
-      position: {x: -0.0000000014272518, y: 0.008740406, z: 2.1420418e-10}
-      rotation: {x: 0.011375145, y: 0.013626333, z: -0.03225176, w: 0.9993221}
-      scale: {x: 0.99999976, y: 1.0000001, z: 1.0000001}
-    - name: MiddleFinger-Tip.R_end
-      parentName: MiddleFinger-Tip.R
-      position: {x: -0, y: 0.008293604, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IndexFinger.R
-      parentName: Wrist.R
-      position: {x: 0.0022796865, y: 0.018160757, z: 0.0045212726}
-      rotation: {x: 0.002008218, y: 0.0214667, z: -0.094696365, w: 0.99527276}
-      scale: {x: 0.9999997, y: 0.99999946, z: 1}
-    - name: IndexFinger-Tip.R
-      parentName: IndexFinger.R
-      position: {x: -1.11758706e-10, y: 0.0061929654, z: 1.4901161e-10}
-      rotation: {x: 0.022254348, y: 0.020558598, z: -0.034622755, w: 0.9989412}
-      scale: {x: 0.9999999, y: 1, z: 1}
-    - name: IndexFinger-Tip.R_end
-      parentName: IndexFinger-Tip.R
-      position: {x: -0, y: 0.009087766, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Thumb.R
-      parentName: Wrist.R
-      position: {x: 0.000050417762, y: 0.010880382, z: 0.00757894}
-      rotation: {x: -0.39573318, y: -0.008405073, z: 0.09707698, w: -0.9131816}
-      scale: {x: 1.0000001, y: 1, z: 0.99999994}
-    - name: Thumb-Tip.R
-      parentName: Thumb.R
-      position: {x: 0.000000009536743, y: 0.0052886894, z: 0.000000010430813}
-      rotation: {x: 0.03570899, y: 0.0000003543682, z: 0.011315377, w: 0.9992982}
-      scale: {x: 1.0000002, y: 1.0000008, z: 0.99999994}
-    - name: Thumb-Tip.R_end
-      parentName: Thumb-Tip.R
-      position: {x: -0, y: 0.005419752, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Torso.001
-      parentName: Torso
-      position: {x: -0.014571186, y: 0.03629444, z: -0.00919355}
-      rotation: {x: 0.7115497, y: 0.16635501, z: 0.1284684, w: 0.6704617}
-      scale: {x: 1, y: 1, z: 0.9999999}
-    - name: Torso.001_end
-      parentName: Torso.001
-      position: {x: -0, y: 0.019761289, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Torso.002
-      parentName: Torso
-      position: {x: 0.013733927, y: 0.035922755, z: -0.008946341}
-      rotation: {x: 0.7115497, y: 0.16635491, z: 0.12846829, w: 0.67046183}
-      scale: {x: 1.0000001, y: 1, z: 1}
-    - name: Torso.002_end
-      parentName: Torso.002
-      position: {x: -0, y: 0.019761289, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Cheeks.L
-      parentName: Armature
-      position: {x: -0.00022898572, y: 0.001802889, z: -0.08946732}
-      rotation: {x: 0.07496495, y: 0.07496491, z: -0.7031217, w: -0.7031219}
-      scale: {x: 1.0000001, y: 1, z: 0.9999999}
-    - name: UpperLeg.L
-      parentName: Cheeks.L
-      position: {x: 1.2136514e-10, y: 0.013415942, z: 0.0000000015009191}
-      rotation: {x: -0.62815696, y: -0.000000040978197, z: -0.00000005960465, w: 0.7780867}
-      scale: {x: 1.0000001, y: 1.0000002, z: 0.99999994}
-    - name: LowerLeg.L
-      parentName: UpperLeg.L
-      position: {x: 1.8284588e-10, y: 0.042428825, z: 0.0000000010020303}
-      rotation: {x: 0.005208134, y: 0.00000014862798, z: 0.000000023958332, w: 0.9999864}
-      scale: {x: 1.0000002, y: 1.0000005, z: 1.0000005}
-    - name: LowerLeg.L_end
-      parentName: LowerLeg.L
-      position: {x: -0, y: 0.049374416, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Cheeks.R
-      parentName: Armature
-      position: {x: 0.00022898572, y: 0.001802889, z: -0.08946732}
-      rotation: {x: 0.07496495, y: -0.07496491, z: 0.7031217, w: -0.7031219}
-      scale: {x: 1.0000001, y: 1, z: 0.9999999}
-    - name: UpperLeg.R
-      parentName: Cheeks.R
-      position: {x: -1.2136514e-10, y: 0.013415942, z: 0.0000000015009191}
-      rotation: {x: -0.62815696, y: 0.000000040978197, z: 0.00000005960465, w: 0.7780867}
-      scale: {x: 1.0000001, y: 1.0000002, z: 0.99999994}
-    - name: LowerLeg.R
-      parentName: UpperLeg.R
-      position: {x: -1.8284588e-10, y: 0.042428825, z: 0.0000000010020303}
-      rotation: {x: 0.005208134, y: -0.00000014862798, z: -0.000000023958332, w: 0.9999864}
-      scale: {x: 1.0000002, y: 1.0000005, z: 1.0000005}
-    - name: LowerLeg.R_end
-      parentName: LowerLeg.R
-      position: {x: -0, y: 0.049374416, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
+    skeleton: []
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5

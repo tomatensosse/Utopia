@@ -71,10 +71,8 @@ public class PlayerMovement : NetworkBehaviour
     public float fovLerpTime = 0.05f;
 
     [Header("Animation")]
-    public GameObject playerModel;
     public Transform playerHead;
-    public Animator playermodelAnimator;
-    public float runAnimationTreshold = 5f;
+    public PlayerAnimation playerAnimation;
     
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -413,21 +411,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ControlAnimation()
     {
-        if (playerRigidbody.velocity.magnitude < 1f)
-        {
-            // set to idle
-            playermodelAnimator.SetFloat("speed", Mathf.Lerp(playermodelAnimator.GetFloat("speed"), 0, 0.05f));
-        }
-        else if (playerRigidbody.velocity.magnitude > 0.1f && playerRigidbody.velocity.magnitude <= runAnimationTreshold)
-        {
-            // set to walk
-            playermodelAnimator.SetFloat("speed", Mathf.Lerp(playermodelAnimator.GetFloat("speed"), 0.5f, 0.05f));
-        }
-        else if (playerRigidbody.velocity.magnitude > runAnimationTreshold)
-        {
-            // set to sprint
-            playermodelAnimator.SetFloat("speed", Mathf.Lerp(playermodelAnimator.GetFloat("speed"), 1f, 0.05f));
-        }
+        playerAnimation._runAnimationParam = playerRigidbody.velocity.magnitude;
     }
 
     private void HandleSlope()

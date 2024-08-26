@@ -6,31 +6,12 @@ using UnityEngine;
 
 public class ItemHandler : NetworkBehaviour
 {
-    public Transform localItemContainer;
-    public Transform remoteItemContainer;
-    public PlayerViewmodel playerViewmodel;
-
-    private void Awake()
-    {
-        playerViewmodel = PlayerViewmodel.Instance;
-    }
+    public Transform itemContainer;
+    public PlayerAnimation playerAnimation;
 
     public void Initialize()
     {
-        if (localItemContainer == null)
-        {
-            localItemContainer = GameObject.Find("LocalItemContainer").transform;
-        }
-
-        if (remoteItemContainer == null)
-        {
-            remoteItemContainer = GameObject.Find("RemoteItemContainer").transform;
-        }
-
-        if (playerViewmodel == null)
-        {
-            playerViewmodel = GameObject.Find("PlayerViewModel").GetComponent<PlayerViewmodel>();
-        }
+        // do sum shit
     }
 
     [Command(requiresAuthority = false)]
@@ -38,7 +19,7 @@ public class ItemHandler : NetworkBehaviour
     {
         Item currentItem = ItemDatabase.Instance.GetItemByID(itemID);
         Debug.Log("Spawning item: " + currentItem.itemName);
-        GameObject itemInstance = Instantiate(currentItem.itemObject, remoteItemContainer.position, remoteItemContainer.rotation);
+        GameObject itemInstance = Instantiate(currentItem.itemObject, itemContainer.position, itemContainer.rotation);
 
         NetworkServer.Spawn(itemInstance, conn);
 
@@ -50,17 +31,10 @@ public class ItemHandler : NetworkBehaviour
     {
         ItemObject itemObject = itemInstance.GetComponent<ItemObject>();
 
-        if (!isLocalPlayer)
+        if (isLocalPlayer)
         {
-            itemInstance.transform.SetParent(remoteItemContainer);
-        }
-        else
-        {
-            itemInstance.transform.SetParent(localItemContainer);
-
-            playerViewmodel.objectToHold = itemInstance.transform;
-            playerViewmodel.AdjustFingerTargets(itemObject.itemHoldPoints);
-            playerViewmodel.Wield();
+            itemInstance.transform.SetParent(itemContainer);
+            playerAnimation.TriggerWield();
         }
     }
 }

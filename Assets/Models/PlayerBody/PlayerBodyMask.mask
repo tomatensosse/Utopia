@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PlayerBodyMask
+  m_Mask: 01000000010000000000000001000000010000000100000000000000010000000000000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Armature
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.L
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.L/UpperLeg.L
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.L/UpperLeg.L/LowerLeg.L
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.L/UpperLeg.L/LowerLeg.L/LowerLeg.L_end
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.R
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.R/UpperLeg.R
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.R/UpperLeg.R/LowerLeg.R
+    m_Weight: 1
+  - m_Path: Armature/Cheeks.R/UpperLeg.R/LowerLeg.R/LowerLeg.R_end
+    m_Weight: 1
+  - m_Path: Armature/Torso
+    m_Weight: 1
+  - m_Path: Armature/Torso/Head
+    m_Weight: 0
+  - m_Path: Armature/Torso/Head/Head_end
+    m_Weight: 0
+  - m_Path: Armature/Torso/Shoulder.L
+    m_Weight: 0
+  - m_Path: Armature/Torso/Shoulder.L/Shoulder.L_end
+    m_Weight: 0
+  - m_Path: Armature/Torso/Shoulder.R
+    m_Weight: 0
+  - m_Path: Armature/Torso/Shoulder.R/Shoulder.R_end
+    m_Weight: 0
+  - m_Path: Armature/Torso/Torso.001
+    m_Weight: 1
+  - m_Path: Armature/Torso/Torso.001/Torso.001_end
+    m_Weight: 1
+  - m_Path: Armature/Torso/Torso.002
+    m_Weight: 1
+  - m_Path: Armature/Torso/Torso.002/Torso.002_end
+    m_Weight: 1
+  - m_Path: Cube
+    m_Weight: 1
