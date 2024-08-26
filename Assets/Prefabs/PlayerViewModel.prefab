@@ -56,7 +56,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0012c76491205df48926b8c0af09c889,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.67559016
+      value: -0.6755902
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0012c76491205df48926b8c0af09c889,
         type: 3}
@@ -78,6 +78,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerViewModel
       objectReference: {fileID: 0}
+    - target: {fileID: 3727956284482021115, guid: 0012c76491205df48926b8c0af09c889,
+        type: 3}
+      propertyPath: m_AABB.m_Center.x
+      value: -0.001591275
+      objectReference: {fileID: 0}
+    - target: {fileID: 3727956284482021115, guid: 0012c76491205df48926b8c0af09c889,
+        type: 3}
+      propertyPath: m_AABB.m_Center.y
+      value: 0.1069616
+      objectReference: {fileID: 0}
+    - target: {fileID: 3727956284482021115, guid: 0012c76491205df48926b8c0af09c889,
+        type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 0.1111285
+      objectReference: {fileID: 0}
+    - target: {fileID: 3727956284482021115, guid: 0012c76491205df48926b8c0af09c889,
+        type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 0.02555938
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 0012c76491205df48926b8c0af09c889,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c59b3b0766dc0104bb455d9c7c49947a, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -107,6 +132,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 925222129195409213}
   m_SourcePrefab: {fileID: 100100000, guid: 0012c76491205df48926b8c0af09c889, type: 3}
+--- !u!95 &156062223984938225 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 0012c76491205df48926b8c0af09c889,
+    type: 3}
+  m_PrefabInstance: {fileID: 5999045864565928288}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1480836104919572319 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5173537536126463551, guid: 0012c76491205df48926b8c0af09c889,
@@ -299,6 +330,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7871143c326f50f4187f813d51da1cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewmodelAnimator: {fileID: 156062223984938225}
+  viewmodelRenderer: {fileID: 6988663104087660443}
   fingerTipTargets:
   - {fileID: 0}
   - {fileID: 0}
@@ -306,6 +339,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   objectToHold: {fileID: 0}
+--- !u!137 &6988663104087660443 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3727956284482021115, guid: 0012c76491205df48926b8c0af09c889,
+    type: 3}
+  m_PrefabInstance: {fileID: 5999045864565928288}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7213469739118975543 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5234448375175369897, guid: 0012c76491205df48926b8c0af09c889,

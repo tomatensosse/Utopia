@@ -53,6 +53,7 @@ public class Player : NetworkBehaviour
     public PlayerMovement playerMovement;
     public InventoryManager playerInventoryManager;
     public Inventory playerInventory;
+    public ItemHandler itemHandler;
 
     public void Start()
     {
@@ -65,6 +66,8 @@ public class Player : NetworkBehaviour
         this.playerState.LoadFromSave(playerSave);
         this.playerState.v_playerConnectionID = playerConnectionID;
         Debug.Log($"[Server] Initializing player with connection ID: {playerConnectionID} and save data.");
+
+        itemHandler.Initialize();
 
         ItemData[] inventoryToSet = playerSave.inventory;
         playerInventory.SetInventory(inventoryToSet);

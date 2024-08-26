@@ -11,6 +11,7 @@ public class Inventory : NetworkBehaviour
     public ItemData[] inventory;
     public Player player;
     public InventoryManager inventoryManager;
+    public ItemHandler itemHandler;
     private ItemDatabase itemDatabase;
 
     public void Initialize()
@@ -89,12 +90,20 @@ public class Inventory : NetworkBehaviour
         {
             Debug.Log("No item in slot " + index + " to hold.");
             heldItem = null;
+
+            if (oldItem == null && heldItem == null)
+            {
+                Debug.Log("No rpc.");
+                return;
+            }
+
             CmdHoldItem(null);
             return;
         }
 
         Item newHeldItem = itemDatabase.GetItemByID(inventory[index].itemID);;
         heldItem = newHeldItem;
+        
         CmdHoldItem(newHeldItem.itemID);
     }
 
@@ -109,6 +118,11 @@ public class Inventory : NetworkBehaviour
         }
         heldItem = itemDatabase.GetItemByID(itemID);
         RpcHoldItem(itemID);
+
+        if (!string.IsNullOrEmpty(itemID))
+        {
+            itemHandler.SpawnItemServerRpc(connectionToClient, heldItem.itemID);
+        }
     }
 
     [ClientRpc(includeOwner = false)]

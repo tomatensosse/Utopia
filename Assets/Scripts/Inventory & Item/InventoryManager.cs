@@ -93,11 +93,6 @@ public class InventoryManager : MonoBehaviour
         }
         inventorySlots[newValue].Select();
         selectedSlot = newValue;
-
-        if (oldItem == null)
-        {
-            return;
-        }
         inventory.Hold(selectedSlot);
     }
 
