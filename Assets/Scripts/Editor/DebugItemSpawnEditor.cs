@@ -12,9 +12,14 @@ public class DebugItemSpawnEditor : Editor
 
         DebugItemSpawn debugItemSpawn = target.GetComponent<DebugItemSpawn>();
 
-        if (GUILayout.Button("Spawn"))
+        if (GUILayout.Button("Save"))
         {
-            debugItemSpawn.Spawn();
+            debugItemSpawn.Save();
+        }
+
+        if (GUILayout.Button("Load"))
+        {
+            debugItemSpawn.Load();
         }
     }
 }

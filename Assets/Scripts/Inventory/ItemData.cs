@@ -7,9 +7,19 @@ using UnityEngine;
 public class ItemData : ISerializationCallbackReceiver
 {
     public string itemID;
-    public int itemAmount;
+    [NonSerialized] private int _itemAmount = 1;
     // private backing field
     [NonSerialized] private int _durability = -1;
+
+    // property to access itemAmount
+    public int itemAmount
+    {
+        get => _itemAmount;
+        set => _itemAmount = value;
+    }
+
+    [SerializeField]
+    private bool _shouldSerializeItemAmount = false;
 
     // property to access durability
     public int durability
@@ -26,10 +36,11 @@ public class ItemData : ISerializationCallbackReceiver
         ItemData generated = new ItemData
         {
             itemID = itemID,
-            itemAmount = itemAmount > -1 ? itemAmount : this.itemAmount,
+            itemAmount = itemAmount > 0 ? itemAmount : 1,
             durability = durability > -1 ? durability : -1
         };
 
+        generated._shouldSerializeItemAmount = itemAmount > -1;
         generated._shouldSerializeDurability = durability > -1;
 
         return generated;
@@ -41,14 +52,21 @@ public class ItemData : ISerializationCallbackReceiver
         string json = "{";
 
         // Add itemID and itemAmount to JSON string
-        json += $"\"itemID\":\"{itemID}\",";
-        json += $"\"itemAmount\":{itemAmount}";
+        json += $"\"itemID\":\"{itemID}\"";
+        
+        // Conditionally add itemAmount if needed
+        if (_shouldSerializeItemAmount && itemAmount != 1)
+        {
+            json += $",\"itemAmount\":{itemAmount}";
+        }
 
         // Conditionally add durability if needed
         if (_shouldSerializeDurability && durability != -1)
         {
             json += $",\"durability\":{durability}";
         }
+
+        // Continue adding JSON string with "," if needed
 
         // Close JSON with ending brace
         json += "}";
@@ -62,6 +80,7 @@ public class ItemData : ISerializationCallbackReceiver
 
         JsonUtility.FromJsonOverwrite(json, itemData);
 
+        itemData._shouldSerializeItemAmount = itemData.itemAmount != 1;
         itemData._shouldSerializeDurability = itemData.durability != -1;
 
         return itemData;
@@ -69,6 +88,10 @@ public class ItemData : ISerializationCallbackReceiver
 
     public void OnBeforeSerialize()
     {
+        if (!_shouldSerializeItemAmount)
+        {
+            _itemAmount = 1;
+        }
         if (!_shouldSerializeDurability)
         {
             _durability = -1;

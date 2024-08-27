@@ -1,17 +1,27 @@
+/// <summary>
+/// 
+/// TODO:
+/// - Fix custom JSON serialization for ItemData
+/// 
+/// </summary>
+
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class DebugItemSpawn : MonoBehaviour
 {
-    [Header("In")]
-    public string itemID;
-    public int itemAmount;
-    public int durability;
+    [Header("Display")]
+    public Item heldItem;
+    public ItemData heldItemData;
+    public int selectedSlot = 0;
+    [Header("References")]
     public string savePath = "Assets/Scripts/Inventory/Debug/InventorySave.json";
     public List<Item> itemsForDemo;
     public int inventorySize = 6;
     public ItemData[] inventory_itemDatas;
-    public int selectedSlot = 0;
+    public void Save() { ItemsToJson(); } // Save the inventory to a JSON file
+    public void Load() { inventory_itemDatas = ItemsFromJson(); } // Load the inventory from a JSON file
 
     private void Start()
     {
@@ -30,58 +40,92 @@ public class DebugItemSpawn : MonoBehaviour
     {
         if (int.TryParse(input, out int result))
         {
-            selectedSlot = result;
+            selectedSlot = result - 1;
+        }
+
+        if (inventory_itemDatas[selectedSlot] != null)
+        {
+            heldItem = ItemDatabase.Instance.GetItemByID(inventory_itemDatas[selectedSlot].itemID);
+            heldItemData = inventory_itemDatas[selectedSlot];
+        }
+        else 
+        {
+            heldItem = null;
+            heldItemData = null;
         }
     }
 
-    public void Spawn()
+    public void ItemsToJson()
     {
-        ItemData itemData = new ItemData().Generate(itemID, itemAmount, durability);
-        Debug.Log(itemData.itemID);
-        Debug.Log(itemData.itemAmount);
-        Debug.Log(itemData.durability);
-        string json = itemData.ItemToJson();
-        Debug.Log(json);
+        string items = "{\"items\": [";
+
+        foreach (ItemData itemData in inventory_itemDatas)
+        {
+            if (itemData != null)
+            {
+                items += itemData.ItemToJson();
+            }
+
+            if (itemData != inventory_itemDatas[inventory_itemDatas.Length - 1])
+            {
+                items += ",";
+            }
+        }
+
+        items += "]}";
+
+        System.IO.File.WriteAllText(savePath, items);
     }
 
-    private void GenerateDemoInventory()
+    public ItemData[] ItemsFromJson()
+    {
+        ItemData[] itemDatas = new ItemData[inventorySize];
+
+        string json = System.IO.File.ReadAllText(savePath);
+
+        // Parse the JSON string
+        var jsonObject = JsonUtility.FromJson<InventoryJson>(json);
+
+        // Convert each JSON item back into an ItemData object
+        for (int i = 0; i < jsonObject.items.Length; i++)
+        {
+            itemDatas[i] = jsonObject.items[i];
+        }
+
+        return itemDatas;
+    }
+
+    [System.Serializable]
+    private class InventoryJson
+    {
+        public ItemData[] items;
+    }
+
+    public void GenerateDemoInventory()
     {
         inventory_itemDatas = new ItemData[inventorySize];
 
         for (int i = 0; i < inventory_itemDatas.Length; i++)
         {
-            if (i < itemsForDemo.Count)
+            int randomIndex = Random.Range(-1, itemsForDemo.Count);
+
+            if (randomIndex == -1)
             {
-                Item item = itemsForDemo[i];
-                inventory_itemDatas[i] = new ItemData().Generate(item.ItemID, Random.Range(1, 10), Random.Range(1, 100));
+                inventory_itemDatas[i] = null;
             }
             else
             {
-                inventory_itemDatas[i] = null;
+                Item item = itemsForDemo[randomIndex];
+                inventory_itemDatas[i] = new ItemData().Generate(item.ItemID, Random.Range(1, 10), Random.Range(1, 100));
             }
         }
     }
 
+    // TBA
     private bool AddItemToInventory(Item item, int amount = 1, int durability = -1)
     {
         ItemData itemSerialized = new ItemData().Generate(item.ItemID, amount, durability);
 
         return false;
-    }
-
-    public void SaveInventory()
-    {
-        // Create a new list of itemDatas
-        inventory_itemDatas = new ItemData[inventorySize];
-
-        foreach (ItemData itemData in inventory_itemDatas)
-        {
-            
-        }
-    }
-
-    public void LoadInventory()
-    {
-
     }
 }
