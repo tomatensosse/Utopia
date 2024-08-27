@@ -21,6 +21,11 @@ public class DebugItemSpawnEditor : Editor
         {
             debugItemSpawn.Load();
         }
+
+        if (GUILayout.Button("Craft"))
+        {
+            debugItemSpawn.Craft();
+        }
     }
 }
 #endif
