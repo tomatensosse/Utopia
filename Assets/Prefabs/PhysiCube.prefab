@@ -23,7 +23,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4645217346231701459
 Transform:
   m_ObjectHideFlags: 0
@@ -59,7 +59,9 @@ MonoBehaviour:
     entityID: 
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
-  isLoaded: 0
+  wasLoadedBefore: 0
+  initialized: 0
+  entityRigidbody: {fileID: 0}
 --- !u!33 &6618977917521762316
 MeshFilter:
   m_ObjectHideFlags: 0
