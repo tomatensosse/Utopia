@@ -10,6 +10,10 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    private InventoryManager inventoryManager;
+    private static Inventory LocalInstance;
+    private bool inventoryFullyLoaded = false;
+
     [Header("Display")]
     public Item heldItem;
     public ItemData heldItemData;
@@ -18,7 +22,7 @@ public class Inventory : MonoBehaviour
     public Blueprint selectedBlueprint;
     public Dictionary<string, int> materials = new Dictionary<string, int>(); // Not displayed in the inspector because unity
     [Header("References")]
-    public string savePath = "Assets/Scripts/Inventory/Debug/InventorySave.json";
+    public string savePath = "Assets/Scripts/Inventory/Debug/";
     public List<Item> itemsForDemo;
     public int inventorySize = 6;
     public ItemData[] inventory_itemDatas;
@@ -42,15 +46,50 @@ public class Inventory : MonoBehaviour
             Debug.LogWarning($"Failed to craft {selectedBlueprint.itemToCraft}.");
         }
     }
+    public void TryUseItem()
+    {
+        if (heldItem != null)
+        {
+            Debug.Log($"Used {heldItem.ItemName}.");
+
+            heldItemData.durability--;
+            inventoryManager.ChangeItemDurability(selectedSlot, heldItemData.durability);
+        }
+        else
+        {
+            Debug.LogWarning("No item held.");
+        }
+    }
 
     private void Awake()
     {
-        InitializeInventory();
+        // if (isLocalPlayer) { LocalInstance = this; }
+
+        inventoryManager = InventoryManager.Instance;
+    }
+
+    private void Start()
+    {
+        inventoryManager.Initialize(inventorySize);
+
+        inventory_itemDatas = new ItemData[inventorySize];
+        inventoryFullyLoaded = true;
+        //InitializeInventory();
     }
 
     private void InitializeInventory()
     {
-        inventory_itemDatas = new ItemData[inventorySize];
+        if (System.IO.File.Exists(savePath + "InventorySave.json"))
+        {
+            // if load exists
+            Load();
+        }
+        else
+        {
+            // if load does not exist
+            inventory_itemDatas = new ItemData[inventorySize];
+            inventoryFullyLoaded = true;
+        }
     }
 
     private void Update()
@@ -99,14 +138,14 @@ public class Inventory : MonoBehaviour
 
         items += "]}";
 
-        System.IO.File.WriteAllText(savePath, items);
+        System.IO.File.WriteAllText(savePath + "InventorySave.json", items);
     }
 
     private ItemData[] ItemsFromJson()
     {
         ItemData[] itemDatas = new ItemData[inventorySize];
 
-        string json = System.IO.File.ReadAllText(savePath);
+        string json = System.IO.File.ReadAllText(savePath + "InventorySave.json");
 
         // Parse the JSON string
         var jsonObject = JsonUtility.FromJson<InventoryJson>(json);
@@ -116,6 +155,7 @@ public class Inventory : MonoBehaviour
         {
             ItemData itemData = new ItemData();
             itemDatas[i] = itemData.JsonToItem(jsonObject.items[i].ItemToJson());
+            Debug.Log(itemData.itemAmount);
         }
 
         return itemDatas;
@@ -203,7 +243,8 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        AddItem(selectedBlueprint.itemToCraft, 1, 1);
+        Item itemToCraft = selectedBlueprint.itemToCraft;
+        AddItem(itemToCraft, selectedBlueprint.craftYield, itemToCraft.MaxDurability);
 
         PrintMaterialCounts();
 
@@ -230,7 +271,7 @@ public class Inventory : MonoBehaviour
             {
                 return i;
             }
-            
+
             if (string.IsNullOrEmpty(inventory_itemDatas[i].itemID))
             {
                 return i;
@@ -247,7 +288,7 @@ public class Inventory : MonoBehaviour
         {
             if (inventory_itemDatas[i] != null && inventory_itemDatas[i].itemID == itemID)
             {
-                if (checkForStackable && ItemDatabase.Instance.GetItemByID(itemID).IsStackable && inventory_itemDatas[i].itemAmount < ItemDatabase.Instance.GetItemByID(itemID).MaxStackSize)
+                if (checkForStackable && ItemDatabase.Instance.GetItemByID(itemID).MaxStackSize > 1 && inventory_itemDatas[i].itemAmount < ItemDatabase.Instance.GetItemByID(itemID).MaxStackSize)
                 {
                     return i;
                 }
@@ -281,7 +322,7 @@ public class Inventory : MonoBehaviour
         }
 
         // Single item if item is not stackable
-        if (!item.IsStackable)
+        if (item.MaxStackSize == -1)
         {
             slot = NextEmptySlot();
 
@@ -297,8 +338,14 @@ public class Inventory : MonoBehaviour
             return true;
         }
 
+        if (item.MaxStackSize == 0 || item.MaxStackSize == 1)
+        {
+            Debug.LogError("Item stack size is invalid."); // -1 for non stackable. Minimum of 2 for stackable
+            return false;
+        }
+
         // Check if the item is stackable
-        if (item.IsStackable)
+        if (item.MaxStackSize > 1)
         {
             slot = NextItemSlot(item.ItemID);
 

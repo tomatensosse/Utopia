@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 944894976bbbc89478f4947be1f20267, type: 3}
   m_Name: BlueprintPickaxe
   m_EditorClassIdentifier: 
-  itemToCraft: 
+  itemToCraft: {fileID: 11400000, guid: 32b8d67551e52b54bbe823572c561cdd, type: 2}
   materials:
-  - materialID: iron
-    materialAmount: 10
-  - materialID: wood
-    materialAmount: 5
+  - materialItem: {fileID: 11400000, guid: 77c1714601a584948a9cdd4af8f15ffd, type: 2}
+    materialItemAmount: 15
+  - materialItem: {fileID: 11400000, guid: 23fc234fb2620b346adc5679693d080d, type: 2}
+    materialItemAmount: 10

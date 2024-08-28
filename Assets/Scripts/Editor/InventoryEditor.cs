@@ -144,6 +144,11 @@ public class InventoryEditor : Editor
         {
             inventory.Craft();
         }
+
+        if (GUILayout.Button("Use"))
+        {
+            inventory.TryUseItem();
+        }
     }
 }
 #endif

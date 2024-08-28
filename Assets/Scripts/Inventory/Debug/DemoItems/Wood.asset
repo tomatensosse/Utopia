@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Wood
   m_EditorClassIdentifier: 
   ItemID: wood
-  ItemIcon: {fileID: 0}
+  ItemIcon: {fileID: 21300000, guid: 393d3f613f6282e4c9fe12c70a7f81b5, type: 3}
   ItemName: Wood
-  ItemDescription: '-'
+  ItemDescription: Its actually a stick. Not that you care...
+  MaxStackSize: 16
+  MaxDurability: -1

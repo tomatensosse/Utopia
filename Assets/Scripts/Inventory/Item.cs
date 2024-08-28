@@ -8,7 +8,7 @@ public class Item : ScriptableObject
     public Sprite ItemIcon;
     public string ItemName;
     public string ItemDescription;
-    public bool IsStackable;
-    [ConditionalHide("IsStackable", true)]
-    public int MaxStackSize;
+    public int MaxStackSize = -1;
+    public int MaxDurability = -1;
+
 }
