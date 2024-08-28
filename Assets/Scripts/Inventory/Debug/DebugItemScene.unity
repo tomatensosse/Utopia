@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 289224281}
   - component: {fileID: 289224280}
   m_Layer: 0
-  m_Name: Debug
+  m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -157,11 +157,13 @@ MonoBehaviour:
     _shouldSerializeItemAmount: 0
     _shouldSerializeDurability: 0
   selectedSlot: 0
+  selectedBlueprint: {fileID: 11400000, guid: f87fa2b7e79cbc74db509c6388030caa, type: 2}
   savePath: Assets/Scripts/Inventory/Debug/InventorySave.json
   itemsForDemo:
   - {fileID: 11400000, guid: 23fc234fb2620b346adc5679693d080d, type: 2}
   - {fileID: 11400000, guid: e2b3968f180e17b418cb16c785c30e3b, type: 2}
   - {fileID: 11400000, guid: 8f16be0d8010f414ca88284b93aae38b, type: 2}
+  - {fileID: 11400000, guid: 77c1714601a584948a9cdd4af8f15ffd, type: 2}
   inventorySize: 16
   inventory_itemDatas: []
 --- !u!4 &289224281
@@ -466,6 +468,7 @@ MonoBehaviour:
   items:
   - {fileID: 11400000, guid: e2b3968f180e17b418cb16c785c30e3b, type: 2}
   - {fileID: 11400000, guid: 8f16be0d8010f414ca88284b93aae38b, type: 2}
+  - {fileID: 11400000, guid: 77c1714601a584948a9cdd4af8f15ffd, type: 2}
   - {fileID: 11400000, guid: 23fc234fb2620b346adc5679693d080d, type: 2}
 --- !u!4 &2015487814
 Transform:

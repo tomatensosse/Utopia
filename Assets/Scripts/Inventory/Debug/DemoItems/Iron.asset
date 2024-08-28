@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c650023ec5f4953bad750927b759f0, type: 3}
   m_Name: Iron
   m_EditorClassIdentifier: 
-  ItemID: 
+  ItemID: iron
   ItemIcon: {fileID: 0}
-  ItemName: 
-  ItemDescription: 
+  ItemName: Iron
+  ItemDescription: What better metal can you have!?

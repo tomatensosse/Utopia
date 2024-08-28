@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c650023ec5f4953bad750927b759f0, type: 3}
   m_Name: Copper
   m_EditorClassIdentifier: 
-  ItemID: copper_ore
+  ItemID: copper
   ItemIcon: {fileID: 0}
   ItemName: Copper
   ItemDescription: A sturdy metal, gathered from the deeps of the underground

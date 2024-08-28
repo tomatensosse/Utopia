@@ -6,11 +6,9 @@
 /// </summary>
 
 using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class DebugItemSpawn : MonoBehaviour
+public class Inventory : MonoBehaviour
 {
     [Header("Display")]
     public Item heldItem;
@@ -26,6 +24,13 @@ public class DebugItemSpawn : MonoBehaviour
     public ItemData[] inventory_itemDatas;
     public void Save() { ItemsToJson(); } // Save the inventory to a JSON file
     public void Load() { inventory_itemDatas = ItemsFromJson(); } // Load the inventory from a JSON file
+    public void Add() 
+    {
+        int randomAmount = Random.Range(1, 20);
+        int randomDurability = Random.Range(1, 10);
+
+        AddItem(RandomDemoItem(), randomAmount, randomDurability); 
+    }
     public void Craft()
     {
         if (TryCraftItem())
@@ -38,9 +43,14 @@ public class DebugItemSpawn : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
-        GenerateDemoInventory();
+        InitializeInventory();
+    }
+
+    private void InitializeInventory()
+    {
+        inventory_itemDatas = new ItemData[inventorySize];
     }
 
     private void Update()
@@ -116,30 +126,20 @@ public class DebugItemSpawn : MonoBehaviour
         public ItemData[] items;
     }
 
-    private void GenerateDemoInventory()
+    private Item RandomDemoItem()
     {
-        inventory_itemDatas = new ItemData[inventorySize];
+        int randomIndex = Random.Range(-1, itemsForDemo.Count);
 
-        for (int i = 0; i < inventory_itemDatas.Length; i++)
+        if (randomIndex == -1)
         {
-            int randomIndex = Random.Range(-1, itemsForDemo.Count);
-
-            if (randomIndex == -1)
-            {
-                inventory_itemDatas[i] = null;
-            }
-            else
-            {
-                Item item = itemsForDemo[randomIndex];
-                int randomAmount = Random.Range(1, 20);
-                int randomDurability = Random.Range(1, 10);
-                inventory_itemDatas[i] = new ItemData().Generate(item.ItemID, randomAmount, randomDurability);
-
-                AddToMaterialsDictionary(item.ItemID, randomAmount);
-            }
+            return null;
         }
 
-        PrintMaterialCounts();
+        Item item = itemsForDemo[randomIndex];
+
+        Debug.Log($"Random item: {item.ItemName}");
+
+        return item;
     }
 
     private void AddToMaterialsDictionary(string itemID, int amount)
@@ -189,14 +189,133 @@ public class DebugItemSpawn : MonoBehaviour
         }
     }
 
-    // TBA
-    private bool AddItemToInventory(Item item, int amount = 1, int durability = -1)
+    private int NextEmptySlot()
     {
+        for (int i = 0; i < inventory_itemDatas.Length; i++)
+        {
+            Debug.Log(string.IsNullOrEmpty(inventory_itemDatas[i].itemID));
+
+            if (string.IsNullOrEmpty(inventory_itemDatas[i].itemID))
+            {
+                return i;
+            }
+        }
+
+        Debug.Log("No empty slots.");
+        return -1;
+    }
+
+    private int NextItemSlot(string itemID, bool checkForStackable = true)
+    {
+        for (int i = 0; i < inventory_itemDatas.Length; i++)
+        {
+            if (inventory_itemDatas[i] != null && inventory_itemDatas[i].itemID == itemID)
+            {
+                if (checkForStackable && ItemDatabase.Instance.GetItemByID(itemID).IsStackable && inventory_itemDatas[i].itemAmount < ItemDatabase.Instance.GetItemByID(itemID).MaxStackSize)
+                {
+                    return i;
+                }
+
+                if (!checkForStackable)
+                {
+                    return i;
+                }
+            }
+        }
+
+        Debug.Log($"No slots with {itemID}.");
+        return -1;
+    }
+
+    // TBA
+    private bool AddItem(Item item, int amount = 1, int durability = -1)
+    {
+        if (item == null)
+        {
+            return false; // change logic to your preference | should an empty item return true or false?
+        }
+
         ItemData itemSerialized = new ItemData().Generate(item.ItemID, amount, durability);
 
-        // Add to materials dictionary
+        // Check if the item is stackable
+        if (item.IsStackable)
+        {
+            int slot;
 
-        // Count empty space in inventory for better performance than checking every slot
+            if (inventory_itemDatas == null)
+            {
+                Debug.LogError("Inventory is null.");
+            }
+
+            // Single item if item is not stackable
+            if (!item.IsStackable)
+            {
+                slot = NextEmptySlot();
+
+                if (slot == -1)
+                {
+                    return false;
+                }
+
+                inventory_itemDatas[slot] = itemSerialized;
+
+                AddToMaterialsDictionary(item.ItemID, amount); // Log total amount of material
+
+                return true;
+            }
+
+            slot = NextItemSlot(item.ItemID);
+
+            bool slotIsEmpty = false;
+
+            if (slot == -1)
+            {
+                slot = NextEmptySlot();
+                slotIsEmpty = true;
+            }
+
+            int stackSize = item.MaxStackSize;
+
+            // Stack the item if possible on pre-occupied slot
+            if (slot != -1 && !slotIsEmpty)
+            {
+                if (inventory_itemDatas[slot].itemAmount + amount <= stackSize)
+                {
+                    inventory_itemDatas[slot].itemAmount += amount;
+
+                    AddToMaterialsDictionary(item.ItemID, amount); // Log total amount of material
+
+                    return true;
+                }
+                else
+                {
+                    int remaining = stackSize - inventory_itemDatas[slot].itemAmount;
+                    inventory_itemDatas[slot].itemAmount = stackSize;
+
+                    AddToMaterialsDictionary(item.ItemID, remaining); // Log total amount of material
+
+                    return AddItem(item, amount - remaining);
+                }
+            }
+
+            // Stack the item if possible on empty slot
+            if (slot != -1 && slotIsEmpty)
+            {
+                inventory_itemDatas[slot] = itemSerialized;
+
+                if (amount > stackSize)
+                {
+                    inventory_itemDatas[slot].itemAmount = stackSize;
+
+                    AddToMaterialsDictionary(item.ItemID, stackSize); // Log total amount of material
+
+                    int remaining = amount - stackSize;
+                    return AddItem(item, remaining);
+                }
+
+                return true;
+            }
+        }
 
         return false;
     }

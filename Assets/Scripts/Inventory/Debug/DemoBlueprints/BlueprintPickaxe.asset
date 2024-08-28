@@ -13,3 +13,8 @@ MonoBehaviour:
   m_Name: BlueprintPickaxe
   m_EditorClassIdentifier: 
   itemToCraft: 
+  materials:
+  - materialID: iron
+    materialAmount: 10
+  - materialID: wood
+    materialAmount: 5
