@@ -114,7 +114,8 @@ public class Inventory : MonoBehaviour
         // Convert each JSON item back into an ItemData object
         for (int i = 0; i < jsonObject.items.Length; i++)
         {
-            itemDatas[i] = jsonObject.items[i];
+            ItemData itemData = new ItemData();
+            itemDatas[i] = itemData.JsonToItem(jsonObject.items[i].ItemToJson());
         }
 
         return itemDatas;
@@ -152,6 +153,8 @@ public class Inventory : MonoBehaviour
         {
             materials.Add(itemID, amount);
         }
+
+        PrintMaterialCounts();
     }
 
     private bool TryCraftItem()
@@ -164,17 +167,43 @@ public class Inventory : MonoBehaviour
 
         foreach (Blueprint.BlueprintMaterial material in selectedBlueprint.materials)
         {
-            if (!materials.ContainsKey(material.materialID) || materials[material.materialID] < material.materialAmount)
+            if (!materials.ContainsKey(material.materialItem.ItemID) || materials[material.materialItem.ItemID] < material.materialItemAmount)
             {
-                Debug.LogWarning($"Not enough {material.materialID} to craft {selectedBlueprint.itemToCraft}.");
+                Debug.LogWarning($"Not enough {material.materialItem.ItemID} to craft {selectedBlueprint.itemToCraft}.");
                 return false;
             }
         }
 
         foreach (Blueprint.BlueprintMaterial material in selectedBlueprint.materials)
         {
-            materials[material.materialID] -= material.materialAmount;
+            materials[material.materialItem.ItemID] -= material.materialItemAmount;
+
+            int remaining = material.materialItemAmount;
+
+            while (remaining > 0)
+            {
+                int slot = NextItemSlot(material.materialItem.ItemID, false);
+
+                if (slot == -1)
+                {
+                    Debug.LogError($"Not enough {material.materialItem.ItemID} to craft {selectedBlueprint.itemToCraft}. | Should'nt have reached this scope.");
+                    return false;
+                }
+
+                if (inventory_itemDatas[slot].itemAmount > remaining)
+                {
+                    inventory_itemDatas[slot].itemAmount -= remaining;
+                    remaining = 0;
+                }
+                else
+                {
+                    remaining -= inventory_itemDatas[slot].itemAmount;
+                    inventory_itemDatas[slot] = null;
+                }
+            }
         }
+
+        AddItem(selectedBlueprint.itemToCraft, 1, 1);
 
         PrintMaterialCounts();
 
@@ -183,18 +212,25 @@ public class Inventory : MonoBehaviour
 
     private void PrintMaterialCounts()
     {
+        string materialsString = "Materials:\n";
+
         foreach (KeyValuePair<string, int> material in materials)
         {
-            Debug.Log($"Material: {material.Key}, Amount: {material.Value}");
+            materialsString += $"Material: {material.Key}, Amount: {material.Value}\n";
         }
+
+        Debug.Log(materialsString);
     }
 
     private int NextEmptySlot()
-    {
+    {   
         for (int i = 0; i < inventory_itemDatas.Length; i++)
         {
-            Debug.Log(string.IsNullOrEmpty(inventory_itemDatas[i].itemID));
-
+            if (inventory_itemDatas[i] == null)
+            {
+                return i;
+            }
+            
             if (string.IsNullOrEmpty(inventory_itemDatas[i].itemID))
             {
                 return i;
@@ -237,33 +273,33 @@ public class Inventory : MonoBehaviour
 
         ItemData itemSerialized = new ItemData().Generate(item.ItemID, amount, durability);
 
+        int slot;
+
+        if (inventory_itemDatas == null)
+        {
+            Debug.LogError("Inventory is null.");
+        }
+
+        // Single item if item is not stackable
+        if (!item.IsStackable)
+        {
+            slot = NextEmptySlot();
+
+            if (slot == -1)
+            {
+                return false;
+            }
+
+            inventory_itemDatas[slot] = itemSerialized;
+
+            AddToMaterialsDictionary(item.ItemID, amount); // Log total amount of material
+
+            return true;
+        }
+
         // Check if the item is stackable
         if (item.IsStackable)
         {
-            int slot;
-
-            if (inventory_itemDatas == null)
-            {
-                Debug.LogError("Inventory is null.");
-            }
-
-            // Single item if item is not stackable
-            if (!item.IsStackable)
-            {
-                slot = NextEmptySlot();
-
-                if (slot == -1)
-                {
-                    return false;
-                }
-
-                inventory_itemDatas[slot] = itemSerialized;
-
-                AddToMaterialsDictionary(item.ItemID, amount); // Log total amount of material
-
-                return true;
-            }
-
             slot = NextItemSlot(item.ItemID);
 
             bool slotIsEmpty = false;
@@ -312,6 +348,8 @@ public class Inventory : MonoBehaviour
                     int remaining = amount - stackSize;
                     return AddItem(item, remaining);
                 }
+
+                AddToMaterialsDictionary(item.ItemID, amount); // Log total amount of material
 
                 return true;
             }
