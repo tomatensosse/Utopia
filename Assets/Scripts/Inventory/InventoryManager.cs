@@ -53,11 +53,28 @@ public class InventoryManager : MonoBehaviour
 
     public void MoveItem(int index1, int index2)
     {
-        
+        ItemData temp = inventory.inventory[index1];
+        inventory.inventory[index1] = inventory.inventory[index2];
+        inventory.inventory[index2] = temp;
     }
 
     public void SwapItems(int index1, int index2)
     {
+        ItemData temp = inventory.inventory[index1];
+        inventory.inventory[index1] = inventory.inventory[index2];
+        inventory.inventory[index2] = temp;
+    }
 
+    public int ReturnIndexOf(InventorySlotUI slot)
+    {
+        for (int i = 0; i < inventorySlotUIs.Length; i++)
+        {
+            if (inventorySlotUIs[i] == slot)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

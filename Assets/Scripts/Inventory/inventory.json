@@ -3,37 +3,12 @@
   "inventory": [
     {
       "itemID": "coal",
-      "itemAmount": 8,
+      "itemAmount": 7,
       "itemDurability": -1
     },
     {
-      "itemID": "wooden_stick",
-      "itemAmount": 4,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "wooden_stick",
-      "itemAmount": 4,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "wooden_stick",
-      "itemAmount": 4,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "coal",
-      "itemAmount": 8,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "wooden_stick",
-      "itemAmount": 4,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "wooden_stick",
-      "itemAmount": 4,
+      "itemID": "rock",
+      "itemAmount": 2,
       "itemDurability": -1
     },
     {
@@ -42,22 +17,47 @@
       "itemDurability": -1
     },
     {
-      "itemID": "rock",
-      "itemAmount": 13,
-      "itemDurability": -1
-    },
-    {
       "itemID": "wooden_stick",
-      "itemAmount": 4,
+      "itemAmount": 2,
       "itemDurability": -1
     },
     {
-      "itemID": "coal",
-      "itemAmount": 8,
+      "itemID": null,
+      "itemAmount": 1,
       "itemDurability": -1
     },
     {
-      "itemID": "wooden_stick",
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
       "itemAmount": 1,
       "itemDurability": -1
     },

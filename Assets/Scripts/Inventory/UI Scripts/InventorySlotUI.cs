@@ -26,20 +26,22 @@ public class InventorySlotUI : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
+        InventoryItemUI draggedItem = eventData.pointerDrag.GetComponent<InventoryItemUI>();
+
+        int from = InventoryManager.Instance.ReturnIndexOf(draggedItem.parentAfterDrag.GetComponent<InventorySlotUI>());
+        int to = InventoryManager.Instance.ReturnIndexOf(this);
+
         if (transform.childCount == 0)
         {
-            InventoryItemUI draggedItem = eventData.pointerDrag.GetComponent<InventoryItemUI>();
-            draggedItem.MoveItems(draggedItem.parentAfterDrag.GetSiblingIndex(), transform.GetSiblingIndex());
+            draggedItem.MoveItems(from, to);
 
             draggedItem.parentAfterDrag = transform;
-            draggedItem.transform.SetParent(transform);
         }
         else if (transform.childCount == 1)
         {
             Transform currentChild = transform.GetChild(0);
 
-            InventoryItemUI draggedItem = eventData.pointerDrag.GetComponent<InventoryItemUI>();
-            draggedItem.SwapItems(draggedItem.parentAfterDrag.GetSiblingIndex(), transform.GetSiblingIndex());
+            draggedItem.SwapItems(from, to);
 
             currentChild.SetParent(draggedItem.parentAfterDrag, false);
             draggedItem.parentAfterDrag = transform;
