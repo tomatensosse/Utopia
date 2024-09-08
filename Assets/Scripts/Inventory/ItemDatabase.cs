@@ -73,6 +73,13 @@ public class ItemDatabase : MonoBehaviour
 
         // Optionally, log the results for debugging
         Debug.Log($"Found and added {items.Count} items to the database.");
+
+        itemDictionary = new Dictionary<string, Item>();
+
+        foreach (Item item in items)
+        {
+            itemDictionary.Add(item.ItemID, item);
+        }
     }
 #endif
 }

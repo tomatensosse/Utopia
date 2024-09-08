@@ -64,12 +64,12 @@ public class Inventory : MonoBehaviour
     private void Awake()
     {
         // if (isLocalPlayer) { LocalInstance = this; }
-
-        inventoryManager = InventoryManager.Instance;
     }
 
     private void Start()
     {
+        inventoryManager = InventoryManager.Instance;
+
         inventoryManager.Initialize(inventorySize);
 
         inventory_itemDatas = new ItemData[inventorySize];
