@@ -8,7 +8,6 @@ public class Item : ScriptableObject
     public Sprite ItemIcon;
     public string ItemName;
     public string ItemDescription;
-    public int MaxStackSize = -1;
+    public int MaxStack = -1;
     public int MaxDurability = -1;
-
 }

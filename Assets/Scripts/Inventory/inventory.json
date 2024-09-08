@@ -1,0 +1,165 @@
+{
+  "inventorySize": 32,
+  "inventory": [
+    {
+      "itemID": "coal",
+      "itemAmount": 8,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "coal",
+      "itemAmount": 8,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "rock",
+      "itemAmount": 16,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "rock",
+      "itemAmount": 13,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 4,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "coal",
+      "itemAmount": 8,
+      "itemDurability": -1
+    },
+    {
+      "itemID": "wooden_stick",
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    }
+  ]
+}

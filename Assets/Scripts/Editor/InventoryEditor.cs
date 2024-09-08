@@ -1,6 +1,5 @@
-using UnityEngine;
 using UnityEditor;
-using Unity.VisualScripting;
+using UnityEngine;
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(Inventory))]
@@ -11,9 +10,13 @@ public class InventoryEditor : Editor
     private const int GRID_HEIGHT = 4;
     private const int BUTTON_SIZE = 50;
     private const int LABEL_FONT_SIZE = 20;
-    
+
     public override void OnInspectorGUI()
     {
+        base.OnInspectorGUI();
+
+        Inventory inventory = (Inventory)target;
+
         GUIStyle labelStyle = new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
@@ -26,8 +29,6 @@ public class InventoryEditor : Editor
 
         DrawDefaultInspector();
 
-        Inventory inventory = target.GetComponent<Inventory>();
-
         GUILayout.Space(10);
         GUILayout.Label("Inventory Grid", labelStyle);
         GUILayout.Space(10);
@@ -39,12 +40,11 @@ public class InventoryEditor : Editor
             for (int x = 0; x < GRID_WIDTH; x++)
             {
                 int index = y * GRID_WIDTH + x;
-                if (index < inventory.inventory_itemDatas.Length)
+                if (index < inventory.inventory.Length)
                 {
                     GUILayout.BeginVertical(GUILayout.Width(BUTTON_SIZE), GUILayout.Height(BUTTON_SIZE));
 
-                    ItemDatabase itemDatabase = GameObject.FindObjectOfType<ItemDatabase>();
-                    Item item = itemDatabase.GetItemByID(inventory.inventory_itemDatas[index].itemID);
+                    Item item = ItemDatabase.GetItemByID(inventory.inventory[index].itemID);
 
                     // Create a GUIContent with icon
                     GUIContent content = new GUIContent();
@@ -66,7 +66,7 @@ public class InventoryEditor : Editor
                     if (item != null)
                     {
                         EditorGUI.BeginDisabledGroup(true);
-                        string itemAmount = inventory.inventory_itemDatas[index].itemAmount.ToString();
+                        string itemAmount = inventory.inventory[index].itemAmount.ToString();
                         string itemAmountDisplay = EditorGUILayout.TextField(itemAmount, GUILayout.Width(BUTTON_SIZE));
                         EditorGUI.EndDisabledGroup();
                     }
@@ -87,12 +87,11 @@ public class InventoryEditor : Editor
         for (int x = 0; x < GRID_WIDTH; x++)
         {
             int index = x;
-            if (index < inventory.inventory_itemDatas.Length)
+            if (index < inventory.inventory.Length)
             {
                 GUILayout.BeginVertical(GUILayout.Width(BUTTON_SIZE), GUILayout.Height(BUTTON_SIZE));
 
-                ItemDatabase itemDatabase = GameObject.FindObjectOfType<ItemDatabase>();
-                Item item = itemDatabase.GetItemByID(inventory.inventory_itemDatas[index].itemID);
+                Item item = ItemDatabase.GetItemByID(inventory.inventory[index].itemID);
 
                 // Create a GUIContent with icon
                 GUIContent content = new GUIContent();
@@ -114,7 +113,7 @@ public class InventoryEditor : Editor
                 if (item != null)
                 {
                     EditorGUI.BeginDisabledGroup(true);
-                    string itemAmount = inventory.inventory_itemDatas[index].itemAmount.ToString();
+                    string itemAmount = inventory.inventory[index].itemAmount.ToString();
                     string itemAmountDisplay = EditorGUILayout.TextField(itemAmount, GUILayout.Width(BUTTON_SIZE));
                     if (itemAmountDisplay != item.ItemName)
                     EditorGUI.EndDisabledGroup();
@@ -125,29 +124,24 @@ public class InventoryEditor : Editor
         }
         GUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Add Random Item"))
+        if (GUILayout.Button("Load Inventory"))
         {
-            inventory.Add();
+            inventory.LoadInventory();
         }
 
-        if (GUILayout.Button("Save"))
+        if (GUILayout.Button("Save Inventory"))
         {
-            inventory.Save();
+            inventory.SaveInventory();
         }
 
-        if (GUILayout.Button("Load"))
+        if (GUILayout.Button("Demo Add Item"))
         {
-            inventory.Load();
+            inventory.DemoAddItem();
         }
 
-        if (GUILayout.Button("Craft"))
+        if (GUILayout.Button("Print Items"))
         {
-            inventory.Craft();
-        }
-
-        if (GUILayout.Button("Use"))
-        {
-            inventory.TryUseItem();
+            inventory.DebugPrintItems();
         }
     }
 }

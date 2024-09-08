@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -6,7 +5,7 @@ using UnityEngine;
 public class ItemDatabase : MonoBehaviour
 {
     public static ItemDatabase Instance { get; private set; }
-    public List<Item> items;
+    public List<Item> items = new List<Item>();
     private Dictionary<string, Item> itemDictionary = new Dictionary<string, Item>();
 
     private void Awake()
@@ -28,16 +27,16 @@ public class ItemDatabase : MonoBehaviour
         }
     }
 
-    public Item GetItemByID(string itemID)
+    public static Item GetItemByID(string itemID)
     {
         if (string.IsNullOrEmpty(itemID))
         {
             return null;
         }
 
-        if (itemDictionary.ContainsKey(itemID))
+        if (Instance.itemDictionary.ContainsKey(itemID))
         {
-            return itemDictionary[itemID];
+            return Instance.itemDictionary[itemID];
         }
 
         Debug.LogWarning($"Item with ID {itemID} not found in the database.");
