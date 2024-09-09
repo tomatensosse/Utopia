@@ -55,6 +55,11 @@ public class SaveSystem
     public List<PlayerSave> LoadAllPlayers()
     {
         List<PlayerSave> playerSaves = new List<PlayerSave>();
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/PlayerSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/PlayerSaves/");
+        }
+
         foreach (string path in System.IO.Directory.GetFiles(Application.persistentDataPath + "/PlayerSaves/"))
         {
             string json = System.IO.File.ReadAllText(path);
@@ -66,6 +71,11 @@ public class SaveSystem
     public List<WorldSave> LoadAllWorlds()
     {
         List<WorldSave> worldSaves = new List<WorldSave>();
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/WorldSaves/"))
+        {
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/WorldSaves/");
+        }
+
         foreach (string path in System.IO.Directory.GetFiles(Application.persistentDataPath + "/WorldSaves/"))
         {
             string json = System.IO.File.ReadAllText(path);

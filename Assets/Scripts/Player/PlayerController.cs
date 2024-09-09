@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class PlayerMovement : NetworkBehaviour
+public class PlayerController : NetworkBehaviour
 {
+
+#region Variables
     [Header("Movement")]
     public Rigidbody playerRigidbody;
     public CapsuleCollider playerCollider;
@@ -53,6 +55,7 @@ public class PlayerMovement : NetworkBehaviour
     public Transform cameraPosition;
     public Transform orientation;
     public float sensX = 2f, sensY = 2f;
+    private CameraScript cameraScript;
     private Camera playerCamera;
     private GameObject cameraContainer;
     private float xRotation, yRotation;
@@ -78,6 +81,12 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
+    public KeyCode interactKey = KeyCode.E;
+
+    [Header("Interact")]
+    public float interactRange = 5f;
+    private Transform holdableObjectContainer;
+    private IHoldableObject heldHoldableObject;
 
     [Header("External References")]
     public bool inputEnabled = false;
@@ -91,6 +100,7 @@ public class PlayerMovement : NetworkBehaviour
     debugLogDrag;
 
     //List<MovementAbility> movementAbilities; TBA!!!
+#endregion
 
     private void Update()
     {
@@ -133,8 +143,12 @@ public class PlayerMovement : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         cameraContainer = GameObject.Find("CameraContainer");
-        cameraContainer.GetComponent<MoveCamera>().cameraPosition = cameraPosition;
-        cameraContainer.GetComponent<MoveCamera>().active = true;
+        cameraScript = cameraContainer.GetComponent<CameraScript>();
+
+        cameraScript.cameraPosition = cameraPosition;
+        cameraScript.active = true;
+
+        holdableObjectContainer = cameraScript.holdableObjectContainer;
 
         playerCamera = cameraContainer.GetComponentInChildren<Camera>();
 
@@ -199,6 +213,98 @@ public class PlayerMovement : NetworkBehaviour
         {
             Jump();
         }
+
+        if (Input.GetKeyDown(interactKey))
+        {
+            Interact();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (heldHoldableObject != null)
+            {
+                DropItem();
+            }
+            else
+            {
+                TryPickUpHoldableObject();
+            }
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            if (heldHoldableObject != null)
+            {
+                RotateItem();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            if (heldHoldableObject != null)
+            {
+                ThrowHoldableObject();
+            }
+        }
+    }
+
+    private void Interact()
+    {
+        Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out RaycastHit hit, interactRange);
+        {
+            if (hit.collider != null)
+            {
+                IHealth health = hit.collider.GetComponent<IHealth>();
+
+                if (health != null)
+                {
+                    health.CmdTakeDamage(10, connectionToClient);
+                }
+            }
+        }
+    }
+
+    private void TryPickUpHoldableObject()
+    {
+        Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out RaycastHit hit, interactRange);
+        {
+            if (hit.collider != null)
+            {
+                IHoldableObject holdableObject = hit.collider.GetComponent<IHoldableObject>();
+
+                if (holdableObject != null)
+                {
+                    heldHoldableObject = holdableObject;
+                    CmdPickUpObject(holdableObject as NetworkBehaviour);
+                }
+            }
+        }
+    }
+
+    [Command (requiresAuthority = false)]
+    private void CmdPickUpObject(NetworkBehaviour holdableObject)
+    {
+        IHoldableObject holdable = holdableObject.GetComponent<IHoldableObject>();
+        holdable?.PickUp(holdableObjectContainer);
+    }
+
+    void DropItem()
+    {
+        heldHoldableObject.Drop();
+        heldHoldableObject = null;
+    }
+
+    void ThrowHoldableObject()
+    {
+        Vector3 throwForce = transform.forward * 15f;
+        heldHoldableObject.Throw(throwForce);
+        heldHoldableObject = null;
+    }
+
+    void RotateItem()
+    {
+        Vector3 rotationDelta = new Vector3(0, 5f, 5);
+        heldHoldableObject.Rotate(rotationDelta);
     }
 
     private void MovePlayer()
@@ -478,5 +584,9 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    class Floor { public bool isOnSlope; public bool canClimpSlope; }
+    class Floor 
+    { 
+        public bool isOnSlope;
+        public bool canClimpSlope;
+    }
 }

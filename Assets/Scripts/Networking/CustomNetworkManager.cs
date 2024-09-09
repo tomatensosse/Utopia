@@ -36,14 +36,15 @@ public class CustomNetworkManager : NetworkManager
 
         if (gameSceneLoaded && NetworkServer.active)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (Input.GetKeyDown(KeyCode.O))
             {
                 SaveAndQuit();
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.L))
             {
-                SpawnEntity("entity_physicube", spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
+                string randomEntity = EntityDatabase.Instance.RandomEntityID();
+                SpawnEntity(randomEntity, spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
             }
         }
     }

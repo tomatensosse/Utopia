@@ -248,6 +248,8 @@ MonoBehaviour:
   runAnimationTreshold: 9
   jumpKey: 32
   sprintKey: 304
+  interactKey: 101
+  interactRange: 5
   inputEnabled: 0
   initialized: 0
   debugLogs: 0
