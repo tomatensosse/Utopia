@@ -2,23 +2,23 @@
   "inventorySize": 32,
   "inventory": [
     {
-      "itemID": "coal",
-      "itemAmount": 7,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "rock",
-      "itemAmount": 2,
-      "itemDurability": -1
-    },
-    {
-      "itemID": "rock",
-      "itemAmount": 16,
-      "itemDurability": -1
-    },
-    {
       "itemID": "wooden_stick",
-      "itemAmount": 2,
+      "itemAmount": 3,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
+      "itemDurability": -1
+    },
+    {
+      "itemID": null,
+      "itemAmount": 1,
       "itemDurability": -1
     },
     {

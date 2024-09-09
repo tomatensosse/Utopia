@@ -129,3 +129,26 @@ public class Inventory : MonoBehaviour
         return -1;
     }
 }
+
+/*
+
+MOCHA123456789() 
+//ARANGE _-^^^-_ !!! 
+MOCHA HAPŞULADI (çok yaşa)
+RETURHN _-^^^-_ !!! (SEN DE GÖR)
+----^^^^^^^^------
+KONUŞMA KESİLMEDİ
+KONUŞMA KESİLDİ
+------^^^^^^^^^_____
+MOCHA- SANANE
+BORA-SAMAN YE
+MOCHA(DURUR MU) -BEN TOKUM SEN YE
+BORA- GİT BABANDAN İŞTE 
+------^^^^^^^^^------
+TOKATI TOKATDA TOKASINI BAĞLARKENE YEDİ
+BORA- BİR DAHA YAPMA (AL EKLENTİSİ)
+SONRA BORA KENDİNİ KAPATTI (AL YORUMUDUR)
+KAYNAKÇA = BORA VE MOCHA (AL YORUMU 2)
+AL GİTGİDE SALAKLAŞIYOR -^ BİZLE ÇOK TAKILDI
+
+*/

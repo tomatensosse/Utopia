@@ -86,6 +86,8 @@ public class Player : NetworkBehaviour
 
         // Initialize ui, camera, etc.
         playerMovement.InitializePlayer();
+
+        GameManagerUI.Instance.Init();
     }
 
     private void Update()

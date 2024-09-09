@@ -102,7 +102,7 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        if (inputEnabled) { MyInput(); }
+        if (inputEnabled && !GameManagerUI.Instance.anyTabOpen) { MyInput(); }
 
         if (!initialized) { return; }
 
