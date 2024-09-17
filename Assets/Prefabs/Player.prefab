@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 4139335902471679491}
   - component: {fileID: 2601177509335972267}
   - component: {fileID: 2432842864333571246}
+  - component: {fileID: -7192116651719782404}
   - component: {fileID: -3254929528396484930}
   - component: {fileID: -2904274883290325614}
   - component: {fileID: 7258308393232278075}
@@ -193,6 +194,7 @@ MonoBehaviour:
     v_playerCurrentHealth: 0
     playerScore: 0
   playerMovement: {fileID: 2432842864333571246}
+  inventory: {fileID: -7192116651719782404}
 --- !u!114 &2432842864333571246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +263,21 @@ MonoBehaviour:
   debugLogPlayerDirection: 0
   debugLogCanWallJump: 0
   debugLogDrag: 0
+--- !u!114 &-7192116651719782404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5661660183043932361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f4b1d01767d92c48b29c98d3e63b0ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: []
+  savePath: Assets/Scripts/Inventory/inventory.json
+  demoItems: []
 --- !u!54 &-3254929528396484930
 Rigidbody:
   m_ObjectHideFlags: 0

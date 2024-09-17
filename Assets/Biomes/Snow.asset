@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37594bfb615c14d2d849ebf9fc0f6c6c, type: 3}
+  m_Name: Snow
+  m_EditorClassIdentifier: 
+  biomeName: Snow
+  biomeColor: {r: 0.6740388, g: 0.8710335, b: 0.9339623, a: 1}
+  regularBiome: 1
+  specialBiomeID: -1
+  isDefaultBiome: 0
+  biomeID: 2
+  maxInstances: 3
+  maxChunksInInstance: 48
+  fullDecayTimeInSteps: 5
+  spawnInBiome: {fileID: 11400000, guid: b067065911f1848969acddd02d3144df, type: 2}
+  heightGenerators: []
+  materials: []

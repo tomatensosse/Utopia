@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37594bfb615c14d2d849ebf9fc0f6c6c, type: 3}
+  m_Name: Default
+  m_EditorClassIdentifier: 
+  biomeName: Default
+  biomeColor: {r: 1, g: 1, b: 1, a: 1}
+  regularBiome: 1
+  specialBiomeID: -1
+  isDefaultBiome: 1
+  biomeID: 0
+  maxInstances: 1
+  maxChunksInInstance: 16
+  fullDecayTimeInSteps: 5
+  spawnInBiome: {fileID: 0}
+  heightGenerators:
+  - {fileID: 3338140468035925606, guid: 92d1f324d953c4c20ab61d7cba92498d, type: 3}
+  materials: []

@@ -54,6 +54,7 @@ public class Player : NetworkBehaviour, IHealth
 
     [Header("Player Scripts")]
     public PlayerController playerMovement;
+    public Inventory inventory;
 
     public void Start()
     {
@@ -91,6 +92,8 @@ public class Player : NetworkBehaviour, IHealth
         {
             // Additional local player initialization if needed
             playerMovement.inputEnabled = true;
+            InventoryManager.Instance.inventory = inventory;
+            inventory.Initialize();
         }
 
         // Initialize ui, camera, etc.

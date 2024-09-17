@@ -12,12 +12,12 @@ public class Object : Entity
 
         if (wasLoadedBefore) { return; }
 
-        if (entityRigidbody == null)
+        if (rb == null)
         {
-            entityRigidbody = gameObject.AddComponent<Rigidbody>();
+            rb = gameObject.AddComponent<Rigidbody>();
         }
 
         Vector3 randomDirection = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
-        entityRigidbody.AddForce(randomDirection * 20f, ForceMode.Impulse);
+        rb.AddForce(randomDirection * 20f, ForceMode.Impulse);
     }
 }

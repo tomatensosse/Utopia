@@ -55,6 +55,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   entityID: entity_crate
+  entityName: 
+  entityDescription: 
   entityData:
     entityID: 
     position: {x: 0, y: 0, z: 0}
@@ -62,6 +64,10 @@ MonoBehaviour:
   wasLoadedBefore: 0
   initialized: 0
   entityRigidbody: {fileID: 8684515297855178677}
+  hasHealth: 1
+  maxHealth: 100
+  isInteractable: 1
+  isHoldable: 0
 --- !u!33 &6191103453636261732
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -173,7 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 1739417131
+  _assetId: 190445635
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

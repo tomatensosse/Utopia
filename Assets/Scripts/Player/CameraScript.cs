@@ -7,7 +7,7 @@ public class CameraScript : MonoBehaviour
     public bool active = false;
 
     [Header("Other")]
-    public Transform holdableObjectContainer;
+    public Transform swingPoint;
 
     private void Update()
     {

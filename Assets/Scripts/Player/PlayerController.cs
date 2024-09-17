@@ -85,7 +85,7 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Interact")]
     public float interactRange = 5f;
-    private Transform holdableObjectContainer;
+    private Transform swingPoint;
     private IHoldableObject heldHoldableObject;
 
     [Header("External References")]
@@ -148,7 +148,7 @@ public class PlayerController : NetworkBehaviour
         cameraScript.cameraPosition = cameraPosition;
         cameraScript.active = true;
 
-        holdableObjectContainer = cameraScript.holdableObjectContainer;
+        swingPoint = cameraScript.swingPoint;
 
         playerCamera = cameraContainer.GetComponentInChildren<Camera>();
 
@@ -169,7 +169,6 @@ public class PlayerController : NetworkBehaviour
     [Command(requiresAuthority = false)]
     private void CmdSyncRotation(float x, float y)
     {
-        Debug.Log("Syncing rotation");
         xRotationSync = x;
         yRotationSync = y;
     }
@@ -219,19 +218,17 @@ public class PlayerController : NetworkBehaviour
             Interact();
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKey(KeyCode.F))
         {
-            if (heldHoldableObject != null)
-            {
-                DropItem();
-            }
-            else
-            {
-                TryPickUpHoldableObject();
-            }
+            HoldObject();
         }
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.F))
+        {
+            DropItem();
+        }
+
+        if (Input.GetKey(KeyCode.Mouse1))
         {
             if (heldHoldableObject != null)
             {
@@ -239,7 +236,7 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             if (heldHoldableObject != null)
             {
@@ -254,49 +251,56 @@ public class PlayerController : NetworkBehaviour
         {
             if (hit.collider != null)
             {
-                IHealth health = hit.collider.GetComponent<IHealth>();
+                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 
-                if (health != null)
+                if (interactable != null)
                 {
-                    health.CmdTakeDamage(10, connectionToClient);
+                    interactable.CmdInteract(connectionToClient);
                 }
             }
         }
     }
 
-    private void TryPickUpHoldableObject()
+    private void HoldObject()
     {
+        if (heldHoldableObject != null)
+        {   
+            heldHoldableObject.Hold(swingPoint);
+            return;
+        }
+
+        Debug.Log("Halit");
+
         Physics.Raycast(cameraContainer.transform.position, cameraContainer.transform.forward, out RaycastHit hit, interactRange);
         {
             if (hit.collider != null)
             {
-                IHoldableObject holdableObject = hit.collider.GetComponent<IHoldableObject>();
+                Entity hitEntity = hit.collider.GetComponent<Entity>();
 
-                if (holdableObject != null)
+                if (hitEntity != null)
                 {
-                    heldHoldableObject = holdableObject;
-                    CmdPickUpObject(holdableObject as NetworkBehaviour);
+
+                    Debug.Log("Bulut");
+
+                    if (!hitEntity.isHoldable)
+                    {
+                        return;
+                    }
+                    heldHoldableObject = hitEntity;
                 }
             }
         }
     }
 
-    [Command (requiresAuthority = false)]
-    private void CmdPickUpObject(NetworkBehaviour holdableObject)
-    {
-        IHoldableObject holdable = holdableObject.GetComponent<IHoldableObject>();
-        holdable?.PickUp(holdableObjectContainer);
-    }
-
     void DropItem()
     {
-        heldHoldableObject.Drop();
+        heldHoldableObject.UnHold();
         heldHoldableObject = null;
     }
 
     void ThrowHoldableObject()
     {
-        Vector3 throwForce = transform.forward * 15f;
+        Vector3 throwForce = swingPoint.forward * 15f;
         heldHoldableObject.Throw(throwForce);
         heldHoldableObject = null;
     }
@@ -534,7 +538,7 @@ public class PlayerController : NetworkBehaviour
         slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
     }
 
-    void StepClimb()
+    private void StepClimb()
     {
         if (OnSlope(transform.position).isOnSlope)
         {

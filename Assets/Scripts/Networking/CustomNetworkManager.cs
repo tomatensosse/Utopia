@@ -44,7 +44,16 @@ public class CustomNetworkManager : NetworkManager
             if (Input.GetKeyDown(KeyCode.L))
             {
                 string randomEntity = EntityDatabase.Instance.RandomEntityID();
-                SpawnEntity(randomEntity, spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
+                Debug.Log("Spawning random entity: " + randomEntity);
+                if (randomEntity == "entity_floor_item")
+                {
+                    Debug.Log("Spawning floor item");
+                    SpawnFloorItem("food_friedchicken", spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
+                }
+                else
+                {
+                    SpawnEntity(randomEntity, spawnPointManager.GetRandomSpawnPoint().position, 3, 8);
+                }
             }
         }
     }
@@ -62,6 +71,18 @@ public class CustomNetworkManager : NetworkManager
         GameObject entityGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID(entityID), spawnPosition, Quaternion.identity);
         NetworkServer.Spawn(entityGameObject, NetworkServer.localConnection);
         World.Instance.AddEntity(entityGameObject.GetComponent<Entity>());
+    }
+
+    private void SpawnFloorItem(string itemID, Vector3 spawnOrigin, float spawnRadMin = 4f, float spawnRadMax = 8f)
+    {
+        Vector3 spawnPosition = spawnOrigin + Random.insideUnitSphere * Random.Range(spawnRadMin, spawnRadMax);
+        GameObject floorItemGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID("entity_floor_item"), spawnPosition, Quaternion.identity);
+
+        FloorItem floorItem = floorItemGameObject.GetComponent<FloorItem>();
+        floorItem.Initialize(ItemData.Generate(itemID, 1));
+        
+        NetworkServer.Spawn(floorItemGameObject, NetworkServer.localConnection);
+        World.Instance.AddEntity(floorItemGameObject.GetComponent<Entity>());
     }
 
     public override void OnStartHost()

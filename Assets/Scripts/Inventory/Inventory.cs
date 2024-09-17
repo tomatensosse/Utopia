@@ -13,7 +13,7 @@ public class Inventory : MonoBehaviour
     public string savePath = "Assets/Scripts/Inventory/inventory.json";
     public List<Item> demoItems; // Demo items to add to the inventory
 
-    void Awake()
+    public void Initialize()
     {
         inventory = new ItemData[inventorySize];
     }
