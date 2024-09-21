@@ -3,22 +3,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-public class IntBool
-{
-    public int i;
-    public bool b;
-}
-
 public class MeshGenerator : MonoBehaviour
 {
-
+    public List<Transform> players;
+    private List<PlayerLocation> playerLocations;
     public MapGenerator generator;
-    int[,] map;
-    Vector2Int playerChunkPosition;
 
     [Header("World Generation")]
     public bool setSeed = false;
@@ -28,17 +22,18 @@ public class MeshGenerator : MonoBehaviour
     public Biome defaultBiome;
 
     [Header("Generation")]
-
     public int chunkSizeHorizontal = 8;
     public int chunkSizeVertical = 128;
+    public int numPointsPerAxis = 8;
     public bool fixedSize = false;
     [ConditionalHide(nameof(fixedSize), true)]
     public Vector2Int worldSize;
+    int offset;
 
     [ConditionalHide(nameof(fixedSize), false)]
-    public Transform player;
-    [ConditionalHide(nameof(fixedSize), false)]
     public int renderDistance = 3;
+    [ConditionalHide(nameof(fixedSize), false)]
+    public int simulationDistance = 3;
 
     public int biomeEdgeBlending = 2;
 
@@ -97,23 +92,60 @@ public class MeshGenerator : MonoBehaviour
 
     private void Update()
     {
-        GenerateWorld();
+        foreach (PlayerLocation playerLocation in playerLocations)
+        {
+            Vector2Int playerInChunk = playerLocation.chunkPosition;
+            GetPlayerCurrentPosition(playerLocation);
+
+            if (playerInChunk == playerLocation.chunkPosition)
+            {
+                return; // Dont generate anything if the player is in the same chunk
+            }
+
+            GenerateWorld(playerLocation);
+        }
     }
 
-    public void GenerateWorld()
+    private void Start()
     {
-        GetPlayerCurrentPosition();
+        Initialize();
+    }
 
-        GenerateChunks();
-
-        GetOutOfRangeChunks();
-
-        GenerateMeshes();
-
-        if (generateImage)
+    private void Initialize()
+    {
+        if (chunksHolder == null) 
         {
-            SaveImage(GenerateImage());
+            if (GameObject.Find (chunksHolderName)) {
+                chunksHolder = GameObject.Find (chunksHolderName);
+            } else {
+                chunksHolder = new GameObject (chunksHolderName);
+            }
         }
+
+        foreach (Transform player in players)
+        {
+            PlayerLocation playerLocation = new PlayerLocation();
+            playerLocations.Add(playerLocation);
+            GetPlayerCurrentPosition(playerLocation);
+        }
+
+        offset = chunkSizeHorizontal * generator.mapSizeInChunks / 2;
+    }
+
+    void GenerateWorld(PlayerLocation playerLocation)
+    {
+        /*
+        if (GenerateNewChunks(playerLocation.chunkPosition))
+        {
+            GetOutOfRangeChunks(playerLocation.chunkPosition);
+
+            GenerateMeshes();
+
+            SpawnGenerateables();
+
+            // Sync on network 
+        }
+        */
     }
 
     public List<Vector3> sumTwoListsVector(List<Vector3> vx, List<Vector3> vy)
@@ -191,7 +223,7 @@ public class MeshGenerator : MonoBehaviour
         foreach (GameObject heightGenGameObject in defaultBiome.heightGenerators)
         {
             TerrainHeightGen terrainHeightGen = heightGenGameObject.GetComponent<TerrainHeightGen>();
-            meshDatas.Add(terrainHeightGen.Execute(chunkSizeHorizontal, currentChunkPosition, newNoise));
+            meshDatas.Add(terrainHeightGen.Execute(chunkSizeHorizontal, numPointsPerAxis, currentChunkPosition, newNoise));
         }
 
         if (currentChunkBiome != defaultBiome)
@@ -199,7 +231,7 @@ public class MeshGenerator : MonoBehaviour
             foreach (GameObject heightGenGameObject in currentChunkBiome.heightGenerators)
             {
                 TerrainHeightGen terrainHeightGen = heightGenGameObject.GetComponent<TerrainHeightGen>();
-                MeshData meshDataRaw = terrainHeightGen.Execute(chunkSizeHorizontal, currentChunkPosition, newNoise);
+                MeshData meshDataRaw = terrainHeightGen.Execute(chunkSizeHorizontal, numPointsPerAxis, currentChunkPosition, newNoise);
                 MeshData meshDataProcessed = new MeshData();
 
                 Vector3[] verticesRaw = meshDataRaw.vertices.ToArray();
@@ -272,13 +304,13 @@ public class MeshGenerator : MonoBehaviour
                     {
                         for (int z = 0; z < biomeEdgeBlending; z++)
                         {
-                            IntBool intBool = lowerInt(z, x);
-                            if (intBool.b)
+                            IntBool intBool = IntBool.LowerInt(z, x);
+                            if (intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[((chunkSizeHorizontal + 1) + z) + (((x - 1) * (chunkSizeHorizontal + 1)))] + " with div: " + (step * intBool.i));
                                 verticesProcessed[((chunkSizeHorizontal + 1) + z) + (((x - 1) * (chunkSizeHorizontal + 1)))].y = verticesRaw[((chunkSizeHorizontal + 1) + z) + (((x - 1) * (chunkSizeHorizontal + 1)))].y * (step * x);
                             }
-                            if (!intBool.b)
+                            if (!intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[(x * (chunkSizeHorizontal + 1)) + z] + " with div: " + (step * intBool.i));
                                 verticesProcessed[(x * (chunkSizeHorizontal + 1)) + z].y = verticesRaw[(x * (chunkSizeHorizontal + 1)) + z].y * (step * z);
@@ -296,13 +328,13 @@ public class MeshGenerator : MonoBehaviour
                     {
                         for (int z = 0; z < biomeEdgeBlending; z++)
                         {
-                            IntBool intBool = lowerInt(z, x);
-                            if (intBool.b)
+                            IntBool intBool = IntBool.LowerInt(z, x);
+                            if (intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1)) + z] + " - - - a");
                                 verticesProcessed[((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1)) + z].y = verticesRaw[((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1)) + z].y * (step * x);
                             }
-                            if (!intBool.b)
+                            if (!intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[((chunkSizeHorizontal + 1) * ((chunkSizeHorizontal - x)) + z)] + " - - - b");
                                 verticesProcessed[((chunkSizeHorizontal + 1) * ((chunkSizeHorizontal - x)) + z)].y = verticesRaw[((chunkSizeHorizontal + 1) * ((chunkSizeHorizontal - x)) + z)].y * (step * z);
@@ -320,13 +352,13 @@ public class MeshGenerator : MonoBehaviour
                     {
                         for (int z = 0; z < biomeEdgeBlending; z++)
                         {
-                            IntBool intBool = lowerInt(z, x);
-                            if (intBool.b)
+                            IntBool intBool = IntBool.LowerInt(z, x);
+                            if (intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[((chunkSizeHorizontal + 1) + (chunkSizeHorizontal - z)) + (((x - 1) * (chunkSizeHorizontal + 1)))] + " - aaa" + "x: " + x + " z: " + z);
                                 verticesProcessed[((chunkSizeHorizontal + 1) + (chunkSizeHorizontal - z)) + (((x - 1) * (chunkSizeHorizontal + 1)))].y = verticesRaw[((chunkSizeHorizontal + 1) + (chunkSizeHorizontal - z)) + (((x - 1) * (chunkSizeHorizontal + 1)))].y * (step * x);
                             }
-                            if (!intBool.b)
+                            if (!intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[(x * (chunkSizeHorizontal + 1)) + (chunkSizeHorizontal - z)] + " - bbb");
                                 verticesProcessed[(x * (chunkSizeHorizontal + 1)) + (chunkSizeHorizontal - z)].y = verticesRaw[(x * (chunkSizeHorizontal + 1)) + (chunkSizeHorizontal - z)].y * (step * z);
@@ -344,13 +376,13 @@ public class MeshGenerator : MonoBehaviour
                     {
                         for (int z = 0; z < biomeEdgeBlending; z++)
                         {
-                            IntBool intBool = lowerInt(z, x);
-                            if (intBool.b)
+                            IntBool intBool = IntBool.LowerInt(z, x);
+                            if (intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[(chunkSizeHorizontal - z) + ((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1))] + " - aaa" + "x: " + x + " z: " + z);
                                 verticesProcessed[(chunkSizeHorizontal - z) + ((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1))].y = verticesRaw[(chunkSizeHorizontal - z) + ((chunkSizeHorizontal - x) * (chunkSizeHorizontal + 1))].y * (step * x);
                             }
-                            if (!intBool.b)
+                            if (!intBool.sBool)
                             {
                                 //Debug.Log(verticesProcessed[(chunkSizeHorizontal + 1) * (chunkSizeHorizontal - x) + (chunkSizeHorizontal - z)] + " - bbb");
                                 verticesProcessed[(chunkSizeHorizontal + 1) * (chunkSizeHorizontal - x) + (chunkSizeHorizontal - z)].y = verticesRaw[(chunkSizeHorizontal + 1) * (chunkSizeHorizontal - x) + (chunkSizeHorizontal - z)].y * (step * z);
@@ -386,28 +418,8 @@ public class MeshGenerator : MonoBehaviour
         return meshDataFinal;
     }
 
-    void GenerateChunks()
-    {   
-        if (chunksHolder == null) 
-        {
-            if (GameObject.Find (chunksHolderName)) {
-                chunksHolder = GameObject.Find (chunksHolderName);
-            } else {
-                chunksHolder = new GameObject (chunksHolderName);
-            }
-        }
-
-        /*
-        foreach (GameObject chunkToDestroy in chunksToDestroy)
-        {
-            chunksToDestroy.Remove(chunkToDestroy);
-            chunks.Remove(chunkToDestroy.GetComponent<BoraChunk>());
-            chunksGameObjects.Remove(chunkToDestroy);
-
-            Destroy(chunkToDestroy);
-        }
-        */
-
+    void GenerateNewChunks(Vector2Int playerInChunk)
+    {
         while (chunksToDestroy.Count > 0)
         {
             GameObject chunkToDestroy = chunksToDestroy[0];
@@ -425,7 +437,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int c = -renderDistance; c <= renderDistance; c++)
             {
-                Vector2Int chunkPosition = new Vector2Int(r + playerChunkPosition.x, c + playerChunkPosition.y);
+                Vector2Int chunkPosition = new Vector2Int(r + playerInChunk.x, c + playerInChunk.y);
 
                 bool chunkExists = false;
 
@@ -441,7 +453,7 @@ public class MeshGenerator : MonoBehaviour
                 {
                     GameObject chunkGameObject = new GameObject("Chunk " + chunkPosition);
                     chunkGameObject.transform.parent = chunksHolder.transform;
-                    chunkGameObject.transform.position = new Vector3(chunkPosition.x * chunkSizeHorizontal, 0, chunkPosition.y * chunkSizeHorizontal);
+                    chunkGameObject.transform.position = new Vector3(chunkPosition.x * chunkSizeHorizontal - offset, -16, chunkPosition.y * chunkSizeHorizontal - offset);
 
                     Chunk boraChunk = chunkGameObject.AddComponent<Chunk>();
                     boraChunk.chunkPosition = chunkPosition;
@@ -483,12 +495,17 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    void GetPlayerCurrentPosition()
+    void GetPlayerCurrentPosition(PlayerLocation playerLocation)
     {
-        Vector3 playerPosition = player.position;
-        playerChunkPosition = new Vector2Int((int)playerPosition.x / chunkSizeHorizontal, (int)playerPosition.z / chunkSizeHorizontal);
-        
-        if (debug) { playerChunkPositionText.text = "Player is in chunk " + playerChunkPosition; }
+        Vector3 playerPosition = playerLocation.player.position;
+        int offset = chunkSizeHorizontal * generator.mapSizeInChunks / 2;
+        Vector2Int playerInChunk = new Vector2Int(
+            (int)(playerPosition.x + offset) / chunkSizeHorizontal, 
+            (int)(playerPosition.z + offset) / chunkSizeHorizontal
+        );
+
+        playerLocation.chunkPosition = playerInChunk;
+        playerLocation.playerPosition = playerPosition;
     }
 
     void DestroyAllChunks()
@@ -503,75 +520,65 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    void GetOutOfRangeChunks()
+    void GetOutOfRangeChunks(Vector2Int playerInChunk)
     {
         foreach (GameObject chunkGameObject in chunksGameObjects)
         {
             Chunk boraChunk = chunkGameObject.GetComponent<Chunk>();
 
-            if (boraChunk.chunkPosition.x < playerChunkPosition.x - renderDistance || boraChunk.chunkPosition.x > playerChunkPosition.x + renderDistance || boraChunk.chunkPosition.y < playerChunkPosition.y - renderDistance || boraChunk.chunkPosition.y > playerChunkPosition.y + renderDistance)
+            if (boraChunk.chunkPosition.x < playerInChunk.x - renderDistance || boraChunk.chunkPosition.x > playerInChunk.x + renderDistance || boraChunk.chunkPosition.y < playerInChunk.y - renderDistance || boraChunk.chunkPosition.y > playerInChunk.y + renderDistance)
             {
                 chunksToDestroy.Add(chunkGameObject);
             }
         }
     }
 
-    Texture2D GenerateImage()
+    void SpawnGenerateables()
     {
-        Texture2D texture = new Texture2D(renderDistance, renderDistance);
-
         foreach (GameObject chunkGameObject in chunksGameObjects)
         {
-            Chunk boraChunk = chunkGameObject.GetComponent<Chunk>();
+            Chunk chunk = chunkGameObject.GetComponent<Chunk>();
 
-            texture.SetPixel(boraChunk.chunkPosition.x, boraChunk.chunkPosition.y, boraChunk.chunkBoundsColor);
+            if (!chunk.generateablesHaveBeenGenerated)
+            {
+                Biome biome = chunk.chunkBiome;
+                GenerateSpawnables(chunk, biome);
+            }
         }
-
-        texture.Apply();
-
-        return texture;
     }
 
-    void SaveImage(Texture2D texture)
+    void GenerateSpawnables(Chunk chunk, Biome biome)
     {
-        if (File.Exists(imageSavePath))
+        foreach (Spawnable spawnable in biome.spawnables)
         {
-            File.Delete(imageSavePath);
+            Mesh mesh = chunk.GetMesh();
+            Vector3 spawnPosition = mesh.vertices[Random.Range(0, mesh.vertices.Length)];
+
+            if (spawnable.generateChance >= UnityEngine.Random.Range(0f, 1f))
+            {
+                GameObject gameObject = spawnable.GetGameObject();
+                GameObject spawnedObject = Instantiate(gameObject);
+
+                spawnedObject.transform.SetParent(chunk.gameObject.transform);
+                spawnedObject.transform.localPosition = spawnPosition;
+
+                SpawnableData spawnableData = new SpawnableData();
+
+                spawnableData.position = spawnedObject.transform.position;
+                spawnableData.rotation = spawnedObject.transform.rotation.eulerAngles;
+                spawnableData.scale = spawnedObject.transform.localScale;
+            }
         }
 
-        byte[] bytes = texture.EncodeToPNG();
-        File.WriteAllBytes(imageSavePath, bytes);
-
-        if (worldVisualisationUIImage != null)
-        {
-            TextureImporter textureImporter = AssetImporter.GetAtPath(imageSavePath) as TextureImporter;
-            textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
-            textureImporter.filterMode = FilterMode.Point;
-            textureImporter.textureType = TextureImporterType.Sprite;
-
-            AssetDatabase.ImportAsset(imageSavePath, ImportAssetOptions.ForceUpdate);
-            
-            worldVisualisationUIImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(imageSavePath);
-        }
+        chunk.generateablesHaveBeenGenerated = true;
     }
 
-    // returns the lower int and true if a is lower than b
-    IntBool lowerInt(int a, int b)
+    private class PlayerLocation
     {
-        IntBool intBool = new IntBool();
-        if (a < b) 
-        {
-            intBool.i = a;
-            intBool.b = true;
-        }
-        else
-        {
-            intBool.i = b;
-            intBool.b = false;
-        }
-        return intBool;
+        public Transform player;
+        public Vector2Int chunkPosition;
+        public Vector3 playerPosition;
     }
-
 }
 
 #endif

@@ -8,28 +8,33 @@ using UnityEngine;
 public class PlayerState
 {
     public string playerSaveName;
+    
     public string v_playerConnectionID;
+
     public string playerClass;
+
     public int v_playerMaxHealth; // calculate from equipment and level and shi
+
     public int v_playerCurrentHealth;
+
     public int playerScore;
 
-    public void LoadFromSave(PlayerSave playerSave)
+    public void LoadFromSave(PlayerData playerSave)
     {
         // only load the data WITHOUT v_ prefix
         // because v_ prefix will be calculated or set in each session
         playerSaveName = playerSave.playerSaveName;
-        playerClass = playerSave._demoPlayerClass;
+        playerClass = playerSave.playerClass;
         playerScore = playerSave.playerScore;
     }
 
-    public PlayerSave ToSave()
+    public PlayerData ToSave()
     {
         // only save the data WITHOUT v_ prefix
         // because v_ prefix will be calculated or set in each session
-        PlayerSave playerSave = new PlayerSave();
+        PlayerData playerSave = new PlayerData();
         playerSave.playerSaveName = playerSaveName;
-        playerSave._demoPlayerClass = playerClass;
+        playerSave.playerClass = playerClass;
         playerSave.playerScore = playerScore;
         return playerSave;
     }
@@ -62,7 +67,7 @@ public class Player : NetworkBehaviour, IHealth
         DontDestroyOnLoad(gameObject);
     }
 
-    public void InitializePlayer(PlayerSave playerSave, string playerConnectionID)
+    public void InitializePlayer(PlayerData playerSave, string playerConnectionID)
     {
         this.playerState.LoadFromSave(playerSave);
         this.playerState.v_playerConnectionID = playerConnectionID;
@@ -149,7 +154,7 @@ public class Player : NetworkBehaviour, IHealth
         if (isLocalPlayer)
         {
             // Save player state
-            PlayerSave playerNewSave = playerState.ToSave();
+            PlayerData playerNewSave = playerState.ToSave();
 
             // Reference SaveSystem and Save Player
         }

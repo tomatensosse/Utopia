@@ -207,11 +207,3 @@ public class Entity : NetworkBehaviour, IHealth, IInteractable, IHoldableObject
     }
 #endregion
 }
-
-[System.Serializable]
-public class EntityData
-{
-    public string entityID;
-    public Vector3 position;
-    public Quaternion rotation;
-}

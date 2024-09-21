@@ -2870,7 +2870,7 @@ MonoBehaviour:
   setPlayer:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
   setWorld:
     saveID: 
@@ -7752,14 +7752,14 @@ MonoBehaviour:
   hostPlayerSave:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
   clientPlayerSave:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
-  hostWorldSave:
+  hostWorldData:
     saveID: 
     worldSaveName: 
     worldSeed: 0

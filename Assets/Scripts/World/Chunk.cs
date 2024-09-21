@@ -4,32 +4,39 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-
     public Color chunkBoundsColor;
+
     public Biome chunkBiome;
+
     public int chunkSizeHorizontal;
+
     public int chunkSizeVertical;
 
     public Vector2Int chunkPosition;
 
     [HideInInspector] public bool setUp = false;
+
     [HideInInspector] public bool meshIsSet = false;
 
     MeshFilter meshFilter;
+
     MeshRenderer meshRenderer;
+
     MeshCollider meshCollider;
 
-    public bool leftEdgeInterpolated = false;
-    public bool rightEdgeInterpolated = false;
-    public bool frontEdgeInterpolated = false;
-    public bool backEdgeInterpolated = false;
+    [HideInInspector] public bool leftEdgeInterpolated = false;
+    [HideInInspector] public bool rightEdgeInterpolated = false;
+    [HideInInspector] public bool frontEdgeInterpolated = false;
+    [HideInInspector] public bool backEdgeInterpolated = false;
 
-    public bool frontLeftEdgeInterpolated = false;
-    public bool frontRightEdgeInterpolated = false;
-    public bool backLeftEdgeInterpolated = false;
-    public bool backRightEdgeInterpolated = false;
+    [HideInInspector] public bool frontLeftEdgeInterpolated = false;
+    [HideInInspector] public bool frontRightEdgeInterpolated = false;
+    [HideInInspector] public bool backLeftEdgeInterpolated = false;
+    [HideInInspector] public bool backRightEdgeInterpolated = false;
 
     public bool generateColliders = false;
+
+    public bool generateablesHaveBeenGenerated = false;
 
     public void SetMesh(List<Vector3> vertices, int[] triangles)
     {
@@ -63,6 +70,8 @@ public class Chunk : MonoBehaviour
         if (generateColliders)
         {
             meshCollider.sharedMesh = mesh;
+
+            meshCollider.convex = true;
         }
 
         meshIsSet = true;
@@ -93,5 +102,22 @@ public class Chunk : MonoBehaviour
     {
         Gizmos.color = chunkBoundsColor;
         Gizmos.DrawWireCube(transform.position, new Vector3(chunkSizeHorizontal, chunkSizeVertical, chunkSizeHorizontal));
+    }
+
+    public Mesh GetMesh()
+    {
+        return meshFilter.mesh;
+    }
+
+    public ChunkData GetChunkData()
+    {
+        ChunkData data = new ChunkData();
+
+        data.vertices = new List<Vector3>(meshFilter.mesh.vertices);
+        data.triangles = meshFilter.mesh.triangles;
+
+        // Add entities and spawnables to the data
+
+        return data;
     }
 }

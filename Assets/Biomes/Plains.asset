@@ -23,4 +23,10 @@ MonoBehaviour:
   fullDecayTimeInSteps: 5
   spawnInBiome: {fileID: 11400000, guid: b067065911f1848969acddd02d3144df, type: 2}
   heightGenerators: []
-  materials: []
+  material: {fileID: 0}
+  spawnables:
+  - generateChance: 0.35
+    hasVariations: 0
+    objectToSpawn: {fileID: 394809628873795739, guid: f792e77c5d57e427299ad7a6872b8fd9,
+      type: 3}
+    objectToSpawnVariations: []

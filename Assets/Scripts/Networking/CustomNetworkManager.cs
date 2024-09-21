@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public struct PlayerSaveMessage : NetworkMessage
 {
-    public PlayerSave playerSave;
+    public PlayerData playerSave;
+    
     public string connectionID;
 }
 
@@ -24,10 +25,15 @@ public class CustomNetworkManager : NetworkManager
 {
     [Header("Custom Settings")]
     public GameObject worldPrefab;
-    public PlayerSave hostPlayerSave;
-    public PlayerSave clientPlayerSave;
-    public WorldSave hostWorldSave;
+
+    public PlayerData hostPlayerSave;
+
+    public PlayerData clientPlayerSave;
+
+    public WorldData hostWorldData;
+
     private SpawnPointManager spawnPointManager;
+
     private bool gameSceneLoaded = false;
 
     public override void Update()
@@ -149,7 +155,7 @@ public class CustomNetworkManager : NetworkManager
 
         Debug.Log("[Server] Server scene loaded.");
         World world = Instantiate(worldPrefab).GetComponent<World>();
-        world.LoadWorldSave(hostWorldSave);
+        world.LoadWorldSave(hostWorldData);
 
         NetworkServer.Spawn(world.gameObject);
     }
@@ -174,6 +180,7 @@ public class CustomNetworkManager : NetworkManager
 
         GameObject playerGameObject = Instantiate(playerPrefab);
         Player player = playerGameObject.GetComponent<Player>();
+
         player.InitializePlayer(message.playerSave, conn.connectionId.ToString());
         player.connectionID = conn.connectionId.ToString();
         
@@ -277,15 +284,15 @@ public class CustomNetworkManager : NetworkManager
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void StartGameAsHost(PlayerSave playerSave, WorldSave worldSave)
+    public void StartGameAsHost(PlayerData playerSave, WorldData worldData)
     {
         hostPlayerSave = playerSave;
-        hostWorldSave = worldSave;
+        hostWorldData = worldData;
 
         StartHost();
     }
 
-    public void FinalizeClientPlayer(PlayerSave playerSave)
+    public void FinalizeClientPlayer(PlayerData playerSave)
     {
         clientPlayerSave = playerSave;
 
