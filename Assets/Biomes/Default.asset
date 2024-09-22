@@ -24,4 +24,6 @@ MonoBehaviour:
   spawnInBiome: {fileID: 0}
   heightGenerators:
   - {fileID: 3338140468035925606, guid: 92d1f324d953c4c20ab61d7cba92498d, type: 3}
-  materials: []
+  material: {fileID: 0}
+  spawnables:
+  - {fileID: 394809628873795739, guid: f792e77c5d57e427299ad7a6872b8fd9, type: 3}

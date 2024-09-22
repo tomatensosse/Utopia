@@ -190,6 +190,7 @@ public class MainMenu : MonoBehaviour
         WorldData worldSave = new WorldData();
         worldSave.worldSaveName = worldNameInput.text;
         worldSave.worldSeed = int.Parse(worldSeedInput.text);
+        worldSave.chunkDatas = new List<ChunkData>(); // To World Size
         saveSystem.SaveWorld(worldSave, worldSave.worldSaveName);
         ChangeTo("SelectionUI");
         LoadSelectionMenuContent();

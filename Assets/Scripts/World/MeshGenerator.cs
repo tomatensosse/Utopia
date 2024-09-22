@@ -1,5 +1,3 @@
-#if UNITY_EDITOR
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,13 +8,12 @@ using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour
 {
-    public List<Transform> players;
-    private List<PlayerLocation> playerLocations;
+    public static MeshGenerator Instance { get; private set; }
+    public List<PlayerLocation> playerLocations;
     public MapGenerator generator;
+    private bool initialized = false;
 
     [Header("World Generation")]
-    public bool setSeed = false;
-    public int seed;
     float newNoise;
     public Material mat;
     public Biome defaultBiome;
@@ -27,7 +24,6 @@ public class MeshGenerator : MonoBehaviour
     public int numPointsPerAxis = 8;
     public bool fixedSize = false;
     [ConditionalHide(nameof(fixedSize), true)]
-    public Vector2Int worldSize;
     int offset;
 
     [ConditionalHide(nameof(fixedSize), false)]
@@ -45,46 +41,18 @@ public class MeshGenerator : MonoBehaviour
     List<Chunk> chunks = new List<Chunk>();
     List<GameObject> chunksGameObjects = new List<GameObject>();
     List<GameObject> chunksToDestroy = new List<GameObject>();
-
-    [Header("World Visualisation as PNG")]
-
-    public bool generateImage = false;
-    [ConditionalHide(nameof(generateImage), true)]
-    public string imageSavePath = "Assets/World.png";
-    [ConditionalHide(nameof(generateImage), true)]
-    [SerializeField] UnityEngine.UI.Image worldVisualisationUIImage;
-
-    [Header("Debug Attributes")]
-    public bool debug = false;
-    [ConditionalHide(nameof(debug), true)]
-    public bool debugPrintRelativeBiomes = false;
-    [ConditionalHide(nameof(debug), true)]
-    public bool debugPrintArrayAddition = false;
-    [ConditionalHide(nameof(debug), true)]
-    public bool debugPrintBiomeInterpolation = false;
-    [ConditionalHide(nameof(debug), true)]
-    public bool debugPrintBiomeInterpolationEdges = false;
-    [ConditionalHide(nameof(debug), true)]
     public TMP_Text playerChunkPositionText;
 
     void Awake()
     {
-        if (!debug)
+        if (Instance == null)
         {
-            playerChunkPositionText.gameObject.SetActive(false);
+            Instance = this;
         }
-
-        if (!setSeed) { seed = UnityEngine.Random.Range(0, 1000000);}
-        
-        UnityEngine.Random.InitState(seed);
-
-        newNoise = UnityEngine.Random.Range(0, 1000000);
-
-        generator.GenerateMap(seed);
-
-        if (generateImage)
+        else
         {
-            Debug.LogWarning("Warning. Local world visualisation is currently set to true. This may cause a lot of lag!");
+            Debug.LogError("There are multiple MeshGenerator instances in the scene.");
+            Destroy(gameObject);
         }
 
         DestroyAllChunks();
@@ -92,6 +60,16 @@ public class MeshGenerator : MonoBehaviour
 
     private void Update()
     {
+        if (!initialized)
+        {
+            return;
+        }
+
+        if (playerLocations == null)
+        {
+            return;
+        }
+
         foreach (PlayerLocation playerLocation in playerLocations)
         {
             Vector2Int playerInChunk = playerLocation.chunkPosition;
@@ -102,16 +80,11 @@ public class MeshGenerator : MonoBehaviour
                 return; // Dont generate anything if the player is in the same chunk
             }
 
-            GenerateWorld(playerLocation);
+            Generate(playerLocation.chunkPosition);
         }
     }
 
-    private void Start()
-    {
-        Initialize();
-    }
-
-    private void Initialize()
+    public void Initialize(int seed)
     {
         if (chunksHolder == null) 
         {
@@ -122,40 +95,23 @@ public class MeshGenerator : MonoBehaviour
             }
         }
 
-        foreach (Transform player in players)
-        {
-            PlayerLocation playerLocation = new PlayerLocation();
-            playerLocations.Add(playerLocation);
-            GetPlayerCurrentPosition(playerLocation);
-        }
-
         offset = chunkSizeHorizontal * generator.mapSizeInChunks / 2;
+
+        Random.InitState(seed);
+
+        newNoise = seed;
+
+        initialized = true;
     }
 
-    void GenerateWorld(PlayerLocation playerLocation)
+    void Generate(Vector2Int playerInChunk)
     {
-        /*
-        if (GenerateNewChunks(playerLocation.chunkPosition))
-        {
-            GetOutOfRangeChunks(playerLocation.chunkPosition);
-
-            GenerateMeshes();
-
-            SpawnGenerateables();
-
-            // Sync on network 
-        }
-        */
+        GetOutOfRangeChunks(playerInChunk);
+        GenerateNewChunks(playerInChunk);
     }
 
-    public List<Vector3> sumTwoListsVector(List<Vector3> vx, List<Vector3> vy)
+    public List<Vector3> SumVertices(List<Vector3> vx, List<Vector3> vy)
     {
-        if (vx.Count != vy.Count && debugPrintArrayAddition)
-        {
-            Debug.LogWarning("Vector lists are not equal in size");
-            Debug.LogWarning(vx.Count + " -VECTOR3- "+  vy.Count);
-        }
-
         List<Vector3> sum = new List<Vector3>();
 
         int longer = 0;
@@ -166,7 +122,6 @@ public class MeshGenerator : MonoBehaviour
 
         if (vx.Count == 0)
         {
-            if (debugPrintArrayAddition) { Debug.Log("vx is empty, setting vx to vy"); }
             vx = vy;
             return vx;
         }
@@ -179,14 +134,8 @@ public class MeshGenerator : MonoBehaviour
         return sum;
     }
 
-    public List<int> sumTwoListsInt(List<int> vx, List<int> vy)
+    public List<int> SumTriangles(List<int> vx, List<int> vy)
     {
-        if (vx.Count != vy.Count && debugPrintArrayAddition)
-        {
-            Debug.LogWarning("Int arrays are not equal in size");
-            Debug.LogWarning(vx.Count + " -INT- " + vy.Count);
-        }
-
         List <int> sum = new List<int>();
 
         int longer = 0;
@@ -197,7 +146,6 @@ public class MeshGenerator : MonoBehaviour
 
         if (vx.Count == 0)
         {
-            if (debugPrintArrayAddition) { Debug.Log("vx is empty, setting vx to vy"); }
             vx = vy;
             return vx;
         }
@@ -217,8 +165,7 @@ public class MeshGenerator : MonoBehaviour
         List<MeshData> meshDatas = new List<MeshData>();
 
         RelativeBiomes relativeBiomes = new RelativeBiomes();
-        relativeBiomes.Feed(boraChunk.chunkPosition, generator);
-        relativeBiomes.DebugPrint(currentChunk, debugPrintRelativeBiomes);
+        relativeBiomes.Feed(boraChunk.chunkPosition, World.Instance.biomeMap);
 
         foreach (GameObject heightGenGameObject in defaultBiome.heightGenerators)
         {
@@ -241,7 +188,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.right)
                 {
-                    if (debugPrintBiomeInterpolation) { Debug.Log("RIGHT SIDE INTERPOLATED !"); }
                     boraChunk.rightEdgeInterpolated = true;
 
                     for (int z = 0; z < (chunkSizeHorizontal + 1); z++)
@@ -255,7 +201,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.left)
                 {
-                    if (debugPrintBiomeInterpolation) { Debug.Log("LEFT SIDE INTERPOLATED !"); }
                     boraChunk.leftEdgeInterpolated = true;
 
                     for (int z = 0; z < (chunkSizeHorizontal + 1); z++)
@@ -269,7 +214,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.front)
                 {
-                    if (debugPrintBiomeInterpolation) { Debug.Log("FRONT SIDE INTERPOLATED !"); }
                     boraChunk.frontEdgeInterpolated = true;
 
                     for (int x = 0; x < (chunkSizeHorizontal + 1); x++)
@@ -283,7 +227,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.back)
                 {
-                    if (debugPrintBiomeInterpolation) { Debug.Log("BACK SIDE INTERPOLATED !"); }
                     boraChunk.backEdgeInterpolated = true;
 
                     for (int x = 0; x < (chunkSizeHorizontal + 1); x++)
@@ -297,7 +240,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.frontRight && !boraChunk.frontEdgeInterpolated && !boraChunk.rightEdgeInterpolated)
                 {
-                    if (debugPrintBiomeInterpolationEdges) { Debug.Log("FRONT RIGHT SIDE INTERPOLATED !"); }
                     boraChunk.frontRightEdgeInterpolated = true;
 
                     for (int x = 0; x < biomeEdgeBlending; x++)
@@ -321,7 +263,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.frontLeft && !boraChunk.frontEdgeInterpolated && !boraChunk.leftEdgeInterpolated)
                 {
-                    if (debugPrintBiomeInterpolationEdges) { Debug.Log("FRONT LEFT SIDE INTERPOLATED !"); }
                     boraChunk.frontLeftEdgeInterpolated = true;
 
                     for (int x = 0; x < biomeEdgeBlending; x++)
@@ -345,7 +286,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.backRight && !boraChunk.backEdgeInterpolated && !boraChunk.rightEdgeInterpolated)
                 {
-                    if (debugPrintBiomeInterpolationEdges) { Debug.Log("BACK RIGHT SIDE INTERPOLATED !"); }
                     boraChunk.backRightEdgeInterpolated = true;
 
                     for (int x = 0; x < biomeEdgeBlending; x++)
@@ -369,7 +309,6 @@ public class MeshGenerator : MonoBehaviour
 
                 if (relativeBiomes.backLeft && !boraChunk.backEdgeInterpolated && !boraChunk.leftEdgeInterpolated)
                 {
-                    if (debugPrintBiomeInterpolationEdges) { Debug.Log("BACK LEFT SIDE INTERPOLATED !"); }
                     boraChunk.backLeftEdgeInterpolated = true;
 
                     for (int x = 0; x < biomeEdgeBlending; x++)
@@ -407,7 +346,7 @@ public class MeshGenerator : MonoBehaviour
         
         foreach (MeshData meshData in meshDatas)
         {
-            vertices = sumTwoListsVector(vertices, meshData.vertices);
+            vertices = SumVertices(vertices, meshData.vertices);
             //triangles = sumTwoListsInt(triangles, meshData.triangles.ToList());
         }
 
@@ -423,10 +362,14 @@ public class MeshGenerator : MonoBehaviour
         while (chunksToDestroy.Count > 0)
         {
             GameObject chunkToDestroy = chunksToDestroy[0];
+            Chunk chunk = chunkToDestroy.GetComponent<Chunk>();
 
             chunksToDestroy.Remove(chunkToDestroy);
             chunks.Remove(chunkToDestroy.GetComponent<Chunk>());
             chunksGameObjects.Remove(chunkToDestroy);
+
+            ChunkData chunkData = chunk.GetChunkData();
+            World.Instance.UnloadChunk(chunkData);
 
             Destroy(chunkToDestroy);
         }
@@ -445,15 +388,19 @@ public class MeshGenerator : MonoBehaviour
                 {
                     if (chunk.chunkPosition == chunkPosition)
                     {
+                        Debug.Log("Chunk already exists at " + chunkPosition);
+                        
                         chunkExists = true;
                     }
                 }
 
                 if (!chunkExists)
                 {
+                    Debug.Log(chunkPosition);
+
                     GameObject chunkGameObject = new GameObject("Chunk " + chunkPosition);
                     chunkGameObject.transform.parent = chunksHolder.transform;
-                    chunkGameObject.transform.position = new Vector3(chunkPosition.x * chunkSizeHorizontal - offset, -16, chunkPosition.y * chunkSizeHorizontal - offset);
+                    chunkGameObject.transform.position = new Vector3(chunkPosition.x * chunkSizeHorizontal - offset, 0, chunkPosition.y * chunkSizeHorizontal - offset);
 
                     Chunk boraChunk = chunkGameObject.AddComponent<Chunk>();
                     boraChunk.chunkPosition = chunkPosition;
@@ -467,30 +414,39 @@ public class MeshGenerator : MonoBehaviour
 
                     chunks.Add(boraChunk);
                     chunksGameObjects.Add(chunkGameObject);
+
+                    ChunkData chunkData = World.Instance.LoadChunk(chunkPosition);
+
+                    if (chunkData != null)
+                    {
+                        boraChunk.SetMesh(chunkData.vertices, chunkData.triangles);
+                        boraChunk.Configure(mat);
+
+                        Debug.Log("Loading chunk at " + chunkPosition);
+            
+                        LoadSpawnables(boraChunk, chunkData);
+                    }
+
+                    if (!boraChunk.setUp)
+                    {
+                        MeshData meshData;
+                        meshData = GenerateMesh(boraChunk.chunkBiome, new Vector2(chunkGameObject.transform.position.x, chunkGameObject.transform.position.z), chunkGameObject);
+
+                        if (generateColliders)
+                        {
+                            boraChunk.generateColliders = true;
+                        }
+                            
+                        boraChunk.SetMesh(meshData.vertices, meshData.triangles);
+
+                        boraChunk.Configure(mat);
+                    }
+
+                    if (!boraChunk.spawnablesHaveBeenGenerated)
+                    {
+                        GenerateSpawnables(boraChunk, biome);
+                    }
                 }
-            }
-        }
-    }
-
-    void GenerateMeshes()
-    {
-        foreach (GameObject chunkGameObject in chunksGameObjects)
-        {
-            Chunk boraChunk = chunkGameObject.GetComponent<Chunk>();
-
-            if (!boraChunk.setUp)
-            {
-                MeshData meshData;
-                meshData = GenerateMesh(boraChunk.chunkBiome, new Vector2(chunkGameObject.transform.position.x, chunkGameObject.transform.position.z), chunkGameObject);
-
-                if (generateColliders)
-                {
-                    boraChunk.generateColliders = true;
-                }
-                
-                boraChunk.SetMesh(meshData.vertices, meshData.triangles);
-
-                boraChunk.Configure(mat);
             }
         }
     }
@@ -533,52 +489,68 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    void SpawnGenerateables()
+    void LoadSpawnables(Chunk chunk, ChunkData chunkData)
     {
-        foreach (GameObject chunkGameObject in chunksGameObjects)
+        foreach (SpawnableData spawnableData in chunkData.spawnableDatas)
         {
-            Chunk chunk = chunkGameObject.GetComponent<Chunk>();
+            GameObject spawnableGameObject = Instantiate(SpawnableDatabase.Instance.GetSpawnableByID(spawnableData.spawnableID));
 
-            if (!chunk.generateablesHaveBeenGenerated)
-            {
-                Biome biome = chunk.chunkBiome;
-                GenerateSpawnables(chunk, biome);
-            }
+            spawnableGameObject.transform.SetParent(chunk.gameObject.transform);
+            spawnableGameObject.transform.localPosition = spawnableData.localPosition;
+            spawnableGameObject.transform.localRotation = Quaternion.Euler(spawnableData.localRotation);
+            spawnableGameObject.transform.localScale = spawnableData.localScale;
+
+            chunk.spawnablesInChunk.Add(spawnableGameObject);
         }
+
+        chunk.spawnablesHaveBeenGenerated = true;
     }
 
     void GenerateSpawnables(Chunk chunk, Biome biome)
     {
-        foreach (Spawnable spawnable in biome.spawnables)
+        if (chunk.spawnablesHaveBeenGenerated)
+        {
+            return;
+        }
+
+        foreach (GameObject spawnableGameObject in biome.spawnables)
         {
             Mesh mesh = chunk.GetMesh();
             Vector3 spawnPosition = mesh.vertices[Random.Range(0, mesh.vertices.Length)];
 
-            if (spawnable.generateChance >= UnityEngine.Random.Range(0f, 1f))
+            Spawnable spawnableComponent = spawnableGameObject.GetComponent<Spawnable>();
+
+            if (spawnableComponent.generateChance >= Random.Range(0f, 1f))
             {
-                GameObject gameObject = spawnable.GetGameObject();
-                GameObject spawnedObject = Instantiate(gameObject);
+                GameObject spawnedObject = Instantiate(spawnableGameObject);
 
                 spawnedObject.transform.SetParent(chunk.gameObject.transform);
                 spawnedObject.transform.localPosition = spawnPosition;
 
-                SpawnableData spawnableData = new SpawnableData();
-
-                spawnableData.position = spawnedObject.transform.position;
-                spawnableData.rotation = spawnedObject.transform.rotation.eulerAngles;
-                spawnableData.scale = spawnedObject.transform.localScale;
+                chunk.spawnablesInChunk.Add(spawnedObject);
             }
         }
 
-        chunk.generateablesHaveBeenGenerated = true;
+        chunk.spawnablesHaveBeenGenerated = true;
     }
 
-    private class PlayerLocation
+    public void AppendPlayer(Transform player)
+    {
+        if (playerLocations == null)
+        {
+            playerLocations = new List<PlayerLocation>();
+        }
+
+        PlayerLocation playerLocation = new PlayerLocation();
+        playerLocation.player = player;
+        playerLocations.Add(playerLocation);
+    }
+
+    [System.Serializable]
+    public class PlayerLocation
     {
         public Transform player;
         public Vector2Int chunkPosition;
         public Vector3 playerPosition;
     }
 }
-
-#endif

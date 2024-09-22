@@ -16,58 +16,45 @@ public class RelativeBiomes
 
     public List<GameObject> all = new List<GameObject>();
 
-    public void Feed(Vector2Int chunkPosition, MapGenerator generator)
+    public void Feed(Vector2Int chunkPosition, int[,] biomeMap)
     {
         int x = chunkPosition.x;
         int y = chunkPosition.y;
 
-        int val = generator.map[x, y];
+        int val = biomeMap[x, y];
 
-        if (generator.map[x + 1, y] != val)
+        if (biomeMap[x + 1, y] != val)
         {
             left = true;
         }
-        if (generator.map[x - 1, y] != val)
+        if (biomeMap[x - 1, y] != val)
         {
             right = true;
         }
-        if (generator.map[x, y + 1] != val)
+        if (biomeMap[x, y + 1] != val)
         {
             back = true;
         }
-        if (generator.map[x, y - 1] != val)
+        if (biomeMap[x, y - 1] != val)
         {
             front = true;
         }
 
-        if (generator.map[x + 1, y + 1] != val)
+        if (biomeMap[x + 1, y + 1] != val)
         {
             backLeft = true;
         }
-        if (generator.map[x - 1, y  + 1] != val)
+        if (biomeMap[x - 1, y  + 1] != val)
         {
             backRight = true;
         }
-        if (generator.map[x + 1, y - 1] != val)
+        if (biomeMap[x + 1, y - 1] != val)
         {
             frontLeft = true;
         }
-        if (generator.map[x - 1, y - 1] != val)
+        if (biomeMap[x - 1, y - 1] != val)
         {
             frontRight = true;
-        }
-    }
-
-    public void DebugPrint(GameObject o, bool b)
-    {
-        if (b)
-        {
-            Debug.Log("Chunk " + o.name + " has " + all.Count + " relative chunks with different biomes around it.");
-
-            for (int i = 0; i < all.Count; i++)
-            {
-                Debug.Log("Chunk " + o.name + " has biome " + all[i].GetComponent<Chunk>().chunkBiome + " around it.");
-            }
         }
     }
 }

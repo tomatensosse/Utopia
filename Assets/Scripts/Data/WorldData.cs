@@ -8,5 +8,5 @@ public class WorldData : SaveData
     public string worldSaveName;
     public int worldSeed;
     public List<EntityData> entityDatas;
-    public ChunkData[,] chunkDatas;
+    public List<ChunkData> chunkDatas;
 }

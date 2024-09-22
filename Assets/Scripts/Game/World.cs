@@ -9,10 +9,12 @@ public class World : NetworkBehaviour
     public WorldData worldData;
     [HideInInspector] public bool initialized;
 
+    [Header("World Settings")]
+    public int seed;
+    [HideInInspector] public int[,] biomeMap;
+
     private void Awake()
     {
-        Debug.Log("World Awake");
-
         if (Instance == null)
         {
             Instance = this;
@@ -23,11 +25,47 @@ public class World : NetworkBehaviour
             Destroy(gameObject);
         }
 
+        Random.InitState(seed);
+
         initialized = true;
     }
 
     private void Start()
     {
-        
+        InitializeWorld();
+    }
+
+    private void InitializeWorld()
+    {
+        biomeMap = MapGenerator.Instance.BiomeMap(seed); // Generate biome map
+
+        MeshGenerator.Instance.Initialize(seed); // Initialize mesh generator
+    }
+
+    public void UnloadChunk(ChunkData chunkData) // Save chunk
+    {
+        worldData.chunkDatas.Add(chunkData);
+    }
+
+    public ChunkData LoadChunk(Vector2Int at) // Load from save
+    {
+        foreach (ChunkData chunkData in worldData.chunkDatas)
+        {
+            if (chunkData.chunkPosition == at)
+            {
+                Debug.Log("NIGGANIGGA | Chunk at " + at + " found in save.");
+
+                return chunkData;
+            }
+        }
+
+        Debug.Log("Chunk at " + at + " not found in save.");
+
+        return null;
+    }
+
+    public void AppendPlayer(Transform player)
+    {
+        MeshGenerator.Instance.AppendPlayer(player);
     }
 }

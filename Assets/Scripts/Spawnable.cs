@@ -2,32 +2,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Spawnable
+public class Spawnable : MonoBehaviour
 {
+    public string spawnableID;
     [Range(0, 1)]
     public float generateChance = 0.3f;
 
     public bool hasVariations;
 
-    [ConditionalHide(nameof(hasVariations), false)]
-    public GameObject objectToSpawn;
-
-    [ConditionalHide(nameof(hasVariations), true)]
-    public List<GameObject> objectToSpawnVariations;
-
-    public virtual GameObject GetGameObject()
+    public virtual SpawnableData GetSpawnableData()
     {
-        if (!hasVariations)
-        {
-            return objectToSpawn;
-        }
-        else
-        {
-            int randomIndex = Random.Range(0, objectToSpawnVariations.Count);
-            return objectToSpawnVariations[randomIndex];
-        }
-    }
-    
-    
+        SpawnableData spawnableData = new SpawnableData();
+        
+        spawnableData.spawnableID = spawnableID;
+        spawnableData.localPosition = transform.localPosition;
+        spawnableData.localRotation = transform.localRotation.eulerAngles;
+        spawnableData.localScale = transform.localScale;
 
+        return spawnableData;
+    }
 }

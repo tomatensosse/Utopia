@@ -65,6 +65,8 @@ public class Player : NetworkBehaviour, IHealth
     {
         // make sure it's not destroyed when we change scenes (FIX LATER)
         DontDestroyOnLoad(gameObject);
+
+        World.Instance.AppendPlayer(transform);
     }
 
     public void InitializePlayer(PlayerData playerSave, string playerConnectionID)

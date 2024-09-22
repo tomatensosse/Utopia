@@ -38,5 +38,5 @@ public class Biome : ScriptableObject
     [Header("Rendering")]
     public Material material;
     [Header("Spawning")]
-    public List<Spawnable> spawnables;
+    public List<GameObject> spawnables;
 }
