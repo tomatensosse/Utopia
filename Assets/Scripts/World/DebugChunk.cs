@@ -1,10 +1,9 @@
+using Unity.AI.Navigation;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class DebugChunk : MonoBehaviour
 {
-    public int size = 8;
-    public int trisPerAxis = 8;
     public Color chunkBoundsColor = Color.white;
 
     public Material material;
@@ -13,12 +12,14 @@ public class DebugChunk : MonoBehaviour
 
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
+    private MeshCollider meshCollider;
+    private NavMeshSurface navMeshSurface;
 
     [Header("Params")]
+    [SerializeField] int size = 8;
+    [SerializeField] int pointsPerAxis = 8;
     [SerializeField] float noiseScale = 1f;
-    [SerializeField] float heightChange = 0f;
     [SerializeField] int octaves = 1;
-    [SerializeField] int offset;
 
     [SerializeField] float amplitude = 1f;
 
@@ -35,9 +36,9 @@ public class DebugChunk : MonoBehaviour
     {
         TerrainHeightNoise noiseGen = heightGen.GetComponent<TerrainHeightNoise>();
         
-        noiseGen.OverrideParameters(noiseScale, heightChange, octaves, offset, amplitude, lacunarity, heightChangeVariation);
+        noiseGen.OverrideParameters(noiseScale, amplitude, octaves, lacunarity);
 
-        MeshData data = noiseGen.Execute(size, Vector2.zero, 0);
+        MeshData data = noiseGen.Execute(size, pointsPerAxis, Vector2.zero, 0);
 
         Mesh mesh = new Mesh();
         mesh.name = "Chunk Mesh";
@@ -47,14 +48,34 @@ public class DebugChunk : MonoBehaviour
 
         mesh.RecalculateNormals();
 
+        mesh.RecalculateTangents();
+
+        mesh.RecalculateBounds();
+
+        Vector2[] uvs = new Vector2[data.vertices.Count];
+        for (int i = 0; i < data.vertices.Count; i++)
+        {
+            // Normalize UVs based on the X and Z coordinates of each vertex
+            float u = (data.vertices[i].x + size / 2f) / size;
+            float v = (data.vertices[i].z + size / 2f) / size;
+            uvs[i] = new Vector2(u, v);
+        }
+        mesh.uv = uvs;
+
         meshFilter.mesh = mesh;
 
-        meshRenderer.material = material;
+        meshCollider.sharedMesh = mesh;
+
+        meshCollider.convex = true;
+
+        navMeshSurface.BuildNavMesh();
     }
 
     private void Initialize()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
+        meshCollider = GetComponent<MeshCollider>();
+        navMeshSurface = GetComponent<NavMeshSurface>();
     }
 }

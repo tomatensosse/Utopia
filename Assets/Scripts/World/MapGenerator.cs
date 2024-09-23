@@ -4,11 +4,7 @@
 // Emre Bora Kaynar
 // Arda Gürses
 
-#if UNITY_EDITOR
-
 using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
 using UnityEngine;
 
 public class BiomePoints
@@ -25,12 +21,12 @@ public class BiomeOrigin
 
 public class MapGenerator : MonoBehaviour
 {
+    public static MapGenerator Instance;
     public UnityEngine.UI.Image worldVisualisationUIImage;
     public int mapSizeInChunks = 256;
     public int islandOffsetFromEdges = 16;
     public int falloffConstantDistance = 14;
     public int falloffAfterConstantDistance = 8;
-    public Color emptyCellColor;
     public Biome[] biomes;
     public int biomeDistance;
     public Biome beachBiome;
@@ -42,22 +38,20 @@ public class MapGenerator : MonoBehaviour
     [Range(0.0f, 1.0f)]
     [SerializeField] float noiseTreshold = 0.5f;
     int seed = 0;
-    string imageSavePath = "Assets/WorldVisualisation.png";
-    [HideInInspector] public int[,] map;
+    [HideInInspector] private int[,] biomeMap;
     BiomePoints[] biomePointsArray;
     List<BiomeOrigin> biomeOrigins = new List<BiomeOrigin>();
 
-    [ContextMenu("Generate Map")]
-    public void Editor()
+    private void Awake()
     {
-        GenerateMap(seed);
+        Instance = this;
     }
 
-    public void GenerateMap(int seed)
+    public int[,] BiomeMap(int seed)
     {
         Random.InitState(seed);
 
-        map = new int[mapSizeInChunks, mapSizeInChunks];
+        biomeMap = new int[mapSizeInChunks, mapSizeInChunks];
 
         GenerateBiomePoints();
 
@@ -67,10 +61,10 @@ public class MapGenerator : MonoBehaviour
         {
             GenerateOoze(biome, biome.spawnInBiome);
         }
-        
-        CustomDebug.OutputMatrix(map);
 
-        SaveTextureToFile(GenerateTexture2D());  // save to file
+        CustomDebug.OutputMatrix(biomeMap);
+
+        return biomeMap;
     }
 
     void GenerateBaseMap()
@@ -83,7 +77,7 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < mapSizeInChunks; y++)
             {
-                map[x, y] = 0;
+                biomeMap[x, y] = 0;
 
                 int index = GetIndexFromBiomePointsArrayFromID(0);
                 biomePointsArray[index].points.Add(new Vector2Int(x, y));
@@ -108,14 +102,14 @@ public class MapGenerator : MonoBehaviour
                     float increasedThreshold = noiseTreshold + (islandOffsetFromEdges - distanceFromEdge) / islandOffsetFromEdges;
                     if (Mathf.PerlinNoise((x * 0.123f + randomOffset) * noiseScale, (y * 0.123f + randomOffset) * noiseScale) < increasedThreshold * falloff)
                     {
-                        map[x, y] = -1;
+                        biomeMap[x, y] = -1;
                     }
                 }
                 else
                 {
                     if (Mathf.PerlinNoise((x * 0.123f + randomOffset) * noiseScale, (y * 0.123f + randomOffset) * noiseScale) < noiseTreshold * falloff)
                     {
-                        map[x, y] = -1;
+                        biomeMap[x, y] = -1;
                     }
                 }
             }
@@ -128,47 +122,47 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < mapSizeInChunks; y++)
             {
-                if (map[x, y] == 0)
+                if (biomeMap[x, y] == 0)
                 {
-                    if (x > 0 && map[x - 1, y] == -1)
+                    if (x > 0 && biomeMap[x - 1, y] == -1)
                     {
-                        map[x, y] = -2;
+                        biomeMap[x, y] = -2;
                         for (int i = 1; i <= beachStrength; i++)
                         {
-                            if (x + i >= 0 && map[x + i, y] == 0)
+                            if (x + i >= 0 && biomeMap[x + i, y] == 0)
                             {
                                 pointsToSet[x + i, y] = -2;
                             }
                         }
                     }
-                    if (x < mapSizeInChunks - 1 && map[x + 1, y] == -1)
+                    if (x < mapSizeInChunks - 1 && biomeMap[x + 1, y] == -1)
                     {
-                        map[x, y] = -2;
+                        biomeMap[x, y] = -2;
                         for (int i = 1; i <= beachStrength; i++)
                         {
-                            if (x - i >= 0 && map[x - i, y] == 0)
+                            if (x - i >= 0 && biomeMap[x - i, y] == 0)
                             {
                                 pointsToSet[x - i, y] = -2;
                             }
                         }
                     }
-                    if (y > 0 && map[x, y - 1] == -1)
+                    if (y > 0 && biomeMap[x, y - 1] == -1)
                     {
-                        map[x, y] = -2;
+                        biomeMap[x, y] = -2;
                         for (int i = 1; i <= beachStrength; i++)
                         {
-                            if (y + i >= 0 && map[x, y + i] == 0)
+                            if (y + i >= 0 && biomeMap[x, y + i] == 0)
                             {
                                 pointsToSet[x, y + i] = -2;
                             }
                         }
                     }
-                    if (y < mapSizeInChunks - 1 && map[x, y + 1] == -1)
+                    if (y < mapSizeInChunks - 1 && biomeMap[x, y + 1] == -1)
                     {
-                        map[x, y] = -2;
+                        biomeMap[x, y] = -2;
                         for (int i = 1; i <= beachStrength; i++)
                         {
-                            if (y - i >= 0 && map[x, y - i] == 0)
+                            if (y - i >= 0 && biomeMap[x, y - i] == 0)
                             {
                                 pointsToSet[x, y - i] = -2;
                             }
@@ -185,7 +179,7 @@ public class MapGenerator : MonoBehaviour
             {
                 if (pointsToSet[x, y] == -2)
                 {
-                    map[x, y] = -2;
+                    biomeMap[x, y] = -2;
                 }
             }
         }
@@ -195,9 +189,9 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < mapSizeInChunks; y++)
             {
-                if (map[x, y] == -1)
+                if (biomeMap[x, y] == -1)
                 {
-                    map[x, y] = lakeBiome.specialBiomeID;
+                    biomeMap[x, y] = lakeBiome.specialBiomeID;
 
                 }
             }
@@ -208,12 +202,12 @@ public class MapGenerator : MonoBehaviour
     void FloodFill(int x, int y, int targetValue, int newValue)
     {
         // S�n�rlar� ve hedef de�eri kontrol et
-        if (x < 0 || x >= mapSizeInChunks || y < 0 || y >= mapSizeInChunks || map[x, y] != targetValue)
+        if (x < 0 || x >= mapSizeInChunks || y < 0 || y >= mapSizeInChunks || biomeMap[x, y] != targetValue)
             return;
 
         // Hedef de�eri yeni de�er ile de�i�tir
         
-        map[x, y] = newValue;
+        biomeMap[x, y] = newValue;
         
         
 
@@ -222,74 +216,6 @@ public class MapGenerator : MonoBehaviour
         FloodFill(x - 1, y, targetValue, newValue); // Sol
         FloodFill(x, y + 1, targetValue, newValue); // A�a��
         FloodFill(x, y - 1, targetValue, newValue); // Yukar�
-    }
-    Texture2D GenerateTexture2D()
-    {
-        Texture2D texture = new Texture2D(mapSizeInChunks, mapSizeInChunks);
-
-        for (int x = 0; x < mapSizeInChunks; x++)
-        {
-            for (int y = 0; y < mapSizeInChunks; y++)
-            {
-                // hardcoded if commands are for speacial biomes (ex: the empty cell and beach)
-                // if the cell is empty
-                if (map[x, y] == -1)
-                {
-                    texture.SetPixel(x, y, emptyCellColor);
-                }
-                // if the cell is beach
-                else if (map[x, y] == -2)
-                {
-                    texture.SetPixel(x, y, beachBiome.biomeColor);
-                }
-                else if (map[x, y] == -3)
-                {
-                    texture.SetPixel(x, y, lakeBiome.biomeColor);
-                }
-                else if (map[x, y] == -4)
-                {
-                    texture.SetPixel(x, y, oceanBiome.biomeColor);
-                }
-                // else set the standart biome color
-                else
-                {
-                    // get the biome color
-                    Debug.Log(map[x, y]);
-                    texture.SetPixel(x, y, biomes[GetIndexFromBiomePointsArrayFromID(map[x, y])].biomeColor);
-                }
-            }
-        }
-
-        texture.Apply();
-
-        Debug.Log("Successfully generated image of the world.");
-
-        return texture;
-    }
-
-    void SaveTextureToFile(Texture2D texture)
-    {
-        if (File.Exists(imageSavePath))
-        {
-            File.Delete(imageSavePath);
-        }
-
-        byte[] bytes = texture.EncodeToPNG();
-        File.WriteAllBytes(imageSavePath, bytes);
-
-        Debug.Log("Successfully saved image of the world.");
-
-        if (worldVisualisationUIImage != null)
-        {
-            TextureImporter textureImporter = AssetImporter.GetAtPath(imageSavePath) as TextureImporter;
-            textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
-            textureImporter.filterMode = FilterMode.Point;
-            textureImporter.textureType = TextureImporterType.Sprite;
-
-            AssetDatabase.ImportAsset(imageSavePath, ImportAssetOptions.ForceUpdate);
-            
-            worldVisualisationUIImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(imageSavePath);
-        }
     }
 
     void GenerateBiomePoints()
@@ -391,7 +317,7 @@ public class MapGenerator : MonoBehaviour
             int index = Random.Range(0, samplePoints.Count);    
             Vector2Int point = samplePoints[index];
         
-            int pointVal = map[point.x, point.y];
+            int pointVal = biomeMap[point.x, point.y];
 
             foreach (BiomeOrigin biomeOrigin in biomeOrigins)
             {
@@ -405,7 +331,7 @@ public class MapGenerator : MonoBehaviour
             if (pointVal == spawnInBiome.biomeID && a)
             {
                 // generates single point to spread around from
-                map[point.x, point.y] = biome.biomeID;
+                biomeMap[point.x, point.y] = biome.biomeID;
                 Debug.Log("Successfully generated " + biome.biomeName + " at " + point.x + ", " + point.y);
 
                 biomePointsArray[GetIndexFromBiomePointsArrayFromID(biome.biomeID)].points.Add(point);
@@ -417,7 +343,7 @@ public class MapGenerator : MonoBehaviour
 
                 biomeOrigins.Add(newBiomeOrigin);
 
-                OozeGeneration(map, point.x, point.y, biome.maxChunksInInstance, biome.biomeID);
+                OozeGeneration(biomeMap, point.x, point.y, biome.maxChunksInInstance, biome.biomeID);
             }
             else
             {
@@ -457,7 +383,7 @@ public class MapGenerator : MonoBehaviour
 
     public int GetBiomeIndex(int x, int y)
     {
-        return map[x, y];
+        return biomeMap[x, y];
     }
 
     public Biome GetBiome(Vector2Int point)
@@ -465,28 +391,26 @@ public class MapGenerator : MonoBehaviour
         int x = point.x;
         int y = point.y;
 
-        if (map[x, y] == -1)
+        if (biomeMap[x, y] == -1)
         {
             Debug.Log("EMPTY CELL");
             return null;
         }
-        else if (map[x, y] == -2)
+        else if (biomeMap[x, y] == -2)
         {
             return beachBiome;
         }
-        else if (map[x, y] == -3)
+        else if (biomeMap[x, y] == -3)
         {
             return lakeBiome;
         }
-        else if (map[x, y] == -4)
+        else if (biomeMap[x, y] == -4)
         {
             return oceanBiome;
         }
         else
         {
-            return biomes[GetIndexFromBiomePointsArrayFromID(map[x, y])];
+            return biomes[GetIndexFromBiomePointsArrayFromID(biomeMap[x, y])];
         }
     }
 }
-
-#endif

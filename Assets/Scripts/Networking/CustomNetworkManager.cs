@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public struct PlayerSaveMessage : NetworkMessage
 {
-    public PlayerSave playerSave;
+    public PlayerData playerSave;
     public string connectionID;
 }
 
@@ -15,19 +15,24 @@ public struct PlayerStateMessage : NetworkMessage
     public List<PlayerState> playerStates;
 }
 
-public struct WorldStateMessage : NetworkMessage
+public struct WorldDataMessage : NetworkMessage
 {
-    public WorldState worldState;
+    public WorldData worldData;
 }
 
 public class CustomNetworkManager : NetworkManager
 {
     [Header("Custom Settings")]
     public GameObject worldPrefab;
-    public PlayerSave hostPlayerSave;
-    public PlayerSave clientPlayerSave;
-    public WorldSave hostWorldSave;
+
+    public PlayerData hostPlayerData;
+
+    public PlayerData clientPlayerData;
+
+    public WorldData hostWorldData;
+
     private SpawnPointManager spawnPointManager;
+
     private bool gameSceneLoaded = false;
 
     public override void Update()
@@ -60,7 +65,6 @@ public class CustomNetworkManager : NetworkManager
 
     private void SaveAndQuit()
     {
-        World.Instance.SaveWorld();
         // Save player
         // Disconnect
     }
@@ -70,7 +74,6 @@ public class CustomNetworkManager : NetworkManager
         Vector3 spawnPosition = spawnOrigin + Random.insideUnitSphere * Random.Range(spawnRadMin, spawnRadMax);
         GameObject entityGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID(entityID), spawnPosition, Quaternion.identity);
         NetworkServer.Spawn(entityGameObject, NetworkServer.localConnection);
-        World.Instance.AddEntity(entityGameObject.GetComponent<Entity>());
     }
 
     private void SpawnFloorItem(string itemID, Vector3 spawnOrigin, float spawnRadMin = 4f, float spawnRadMax = 8f)
@@ -82,7 +85,6 @@ public class CustomNetworkManager : NetworkManager
         floorItem.Initialize(ItemData.Generate(itemID, 1));
         
         NetworkServer.Spawn(floorItemGameObject, NetworkServer.localConnection);
-        World.Instance.AddEntity(floorItemGameObject.GetComponent<Entity>());
     }
 
     public override void OnStartHost()
@@ -109,7 +111,7 @@ public class CustomNetworkManager : NetworkManager
         Debug.Log("[Client] Registering handlers for PlayerSaveMessage and PlayerStateMessage.");
         NetworkClient.RegisterHandler<PlayerSaveMessage>(OnClientPlayerSaveMessageRecieved);
         NetworkClient.RegisterHandler<PlayerStateMessage>(OnPlayerStateMessageReceived);
-        NetworkClient.RegisterHandler<WorldStateMessage>(OnClientWorldStateMessageReceived);
+        NetworkClient.RegisterHandler<WorldDataMessage>(OnClientWorldStateMessageReceived);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -139,17 +141,17 @@ public class CustomNetworkManager : NetworkManager
 
     private void OnServerSceneLoadedForPlayers()
     {
-        GameObject hostPlayer = Instantiate(playerPrefab);
+        GameObject hostPlayer = Instantiate(playerPrefab, new Vector3(0, 8, 0), Quaternion.identity);
         Player hostPlayerComponent = hostPlayer.GetComponent<Player>();
 
-        hostPlayerComponent.InitializePlayer(hostPlayerSave, "HOST");
+        hostPlayerComponent.InitializePlayer(hostPlayerData, "HOST");
         hostPlayerComponent.connectionID = "HOST";
 
         NetworkServer.AddPlayerForConnection(NetworkServer.localConnection, hostPlayer);
 
         Debug.Log("[Server] Server scene loaded.");
         World world = Instantiate(worldPrefab).GetComponent<World>();
-        world.LoadWorldSave(hostWorldSave);
+        world.worldData = hostWorldData;
 
         NetworkServer.Spawn(world.gameObject);
     }
@@ -165,15 +167,16 @@ public class CustomNetworkManager : NetworkManager
 
         Debug.Log("Client is " + (NetworkClient.ready ? "ready" : "not ready"));
 
-        NetworkClient.Send(new PlayerSaveMessage { playerSave = clientPlayerSave, connectionID = NetworkClient.connection.connectionId.ToString() });
+        NetworkClient.Send(new PlayerSaveMessage { playerSave = clientPlayerData, connectionID = NetworkClient.connection.connectionId.ToString() });
     }
 
     private void OnPlayerSaveMessageReceived(NetworkConnectionToClient conn, PlayerSaveMessage message)
     {
         Debug.Log("[Server] Received player save message.");
 
-        GameObject playerGameObject = Instantiate(playerPrefab);
+        GameObject playerGameObject = Instantiate(playerPrefab, new Vector3(0, 8, 0), Quaternion.identity);
         Player player = playerGameObject.GetComponent<Player>();
+
         player.InitializePlayer(message.playerSave, conn.connectionId.ToString());
         player.connectionID = conn.connectionId.ToString();
         
@@ -199,7 +202,7 @@ public class CustomNetworkManager : NetworkManager
         conn.Send(playerStateMessage);
 
         // Send the world save to the player
-        conn.Send(new WorldStateMessage { worldState = World.Instance.worldState });
+        conn.Send(new WorldDataMessage { worldData = hostWorldData });
     } 
 
     private void OnClientPlayerSaveMessageRecieved(PlayerSaveMessage message)
@@ -209,16 +212,16 @@ public class CustomNetworkManager : NetworkManager
         StartCoroutine(InitializeClientPlayer(message));
     }
 
-    private void OnClientWorldStateMessageReceived(WorldStateMessage message)
+    private void OnClientWorldStateMessageReceived(WorldDataMessage message)
     {
-        StartCoroutine(LoadWorldStateDelayed(message.worldState));
+        StartCoroutine(LoadWorldDataDelayed(message.worldData));
     }
 
-    IEnumerator<object> LoadWorldStateDelayed(WorldState worldState)
+    IEnumerator<object> LoadWorldDataDelayed(WorldData worldState)
     {
         yield return new WaitUntil(() => World.Instance.initialized);
 
-        World.Instance.LoadWorldState(worldState);
+        World.Instance.worldData = worldState;
     }
 
     private void OnPlayerStateMessageReceived(PlayerStateMessage message)
@@ -277,17 +280,17 @@ public class CustomNetworkManager : NetworkManager
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void StartGameAsHost(PlayerSave playerSave, WorldSave worldSave)
+    public void StartGameAsHost(PlayerData playerSave, WorldData worldData)
     {
-        hostPlayerSave = playerSave;
-        hostWorldSave = worldSave;
+        hostPlayerData = playerSave;
+        hostWorldData = worldData;
 
         StartHost();
     }
 
-    public void FinalizeClientPlayer(PlayerSave playerSave)
+    public void FinalizeClientPlayer(PlayerData playerSave)
     {
-        clientPlayerSave = playerSave;
+        clientPlayerData = playerSave;
 
         // Ensure the world is loaded after selection
         SceneManager.LoadScene("Game");

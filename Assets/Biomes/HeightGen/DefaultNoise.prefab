@@ -45,11 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   strength: 1
-  noiseScale: 1
-  heightChange: 2
+  noiseScale: 0.02
+  amplitude: 16
   octaves: 1
-  offset: 0
-  amplitude: 1
   lacunarity: 2
-  heightChangeVariation: 0.5
-  trianglesPerAxis: 8

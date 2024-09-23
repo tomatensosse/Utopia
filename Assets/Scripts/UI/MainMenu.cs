@@ -7,29 +7,43 @@ using UnityEngine;
 public class MainMenu : MonoBehaviour
 {
     public static MainMenu Instance { get; private set; }
+
     [Header("UI")]
     private string currentSelection;
+
     public GameObject selectionUI;
+
     public Transform playerSavesContent;
+
     public Transform worldSavesContent;
+
     public GameObject playerCreationUI;
+
     public GameObject worldCreationUI;
+
     public GameObject joinSelectionUI;
+
     public Transform joinSelectionContent;
+
     public GameObject titleScreenUI;
+
     public GameObject settingsUI;
 
     [Header("Player Creation")]
     public TMP_InputField playerNameInput;
+
     public TMP_InputField playerClassInput;
 
     [Header("World Creation")]
     public TMP_InputField worldNameInput;
+
     public TMP_InputField worldSeedInput;
 
     [Header("Save Management")]
     public GameObject selectionMenuContentPrefab;
+
     private SaveSystem saveSystem = new SaveSystem();
+    
     private CustomNetworkManager networkManager;
 
     private void Awake()
@@ -123,7 +137,7 @@ public class MainMenu : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-            foreach (PlayerSave playerSave in saveSystem.LoadAllPlayers())
+            foreach (PlayerData playerSave in saveSystem.LoadAllPlayers())
             {
                 GameObject selectionMenuContent = Instantiate(selectionMenuContentPrefab, selectionUI.transform);
                 selectionMenuContent.transform.SetParent(playerSavesContent);
@@ -132,7 +146,7 @@ public class MainMenu : MonoBehaviour
                 selectionMenuContentScript.displayText.text = playerSave.playerSaveName;
             }
 
-            foreach (WorldSave worldSave in saveSystem.LoadAllWorlds())
+            foreach (WorldData worldSave in saveSystem.LoadAllWorlds())
             {
                 GameObject selectionMenuContent = Instantiate(selectionMenuContentPrefab, selectionUI.transform);
                 selectionMenuContent.transform.SetParent(worldSavesContent);
@@ -150,7 +164,7 @@ public class MainMenu : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-            foreach (PlayerSave playerSave in saveSystem.LoadAllPlayers())
+            foreach (PlayerData playerSave in saveSystem.LoadAllPlayers())
             {
                 GameObject selectionMenuContent = Instantiate(selectionMenuContentPrefab, selectionUI.transform);
                 selectionMenuContent.transform.SetParent(joinSelectionContent);
@@ -163,9 +177,9 @@ public class MainMenu : MonoBehaviour
 
     public void CreatePlayer()
     {
-        PlayerSave playerSave = new PlayerSave();
+        PlayerData playerSave = new PlayerData();
         playerSave.playerSaveName = playerNameInput.text;
-        playerSave._demoPlayerClass = playerClassInput.text;
+        playerSave.playerClass = playerClassInput.text;
         saveSystem.SavePlayer(playerSave, playerSave.playerSaveName);
         ChangeTo("SelectionUI");
         LoadSelectionMenuContent();
@@ -173,9 +187,10 @@ public class MainMenu : MonoBehaviour
 
     public void CreateWorld()
     {
-        WorldSave worldSave = new WorldSave();
+        WorldData worldSave = new WorldData();
         worldSave.worldSaveName = worldNameInput.text;
         worldSave.worldSeed = int.Parse(worldSeedInput.text);
+        worldSave.chunkDatas = new List<ChunkData>(); // To World Size
         saveSystem.SaveWorld(worldSave, worldSave.worldSaveName);
         ChangeTo("SelectionUI");
         LoadSelectionMenuContent();

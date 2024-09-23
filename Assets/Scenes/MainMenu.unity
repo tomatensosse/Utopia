@@ -14,11 +14,11 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.8443396, g: 0.980809, b: 1, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
+  m_LinearFogStart: 200
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
@@ -27,7 +27,7 @@ RenderSettings:
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
-  m_HaloStrength: 0.5
+  m_HaloStrength: 0.8
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
@@ -2870,13 +2870,14 @@ MonoBehaviour:
   setPlayer:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
   setWorld:
     saveID: 
     worldSaveName: 
     worldSeed: 0
     entityDatas: []
+    chunkDatas: []
 --- !u!4 &750676916
 Transform:
   m_ObjectHideFlags: 0
@@ -7732,6 +7733,8 @@ MonoBehaviour:
   - {fileID: 7117404437406433897, guid: 260c11449d9e5a44a847880d3133997a, type: 3}
   - {fileID: 8710009695634848317, guid: 9482590a307d10b419544607455bdde4, type: 3}
   - {fileID: 7341288090100755433, guid: a20ad2d2820ac0c42a900da0ec662702, type: 3}
+  - {fileID: 772804160335534987, guid: 40be4bfd17f0a4b05b5783d1f3b288c8, type: 3}
+  - {fileID: 1185419456537794146, guid: 6701745fca27b483ba306a451217e0c2, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -7747,23 +7750,24 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  worldPrefab: {fileID: 7341288090100755433, guid: a20ad2d2820ac0c42a900da0ec662702,
+  worldPrefab: {fileID: 1185419456537794146, guid: 6701745fca27b483ba306a451217e0c2,
     type: 3}
-  hostPlayerSave:
+  hostPlayerData:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
-  clientPlayerSave:
+  clientPlayerData:
     saveID: 
     playerSaveName: 
-    _demoPlayerClass: 
+    playerClass: 
     playerScore: 0
-  hostWorldSave:
+  hostWorldData:
     saveID: 
     worldSaveName: 
     worldSeed: 0
     entityDatas: []
+    chunkDatas: []
 --- !u!4 &1880743290
 Transform:
   m_ObjectHideFlags: 0

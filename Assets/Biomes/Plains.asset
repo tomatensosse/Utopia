@@ -18,9 +18,10 @@ MonoBehaviour:
   specialBiomeID: -1
   isDefaultBiome: 0
   biomeID: 1
-  maxInstances: 5
+  maxInstances: 8
   maxChunksInInstance: 64
   fullDecayTimeInSteps: 5
   spawnInBiome: {fileID: 11400000, guid: b067065911f1848969acddd02d3144df, type: 2}
   heightGenerators: []
-  materials: []
+  material: {fileID: 0}
+  spawnables: []

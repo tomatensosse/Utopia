@@ -4,6 +4,7 @@
 // Emre Bora Kaynar
 // Arda Gürses
 
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Biome", menuName = "Terrain Generation/Biome")]
@@ -35,8 +36,8 @@ public class Biome : ScriptableObject
     public GameObject[] heightGenerators;
 
     [Header("Rendering")]
-    public Texture2D[] materials;
-    //[Header("Spawning")]
-    //public GameObject[] foliage;
-    //public Spawnable[] spawnables;
+    public Material material;
+    [Header("Spawning")]
+    public List<GameObject> spawnables;
+    public List<GameObject> NPCs;
 }

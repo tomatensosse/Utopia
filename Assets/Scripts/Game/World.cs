@@ -1,54 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Mirror;
+using Steamworks;
 using UnityEngine;
-
-[System.Serializable]
-public class WorldState
-{
-    public string saveID;
-    public string worldName;
-    public int worldSeed;
-    public List<Entity> v_activeEntities; // NOT TO BE CONFUSED WITH ENTITYDATAS IN WORLD SAVE
-
-    public WorldSave ToSave()
-    {
-        WorldSave worldSave = new WorldSave();
-        worldSave.saveID = saveID;
-
-        worldSave.worldSaveName = worldName;
-        worldSave.worldSeed = worldSeed;
-
-        worldSave.entityDatas = new List<EntityData>();
-
-        foreach (Entity entity in v_activeEntities)
-        {
-            worldSave.entityDatas.Add(entity.SaveEntity());
-        }
-
-        return worldSave;
-    }
-
-    public void Load(WorldSave worldSave)
-    {
-        saveID = worldSave.saveID;
-        worldName = worldSave.worldSaveName;
-        worldSeed = worldSave.worldSeed;
-
-        v_activeEntities = new List<Entity>();
-    }
-}
 
 public class World : NetworkBehaviour
 {
     public static World Instance { get; private set; }
-    public WorldState worldState = new WorldState();
+    public WorldData worldData;
     [HideInInspector] public bool initialized;
+    public List<PlayerLocation> playerLocations;
+
+    public float worldTimeSession;
+    public float tickRate = 10f;
+
+    [Header("Spawning")]
+    public int maxSpawnsPerTick = 3;
+    public int minimumSpawnDistance = 1;
+    public int maximumSpawnDistance = 6;
+    public delegate void SpawnTickCallback();
+    public static event TimerCallback OnSpawnTick;
+
+    [Header("World Settings")]
+    public int seed;
+    [HideInInspector] public int[,] biomeMap;
 
     private void Awake()
     {
-        Debug.Log("World Awake");
-
         if (Instance == null)
         {
             Instance = this;
@@ -59,54 +38,67 @@ public class World : NetworkBehaviour
             Destroy(gameObject);
         }
 
+        Random.InitState(seed);
+
         initialized = true;
     }
 
-    public void SaveWorld()
+    private void Start()
     {
-        WorldSave worldSave = worldState.ToSave();
-        Game.Instance.saveSystem.SaveWorld(worldSave, worldSave.saveID);
+        InitializeWorld();
+
+        InvokeRepeating("Tick", 0f, tickRate);
     }
 
-    public void AddEntity(Entity entity)
+    private void Tick()
     {
-        worldState.v_activeEntities.Add(entity);
+        Debug.Log("Tick");
+        OnSpawnTick?.Invoke(null);
     }
 
-    public void LoadWorldSave(WorldSave worldSave)
+    private void Update()
     {
-        Debug.Log("Loaded world : " + worldSave.worldSaveName);
+        worldTimeSession = Time.timeSinceLevelLoad;
+    }
 
-        worldState.Load(worldSave);
+    private void InitializeWorld()
+    {
+        biomeMap = MapGenerator.Instance.BiomeMap(seed); // Generate biome map
 
-        foreach (EntityData entityData in worldSave.entityDatas)
+        MeshGenerator.Instance.Initialize(seed); // Initialize mesh generator
+    }
+
+    public void UnloadChunk(ChunkData chunkData) // Save chunk
+    {
+        worldData.chunkDatas.Add(chunkData);
+    }
+
+    public ChunkData LoadChunk(Vector2Int at) // Load from save
+    {
+        foreach (ChunkData chunkData in worldData.chunkDatas)
         {
-            GameObject entity = Instantiate(EntityDatabase.Instance.GetEntityByID(entityData.entityID), entityData.position, entityData.rotation);
-            entity.GetComponent<Entity>().LoadEntity(entityData);
-            AddEntity(entity.GetComponent<Entity>());
+            if (chunkData.chunkPosition == at)
+            {
+                Debug.Log("NIGGANIGGA | Chunk at " + at + " found in save.");
 
-            NetworkServer.Spawn(entity.gameObject, NetworkServer.localConnection);
+                return chunkData;
+            }
         }
+
+        Debug.Log("Chunk at " + at + " not found in save.");
+
+        return null;
     }
 
-    public void LoadWorldState(WorldState worldState)
+    public void AppendPlayer(Transform player)
     {
-        Debug.Log("Loaded world : " + worldState.worldName);
-
-        this.worldState = worldState;
-
-        // entities are already spawned
-        // grant authority over entities
-
-        StartCoroutine(RequestAuthorityDelayed());
-    }
-
-    IEnumerator RequestAuthorityDelayed()
-    {
-        foreach (Entity entity in worldState.v_activeEntities)
+        if (playerLocations == null)
         {
-            yield return new WaitUntil(() => entity.initialized);
-            entity.CmdRequestAuthority(connectionToClient);
+            playerLocations = new List<PlayerLocation>();
         }
+
+        PlayerLocation playerLocation = new PlayerLocation();
+        playerLocation.player = player;
+        playerLocations.Add(playerLocation);
     }
 }
