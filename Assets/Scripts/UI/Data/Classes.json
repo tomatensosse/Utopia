@@ -1,0 +1,48 @@
+{
+  "classes": [
+    {
+      "name": "Mage",
+      "description": "likes potatoes, does magic",
+      "icon": "./file/file.png",
+      "properties": {
+        "baseHP": 80,
+        "baseStamina": 150,
+        "baseArmor": 40,
+        "startingItems": ["Beginner Wand", "Mana Crystal"]
+      }
+    },
+    {
+      "name": "Warrior",
+      "description": "Swing big sword, little range",
+      "icon": "./file/file.png",
+      "properties": {
+        "baseHP": 160,
+        "baseStamina": 60,
+        "baseArmor": 80,
+        "startingItems": ["Wooden Spear", "Shield"]
+      }
+    },
+    {
+      "name": "Priest",
+      "description": "Holy dude, heals people",
+      "icon": "./file/file.png",
+      "properties": {
+        "baseHP": 120,
+        "baseStamina": 130,
+        "baseArmor": 25,
+        "startingItems": ["Healer's Bible", "Weed"]
+      }
+    },
+    {
+      "name": "EmreBoraMal",
+      "description": "Potential Homo",
+      "icon": "./file/file.png",
+      "properties": {
+        "baseHP": 120,
+        "baseStamina": 130,
+        "baseArmor": 25,
+        "startingItems": ["Macos", "Cigar"]
+      }
+    }
+  ]
+}
