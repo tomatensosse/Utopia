@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class NPC : Entity, INPCInteractionHandler
 {
-
     [Header("NPC Interaction")]
     public Family family;
     public float toleranceVariation;
@@ -43,7 +41,6 @@ public class NPC : Entity, INPCInteractionHandler
     private bool atTargetDestination = false;
     private Transform targeted;
     private bool hasTarget = false;
-
 
     [Header("Animation")]
     public Animator anim;

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Mirror;
+using Steamworks;
 using UnityEngine;
 
 public class World : NetworkBehaviour
@@ -8,6 +10,13 @@ public class World : NetworkBehaviour
     public static World Instance { get; private set; }
     public WorldData worldData;
     [HideInInspector] public bool initialized;
+    public List<PlayerLocation> playerLocations;
+
+    public float worldTimeSession;
+    public float tickRate = 10f;
+    public int maxSpawnsPerTick = 3;
+    public delegate void SpawnTickCallback();
+    public static event TimerCallback OnSpawnTick;
 
     [Header("World Settings")]
     public int seed;
@@ -33,6 +42,18 @@ public class World : NetworkBehaviour
     private void Start()
     {
         InitializeWorld();
+
+        InvokeRepeating("Tick", 0f, tickRate);
+    }
+
+    private void Tick()
+    {
+        OnSpawnTick?.Invoke(null);
+    }
+
+    private void Update()
+    {
+        worldTimeSession = Time.timeSinceLevelLoad;
     }
 
     private void InitializeWorld()
@@ -66,6 +87,13 @@ public class World : NetworkBehaviour
 
     public void AppendPlayer(Transform player)
     {
-        MeshGenerator.Instance.AppendPlayer(player);
+        if (playerLocations == null)
+        {
+            playerLocations = new List<PlayerLocation>();
+        }
+
+        PlayerLocation playerLocation = new PlayerLocation();
+        playerLocation.player = player;
+        playerLocations.Add(playerLocation);
     }
 }

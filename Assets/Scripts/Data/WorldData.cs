@@ -9,4 +9,5 @@ public class WorldData : SaveData
     public int worldSeed;
     public List<EntityData> entityDatas;
     public List<ChunkData> chunkDatas;
+    public float worldTimeTotal;
 }

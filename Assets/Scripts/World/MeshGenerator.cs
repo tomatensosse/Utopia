@@ -1,15 +1,11 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour
 {
     public static MeshGenerator Instance { get; private set; }
-    public List<PlayerLocation> playerLocations;
     public MapGenerator generator;
     private bool initialized = false;
 
@@ -65,12 +61,12 @@ public class MeshGenerator : MonoBehaviour
             return;
         }
 
-        if (playerLocations == null)
+        if (World.Instance.playerLocations == null)
         {
             return;
         }
 
-        foreach (PlayerLocation playerLocation in playerLocations)
+        foreach (PlayerLocation playerLocation in World.Instance.playerLocations)
         {
             Vector2Int playerInChunk = playerLocation.chunkPosition;
             GetPlayerCurrentPosition(playerLocation);
@@ -495,6 +491,8 @@ public class MeshGenerator : MonoBehaviour
         {
             GameObject spawnableGameObject = Instantiate(SpawnableDatabase.Instance.GetSpawnableByID(spawnableData.spawnableID));
 
+            Debug.Log(spawnableData.spawnableID);
+
             spawnableGameObject.transform.SetParent(chunk.gameObject.transform);
             spawnableGameObject.transform.localPosition = spawnableData.localPosition;
             spawnableGameObject.transform.localRotation = Quaternion.Euler(spawnableData.localRotation);
@@ -532,25 +530,5 @@ public class MeshGenerator : MonoBehaviour
         }
 
         chunk.spawnablesHaveBeenGenerated = true;
-    }
-
-    public void AppendPlayer(Transform player)
-    {
-        if (playerLocations == null)
-        {
-            playerLocations = new List<PlayerLocation>();
-        }
-
-        PlayerLocation playerLocation = new PlayerLocation();
-        playerLocation.player = player;
-        playerLocations.Add(playerLocation);
-    }
-
-    [System.Serializable]
-    public class PlayerLocation
-    {
-        public Transform player;
-        public Vector2Int chunkPosition;
-        public Vector3 playerPosition;
     }
 }
