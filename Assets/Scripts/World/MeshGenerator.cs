@@ -531,4 +531,17 @@ public class MeshGenerator : MonoBehaviour
 
         chunk.spawnablesHaveBeenGenerated = true;
     }
+
+    public Chunk GetChunk(Vector2Int at)
+    {
+        foreach (Chunk chunk in chunks)
+        {
+            if (chunk.chunkPosition == at)
+            {
+                return chunk;
+            }
+        }
+
+        return null;
+    }
 }

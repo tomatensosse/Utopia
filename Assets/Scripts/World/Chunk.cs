@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public class Chunk : MonoBehaviour
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
+    NavMeshSurface navMeshSurface;
 
     [HideInInspector] public bool leftEdgeInterpolated = false;
     [HideInInspector] public bool rightEdgeInterpolated = false;
@@ -53,6 +55,13 @@ public class Chunk : MonoBehaviour
             meshCollider = gameObject.AddComponent<MeshCollider>();
         }
 
+        navMeshSurface = GetComponent<NavMeshSurface>();
+
+        if (navMeshSurface == null)
+        {
+            navMeshSurface = gameObject.AddComponent<NavMeshSurface>();
+        }
+
         Mesh mesh = new Mesh();
         mesh.name = "Chunk Mesh";
 
@@ -89,6 +98,11 @@ public class Chunk : MonoBehaviour
         }
 
         meshIsSet = true;
+
+        if (navMeshSurface != null)
+        {
+            navMeshSurface.BuildNavMesh();
+        }
     }
 
     public void Configure(Material mat)
@@ -138,5 +152,12 @@ public class Chunk : MonoBehaviour
         }
 
         return data;
+    }
+
+    public Vector3 GetRandomPosition()
+    {
+        Vector3 position = meshFilter.mesh.vertices[Random.Range(0, meshFilter.mesh.vertices.Length)];
+
+        return position;
     }
 }

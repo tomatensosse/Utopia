@@ -14,7 +14,11 @@ public class World : NetworkBehaviour
 
     public float worldTimeSession;
     public float tickRate = 10f;
+
+    [Header("Spawning")]
     public int maxSpawnsPerTick = 3;
+    public int minimumSpawnDistance = 1;
+    public int maximumSpawnDistance = 6;
     public delegate void SpawnTickCallback();
     public static event TimerCallback OnSpawnTick;
 
@@ -48,6 +52,7 @@ public class World : NetworkBehaviour
 
     private void Tick()
     {
+        Debug.Log("Tick");
         OnSpawnTick?.Invoke(null);
     }
 
@@ -74,7 +79,7 @@ public class World : NetworkBehaviour
         {
             if (chunkData.chunkPosition == at)
             {
-                Debug.Log("NIGGANIGGA | Chunk at " + at + " found in save.");
+                Debug.Log("NIGGANIGGA | Chunk at " + at + " found in save.");
 
                 return chunkData;
             }

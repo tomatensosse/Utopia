@@ -53,11 +53,6 @@ public class Entity : NetworkBehaviour, IHealth, IInteractable, IHoldableObject
         if (wasLoadedBefore) { return; }
 
         rb = GetComponent<Rigidbody>();
-
-        if (rb == null)
-        {
-            rb = gameObject.AddComponent<Rigidbody>();
-        }
     }
 
     public virtual void SetDefaults() // Called on Awake before everything else

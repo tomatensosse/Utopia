@@ -1,3 +1,4 @@
+using Unity.AI.Navigation;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class DebugChunk : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
+    private NavMeshSurface navMeshSurface;
 
     [Header("Params")]
     [SerializeField] int size = 8;
@@ -65,6 +67,8 @@ public class DebugChunk : MonoBehaviour
         meshCollider.sharedMesh = mesh;
 
         meshCollider.convex = true;
+
+        navMeshSurface.BuildNavMesh();
     }
 
     private void Initialize()
@@ -72,5 +76,6 @@ public class DebugChunk : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         meshCollider = GetComponent<MeshCollider>();
+        navMeshSurface = GetComponent<NavMeshSurface>();
     }
 }

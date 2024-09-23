@@ -56,21 +56,14 @@ public class NPC : Entity, INPCInteractionHandler
         Tolerance = tolerance;
         Relation = relation;
 
-        nma = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
-    }
-
-    public override void SetDefaults()
-    {
-        entityID = "NPC";
-        entityName = "NPC";
-        entityDescription = "A non-playable character.";
-
-        hasHealth = true;
-        maxHealth = 100;
-
-        isInteractable = false;
-        isHoldable = false;
+        if (nma == null)
+        {
+            nma = GetComponent<NavMeshAgent>();
+        }
+        if (anim == null)
+        {
+            anim = GetComponent<Animator>();
+        }
     }
 
     public override void Start()
@@ -141,7 +134,7 @@ public class NPC : Entity, INPCInteractionHandler
         MoveTo(finalPosition);
         hasActiveDestination = true;
 
-        anim.SetBool("idle,", false);
+        anim.SetBool("idle", false);
     }
 
     public virtual void CheckAtTarget()
