@@ -431,6 +431,7 @@ public class PlayerController : NetworkBehaviour
 
     private IEnumerator ResetJump()
     {
+        yield return new WaitForSeconds(0.25f); // Hardcoded to prevend jump lagback
         yield return new WaitUntil(() => isGrounded);
         isJumping = false;
     }

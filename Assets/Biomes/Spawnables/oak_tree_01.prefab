@@ -61,7 +61,12 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 154cb10d9270f4f8a88739393c24f822,
         type: 3}
       propertyPath: m_Name
-      value: plains_tree_01
+      value: oak_tree_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 154cb10d9270f4f8a88739393c24f822,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -75,6 +80,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: -4937205856412821063}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 154cb10d9270f4f8a88739393c24f822,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7226586107224508012}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 154cb10d9270f4f8a88739393c24f822,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5121440554619919186}
   m_SourcePrefab: {fileID: 100100000, guid: 154cb10d9270f4f8a88739393c24f822, type: 3}
 --- !u!1 &394809628873795739 stripped
 GameObject:
@@ -89,7 +102,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 394809628873795739}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 030e77dfb652949faad2f308a9d290ea, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -120,5 +133,36 @@ MonoBehaviour:
   spawnableID: oak_tree_01
   generateChance: 0.2
   hasVariations: 0
-  objectToSpawn: {fileID: 0}
-  objectToSpawnVariations: []
+--- !u!208 &7226586107224508012
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394809628873795739}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.025, y: 0.025, z: 0.25}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.01, y: 0, z: 0.15}
+  m_TimeToStationary: 0.5
+--- !u!114 &-5121440554619919186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394809628873795739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1827474309
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

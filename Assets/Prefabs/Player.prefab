@@ -212,8 +212,8 @@ MonoBehaviour:
   syncInterval: 0
   playerRigidbody: {fileID: 2624100563409813973}
   playerCollider: {fileID: 324329365781005769}
-  sprintSpeed: 6
-  walkSpeed: 3
+  sprintSpeed: 4
+  walkSpeed: 2
   acceleration: 8
   groundCheck: {fileID: 6288754797026335061}
   groundDistance: 0.3
@@ -228,9 +228,9 @@ MonoBehaviour:
   airDrag: 4
   decelerateDrag: 30
   slopeDrag: 6
-  jumpForce: 8
-  wallJumpForce: 18
-  maximumWallJumps: 3
+  jumpForce: 12
+  wallJumpForce: 10
+  maximumWallJumps: 0
   cameraPosition: {fileID: 2413175281581307540}
   orientation: {fileID: 8857916033637471581}
   sensX: 2
@@ -633,7 +633,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2113317119549288549, guid: 3bc3ef75d65dee64289ab48e2fd7d69d,
         type: 3}

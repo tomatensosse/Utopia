@@ -60,7 +60,25 @@ public class Entity : NetworkBehaviour, IHealth, IInteractable, IHoldableObject
         // Set stuff here
     }
 
+    public virtual void Update()
+    {
+        CheckIfInSimulationDistance();
+    }
+
 #region Network and Saving
+    private void CheckIfInSimulationDistance()
+    {
+        Vector2Int chunkPosition = MeshGenerator.Instance.InChunk(transform.position);
+        Chunk chunk = MeshGenerator.Instance.GetChunk(chunkPosition);
+
+        if (!chunk.inSimulationDistance)
+        {
+            chunk.nonSimulatedEntities.Add(SaveEntity());
+
+            NetworkServer.Destroy(gameObject);
+        }
+    }
+
     public virtual EntityData SaveEntity()
     {
         EntityData entityData = new EntityData();

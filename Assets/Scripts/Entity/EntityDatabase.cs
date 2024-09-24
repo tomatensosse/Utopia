@@ -33,11 +33,6 @@ public class EntityDatabase : MonoBehaviour
         return entity;
     }
 
-    public string RandomEntityID()
-    {
-        return entities[Random.Range(0, entities.Count)].GetComponent<Entity>().entityID;
-    }
-
 #if UNITY_EDITOR
     [ContextMenu("Populate Entity Database")]
     public void PopulateEntityDatabase()

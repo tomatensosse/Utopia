@@ -82,8 +82,10 @@ public class NPC : Entity, INPCInteractionHandler
         Wander();
     }
 
-    public virtual void Update()
+    public override void Update()
     {
+        base.Update();
+        
         CheckAtTarget();
         FindTarget();
     }

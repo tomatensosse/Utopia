@@ -79,13 +79,9 @@ public class World : NetworkBehaviour
         {
             if (chunkData.chunkPosition == at)
             {
-                Debug.Log("NIGGANIGGA | Chunk at " + at + " found in save.");
-
                 return chunkData;
             }
         }
-
-        Debug.Log("Chunk at " + at + " not found in save.");
 
         return null;
     }
@@ -101,4 +97,17 @@ public class World : NetworkBehaviour
         playerLocation.player = player;
         playerLocations.Add(playerLocation);
     }
+
+    /*
+    private void SpawnFloorItem(string itemID, Vector3 spawnOrigin, float spawnRadMin = 4f, float spawnRadMax = 8f)
+    {
+        Vector3 spawnPosition = spawnOrigin + Random.insideUnitSphere * Random.Range(spawnRadMin, spawnRadMax);
+        GameObject floorItemGameObject = Instantiate(EntityDatabase.Instance.GetEntityByID("entity_floor_item"), spawnPosition, Quaternion.identity);
+
+        FloorItem floorItem = floorItemGameObject.GetComponent<FloorItem>();
+        floorItem.Initialize(ItemData.Generate(itemID, 1));
+        
+        NetworkServer.Spawn(floorItemGameObject, NetworkServer.localConnection);
+    }
+    */
 }
