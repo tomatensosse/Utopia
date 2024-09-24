@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DebugChunk : MonoBehaviour
 {
@@ -14,6 +16,8 @@ public class DebugChunk : MonoBehaviour
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
     private NavMeshSurface navMeshSurface;
+
+    private AsyncOperation navMeshAsyncOperation;
 
     [Header("Params")]
     [SerializeField] int size = 8;
@@ -68,7 +72,59 @@ public class DebugChunk : MonoBehaviour
 
         meshCollider.convex = true;
 
-        navMeshSurface.BuildNavMesh();
+        UpdateNavMeshAsync();
+    }
+
+    private void UpdateNavMeshAsync()
+    {
+        // Ensure navMeshSurface has valid NavMeshData
+        if (navMeshSurface.navMeshData == null)
+        {
+            navMeshSurface.navMeshData = new NavMeshData();
+        }
+
+        // Collect NavMesh build sources from the Chunks Holder (parent of all chunks)
+        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
+
+        // Assuming "Chunks Holder" is the parent object of all chunks
+        Transform chunksHolderTransform = transform.parent;  // or find by name/tag if necessary
+
+        if (chunksHolderTransform != null)
+        {
+            NavMeshBuilder.CollectSources(
+                chunksHolderTransform,
+                navMeshSurface.layerMask, 
+                NavMeshCollectGeometry.RenderMeshes, 
+                0, 
+                new List<NavMeshBuildMarkup>(), 
+                sources
+            );
+        }
+        else
+        {
+            Debug.LogError("Chunks Holder not found.");
+            return;
+        }
+
+        // Check for sources
+        if (sources.Count == 0)
+        {
+            Debug.LogWarning("No sources found for NavMesh update.");
+            return;
+        }
+
+        // Define bounds based on the Chunks Holder's center and size
+        Vector3 chunkCenter = chunksHolderTransform.position;
+        Vector3 chunkSize = new Vector3(size, 16, size); // Use your chunk dimensions
+        Bounds bounds = new Bounds(chunkCenter, chunkSize); // Calculate bounds based on chunk center and size
+
+        // Update the NavMesh asynchronously
+        navMeshAsyncOperation = NavMeshBuilder.UpdateNavMeshDataAsync(
+            navMeshSurface.navMeshData, 
+            navMeshSurface.GetBuildSettings(), 
+            sources, 
+            bounds
+        );
     }
 
     private void Initialize()

@@ -95,6 +95,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5688017763751265795}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f5795f8f0f597498d8ceb4768da37b4c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5138444779992551520}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f5795f8f0f597498d8ceb4768da37b4c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5718314584616527858}
   m_SourcePrefab: {fileID: 100100000, guid: f5795f8f0f597498d8ceb4768da37b4c, type: 3}
 --- !u!1 &5070436235414551118 stripped
 GameObject:
@@ -138,3 +146,36 @@ MonoBehaviour:
   spawnableID: rock_01
   generateChance: 0.5
   hasVariations: 0
+--- !u!208 &5138444779992551520
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070436235414551118}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.45, y: 0.286, z: 0.45}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.06, y: 0.15, z: -0.006}
+  m_TimeToStationary: 0.5
+--- !u!114 &5718314584616527858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070436235414551118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 3768643949
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

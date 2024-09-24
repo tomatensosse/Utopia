@@ -9,4 +9,5 @@ public class ChunkData
     public int[] triangles;
 
     public List<SpawnableData> spawnableDatas;
+    public List<EntityData> entityDatas;
 }

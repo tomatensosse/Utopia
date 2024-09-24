@@ -304,7 +304,6 @@ public class MapGenerator : MonoBehaviour
     {
         if (biome.isDefaultBiome)
         {
-            Debug.Log("Skipped ooze generating default biome :: INTENDED BEHAVIOUR");
             return;
         }
         

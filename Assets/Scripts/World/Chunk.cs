@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Chunk : MonoBehaviour
 {
@@ -15,7 +17,6 @@ public class Chunk : MonoBehaviour
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
-    NavMeshSurface navMeshSurface;
 
     [HideInInspector] public bool leftEdgeInterpolated = false;
     [HideInInspector] public bool rightEdgeInterpolated = false;
@@ -30,7 +31,11 @@ public class Chunk : MonoBehaviour
     public bool generateColliders = false;
 
     public List<GameObject> spawnablesInChunk = new List<GameObject>();
+    public List<EntityData> simulatedEntities = new List<EntityData>();
+    public List<EntityData> nonSimulatedEntities = new List<EntityData>();
     public bool spawnablesHaveBeenGenerated = false;
+
+    public bool inSimulationDistance;
 
     public void SetMesh(List<Vector3> vertices, int[] triangles)
     {
@@ -53,13 +58,6 @@ public class Chunk : MonoBehaviour
         if (meshCollider == null && generateColliders)
         {
             meshCollider = gameObject.AddComponent<MeshCollider>();
-        }
-
-        navMeshSurface = GetComponent<NavMeshSurface>();
-
-        if (navMeshSurface == null)
-        {
-            navMeshSurface = gameObject.AddComponent<NavMeshSurface>();
         }
 
         Mesh mesh = new Mesh();
@@ -98,11 +96,6 @@ public class Chunk : MonoBehaviour
         }
 
         meshIsSet = true;
-
-        if (navMeshSurface != null)
-        {
-            navMeshSurface.BuildNavMesh();
-        }
     }
 
     public void Configure(Material mat)
@@ -151,6 +144,16 @@ public class Chunk : MonoBehaviour
             }
         }
 
+        foreach (EntityData entityData in simulatedEntities)
+        {
+            data.entityDatas.Add(entityData);
+        }
+
+        foreach (EntityData entityData in nonSimulatedEntities)
+        {
+            data.entityDatas.Add(entityData);
+        }
+
         return data;
     }
 
@@ -159,5 +162,48 @@ public class Chunk : MonoBehaviour
         Vector3 position = meshFilter.mesh.vertices[Random.Range(0, meshFilter.mesh.vertices.Length)];
 
         return position;
+    }
+
+    public void CheckIfInSimulationDistance()
+    {
+        bool inSimulationDistance = false;
+
+        foreach (PlayerLocation playerLocation in World.Instance.playerLocations)
+        {
+            int simulationDistance = MeshGenerator.Instance.simulationDistance;
+            if (chunkPosition.x > playerLocation.chunkPosition.x + simulationDistance || chunkPosition.x < playerLocation.chunkPosition.x - simulationDistance)
+            {
+                inSimulationDistance = false;
+            }
+            else if (chunkPosition.y > playerLocation.chunkPosition.y + simulationDistance || chunkPosition.y < playerLocation.chunkPosition.y - simulationDistance)
+            {
+                inSimulationDistance = false;
+            }
+            else
+            {
+                inSimulationDistance = true;
+            }
+        }
+
+        this.inSimulationDistance = inSimulationDistance;
+
+        if (inSimulationDistance)
+        {
+            foreach (EntityData entityData in nonSimulatedEntities)
+            {
+                GameObject entity = EntityDatabase.Instance.GetEntityByID(entityData.entityID);
+
+                GameObject newEntity = Instantiate(entity);
+
+                newEntity.transform.position = entityData.position;
+                newEntity.transform.rotation = entityData.rotation;
+
+                Entity entityComponent = newEntity.GetComponent<Entity>();
+
+                entityComponent.LoadEntity(entityData);
+            }
+
+            nonSimulatedEntities.Clear();
+        }
     }
 }
