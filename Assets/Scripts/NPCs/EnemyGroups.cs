@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPCGroup : MonoBehaviour
+[CreateAssetMenu(fileName = "EnemyGroup", menuName = "NPCs/EnemyGroup")]
+public class NPCGroup : ScriptableObject
 {
     [Header("Group Settings")]
     public int maxMembers = 8; // Maksimum grup üyesi 
