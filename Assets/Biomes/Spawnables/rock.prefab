@@ -83,6 +83,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: rock
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f5795f8f0f597498d8ceb4768da37b4c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -117,7 +122,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5070436235414551118}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 030e77dfb652949faad2f308a9d290ea, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

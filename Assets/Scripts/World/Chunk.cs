@@ -98,9 +98,21 @@ public class Chunk : MonoBehaviour
         meshIsSet = true;
     }
 
-    public void Configure(Material mat)
+    public void Configure(Material mat, PhysicMaterial physicMat)
     {
-        GetComponent<MeshRenderer>().material = mat;
+        if (meshRenderer == null)
+        {
+            meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        }
+
+        meshRenderer.material = mat;
+
+        if (meshCollider == null)
+        {
+            meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
+
+        meshCollider.material = physicMat;
     }
 
     void OnDrawGizmos()

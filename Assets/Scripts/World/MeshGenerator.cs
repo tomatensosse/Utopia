@@ -13,6 +13,7 @@ public class MeshGenerator : MonoBehaviour
     [Header("World Generation")]
     float newNoise;
     public Material mat;
+    public PhysicMaterial physicMat;
     public Biome defaultBiome;
 
     [Header("Generation")]
@@ -418,7 +419,7 @@ public class MeshGenerator : MonoBehaviour
                     if (chunkData != null)
                     {
                         boraChunk.SetMesh(chunkData.vertices, chunkData.triangles);
-                        boraChunk.Configure(mat);
+                        boraChunk.Configure(mat, physicMat);
 
                         Debug.Log("Loading chunk at " + chunkPosition);
             
@@ -438,7 +439,7 @@ public class MeshGenerator : MonoBehaviour
                             
                         boraChunk.SetMesh(meshData.vertices, meshData.triangles);
 
-                        boraChunk.Configure(mat);
+                        boraChunk.Configure(mat, physicMat);
                     }
 
                     if (!boraChunk.spawnablesHaveBeenGenerated)
