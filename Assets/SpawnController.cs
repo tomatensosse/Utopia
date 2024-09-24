@@ -47,6 +47,14 @@ public class SpawnController : MonoBehaviour
                 Debug.Log("Spawning enemy");
 
                 int enemy = Random.Range(0, biome.NPCs.Count);
+
+                if (biome.NPCs.Count == 0)
+                {
+                    CustomDebug.Instance.PopUp("Error", "No NPCs in biome", 5);
+
+                    break;
+                }
+
                 GameObject npc = biome.NPCs[enemy];
                 GameObject npcGameObject = Instantiate(npc);
 

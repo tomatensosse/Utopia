@@ -1,32 +1,50 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CustomDebug : MonoBehaviour
 {
-    public static void OutputMatrix(int[,] matrix)
+    public static CustomDebug Instance { get; private set; }
+    private Canvas canvasInScene;
+    
+    [Header("Error Popup")]
+    public GameObject errorPopupPrefab;
+    private int popupCount = 0;
+
+    private void Start()
     {
-        List<string> strings = new List<string>();
+        DontDestroyOnLoad(gameObject);
 
-        for (int y = 0;  y < matrix.GetLength(1); y++)
+        canvasInScene = FindObjectOfType<Canvas>();
+
+        SceneManager.sceneLoaded += (scene, mode) => OnSceneChanged();
+    }
+
+    private void OnSceneChanged()
+    {
+        canvasInScene = FindObjectOfType<Canvas>();
+    }
+
+    private void Awake()
+    {
+        if (Instance == null)
         {
-            string newLine = "\n ";
-
-            for (int x = 0; x < matrix.GetLength(0); x++)
-            {
-                newLine = newLine + " [" + matrix[x, y] +"]";
-            }
-
-            strings.Add(newLine);
+            Instance = this;
         }
-
-        string finalString = string.Empty;
-
-        foreach (string individualString in  strings)
+        else
         {
-            finalString += individualString;
+            Destroy(gameObject);
         }
+    }
 
-        Debug.Log(finalString);
+    public void PopUp(string title, string message, int timeoutSeconds = 5)
+    {
+        GameObject errorPopup = Instantiate(errorPopupPrefab, canvasInScene.transform);
+        errorPopup.GetComponent<ErrorPopup>().ShowError(title, message, timeoutSeconds);
+    }
+
+    [ContextMenu("Test Error Popup")]
+    public void TestErrorPopup()
+    {
+        PopUp("Test Error", "This is a test error message", 5);
     }
 }

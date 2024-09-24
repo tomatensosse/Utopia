@@ -49,7 +49,6 @@ public class MainMenu : MonoBehaviour
     private SaveSystem saveSystem = new SaveSystem();
     
     private CustomNetworkManager networkManager;
-    public ErrorPopup errorPopup; 
     public TMP_Dropdown characterClassSelectDropdown; // Assign in the Inspector
 
     private void Awake()
@@ -188,19 +187,19 @@ public class MainMenu : MonoBehaviour
         string validNameRegex = "^[a-zA-Z0-9._-]{1,20}$";
 
         if (validateRegex(inputName,validNameRegex) != true) { // Validate Name
-            errorPopup.ShowError("Name should be 1-20 letters, include only a-z, A-Z, and . _ -", 4);
+            CustomDebug.Instance.PopUp("Invalid Name", "Name should be 1-20 letters, include only a-z, A-Z, and . _ -", 4);
             return;
         }
 
         string[] playerNames = saveSystem.LoadAllPlayers().Select(ply => ply.playerSaveName).ToArray();
         
         if (playerNames.Contains(inputName) == true) {
-            errorPopup.ShowError("The name \"" + inputName + "\" is already taken!", 4);
+            CustomDebug.Instance.PopUp("Name Taken", "Name already exists, please choose another name", 4);
             return;
         }
 
         if (inputClass == "Choose Class") {
-            errorPopup.ShowError("Please choose a class!", 4);
+            CustomDebug.Instance.PopUp("Invalid Class", "Please choose a class", 4);
             return;
         }   
 

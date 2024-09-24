@@ -62,8 +62,6 @@ public class MapGenerator : MonoBehaviour
             GenerateOoze(biome, biome.spawnInBiome);
         }
 
-        CustomDebug.OutputMatrix(biomeMap);
-
         return biomeMap;
     }
 
