@@ -3,6 +3,8 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum Role { Tank, Warrior, Healer }
+
 public class NPC : Entity, INPCInteractionHandler
 {
     [Header("NPC Interaction")]
@@ -22,6 +24,7 @@ public class NPC : Entity, INPCInteractionHandler
     public NavMeshAgent nma;
 
     [Header("Behaviour Variables")]
+    public bool isLeader;
     public float minWanderDistance = 25f;
     public float maxWanderDistance = 50f;
     public float idleMinTime = 1f;
