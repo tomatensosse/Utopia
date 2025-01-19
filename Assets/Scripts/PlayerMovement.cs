@@ -48,8 +48,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void MyInput()
     {
-        horizontalMovement = Input.GetAxis("Horizontal");
-        verticalMovement = Input.GetAxis("Vertical");
+        horizontalMovement = Input.GetAxisRaw("Horizontal");
+        verticalMovement = Input.GetAxisRaw("Vertical");
 
         moveDirection = orientation.forward * verticalMovement + orientation.right * horizontalMovement;
 
@@ -105,6 +105,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleDrag()
     {
+        if (!IsMovingControlled())
+        {
+            var v = rb.velocity;
+            v.y = 0;
+            v = -v * v.magnitude;
+            
+            rb.AddForce(v * decelerateDrag * dragMultiplier, ForceMode.Force);
+
+            return;
+        }
+
         if (isGrounded)
         {
             var v = rb.velocity;

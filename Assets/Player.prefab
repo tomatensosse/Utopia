@@ -300,7 +300,7 @@ MonoBehaviour:
   fallMultiplier: 2.5
   groundDrag: 8
   airDrag: 6
-  decelerateDrag: 30
+  decelerateDrag: 15
 --- !u!1 &3885161053466818623
 GameObject:
   m_ObjectHideFlags: 0
