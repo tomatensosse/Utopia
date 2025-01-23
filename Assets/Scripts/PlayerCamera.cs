@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerCamera : MonoBehaviour
 {
@@ -29,6 +30,13 @@ public class PlayerCamera : MonoBehaviour
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        var freeCamScript = cameraContainer.GetComponent<FreeCamera>();
+
+        if (freeCamScript != null)
+        {
+            Destroy(freeCamScript);
+        }
     }
 
     public void UpdateCamera(float xRotation, float yRotation)

@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c855db6cc40c0480a8c52508bbbfcacb, type: 3}
+  m_Name: SimpleNoise
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  shader: {fileID: 7200000, guid: 6c565249eb7094caeb45b60238eae943, type: 3}
+  kernelName: Density
+  parameters:
+  - uid: numPointsPerAxis
+    displayName: Points Per Axis
+    description: Number of points per axis
+    type: 0
+  - uid: boundsSize
+    displayName: Bounds Size
+    description: Size of the bounds
+    type: 1
+  - uid: centre
+    displayName: Center
+    description: Center position
+    type: 3
+  - uid: offset
+    displayName: Offset
+    description: Position offset
+    type: 3
+  - uid: spacing
+    displayName: Point Spacing
+    description: Space between points
+    type: 1
+  - uid: worldSize
+    displayName: World Size
+    description: Size of the world
+    type: 3
+  - uid: octaves
+    displayName: Octaves
+    description: Number of noise octaves
+    type: 0
+  - uid: lacunarity
+    displayName: Lacunarity
+    description: Frequency multiplier per octave
+    type: 1
+  - uid: persistence
+    displayName: Persistence
+    description: Amplitude multiplier per octave
+    type: 1
+  - uid: noiseScale
+    displayName: Noise Scale
+    description: Scale of the noise
+    type: 1
+  - uid: noiseWeight
+    displayName: Noise Weight
+    description: Weight of the noise
+    type: 1
+  - uid: floorOffset
+    displayName: Floor Offset
+    description: Offset of the floor
+    type: 1
+  - uid: weightMultiplier
+    displayName: Weight Multiplier
+    description: Multiplier for weights
+    type: 1
+  - uid: closeEdges
+    displayName: Close Edges
+    description: Whether to close edges
+    type: 5
+  - uid: hardFloor
+    displayName: Hard Floor
+    description: Height of hard floor
+    type: 1
+  - uid: hardFloorWeight
+    displayName: Hard Floor Weight
+    description: Weight of hard floor
+    type: 1
