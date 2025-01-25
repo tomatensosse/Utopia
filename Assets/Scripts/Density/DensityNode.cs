@@ -44,10 +44,11 @@ public abstract class DensityNode : Node
         shader.SetFloat("spacing", baseParameters.spacing);
         shader.SetVector("worldSize", baseParameters.worldSize);
 
-        Vector4 offset = new Vector4(0, 0, 0, 0); // FIX
         shader.SetVector("offset", offset);
 
-        shader.SetVector("params", new Vector4(1, 1, 1, 1)); // FIX
+        shader.SetVector("params", parameters);
+
+        shader.SetInt("octaves", Mathf.Max (1, numOctaves));
     }
 
     public void SetDynamicParameters(DynamicParameters dynamicParameters)

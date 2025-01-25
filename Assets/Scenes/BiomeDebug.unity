@@ -315,10 +315,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setSeed: 0
-  chunkSize: 64
+  chunkSize: 16
   renderDistanceHorizontal: 8
   renderDistanceVertical: 8
-  numPointsPerAxis: 32
+  numPointsPerAxis: 16
 --- !u!4 &1483280353
 Transform:
   m_ObjectHideFlags: 0

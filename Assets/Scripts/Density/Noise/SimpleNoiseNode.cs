@@ -30,6 +30,8 @@ public class SimpleNoiseNode : DensityNode
             }
         }
 
+        LogBuffer(pointsBuffer);
+
         return pointsBuffer;
     }
 
@@ -44,5 +46,20 @@ public class SimpleNoiseNode : DensityNode
         shader.SetFloat("weightMultiplier", weightMultiplier);
         shader.SetFloat("hardFloor", hardFloor);
         shader.SetFloat("hardFloorWeight", hardFloorWeight);
+    }
+
+    private void LogBuffer(ComputeBuffer buffer)
+    {
+        Vector4[] data = new Vector4[buffer.count];
+        buffer.GetData(data);
+
+        string s = "";
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            s += data[i].ToString() + "\n";
+        }
+
+        Debug.Log(s);
     }
 }

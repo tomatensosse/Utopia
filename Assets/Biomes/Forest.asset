@@ -23,14 +23,14 @@ MonoBehaviour:
       data:
         shader: {fileID: 7200000, guid: 6c565249eb7094caeb45b60238eae943, type: 3}
         offset: {x: 0, y: 0, z: 0}
-        parameters: {x: 1, y: 0, z: 0, w: 1}
-        numOctaves: 4
-        lacunarity: 2
-        persistence: 1
-        noiseScale: 0.5
-        noiseWeight: 3.64
+        parameters: {x: 1, y: 0, z: 0, w: 0}
+        numOctaves: 2
+        lacunarity: 0.008
+        persistence: -1
+        noiseScale: 2
+        noiseWeight: -50
         closeEdges: 1
         floorOffset: 0
-        weightMultiplier: 9.72
-        hardFloor: 0
-        hardFloorWeight: 0
+        weightMultiplier: 4
+        hardFloor: 1
+        hardFloorWeight: 4
