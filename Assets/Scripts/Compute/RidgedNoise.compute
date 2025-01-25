@@ -28,6 +28,7 @@ void Density(int3 id : SV_DispatchThreadID)
         frequency *= lacunarity;
     }
 
+    noise = abs(noise);
     noise = pow(noise, ridgeWeight);
     float finalVal = -(pos.y) + noise;
     int index = indexFromCoord(id.x, id.y, id.z);

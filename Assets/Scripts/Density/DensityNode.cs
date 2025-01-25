@@ -9,7 +9,7 @@ public abstract class DensityNode : Node
 
     [Header("Base Parameters")]
     public Vector3 offset = Vector4.zero; // FIX
-    public Vector4 parameters = new Vector4(1, 0, 0, 1); // FIX
+    public Vector4 parameters = new Vector4(1, 0, 0, 0); // FIX
     public int numOctaves = 2;
 
     protected List<ComputeBuffer> buffersToRelease = new List<ComputeBuffer>();

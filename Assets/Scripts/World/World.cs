@@ -99,7 +99,7 @@ public class World : MonoBehaviour
             maxTriangleCount = maxTriangleCount,
             numThreadsPerAxis = Mathf.CeilToInt(numVoxelsPerAxis / (float) threadGroupSize),
             boundsSize = chunkSize,
-            pointSpacing = chunkSize / (numPointsPerAxis - 1),
+            pointSpacing = chunkSize / ((float)numPointsPerAxis - 1),
             worldBounds = new Vector3(renderDistanceHorizontal, renderDistanceVertical, renderDistanceHorizontal) * chunkSize,
 
             threadGroupSize = threadGroupSize

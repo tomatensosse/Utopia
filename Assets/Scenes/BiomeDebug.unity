@@ -318,7 +318,7 @@ MonoBehaviour:
   chunkSize: 16
   renderDistanceHorizontal: 8
   renderDistanceVertical: 8
-  numPointsPerAxis: 16
+  numPointsPerAxis: 32
 --- !u!4 &1483280353
 Transform:
   m_ObjectHideFlags: 0
@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6360da7dc3a45b594306af8d5fc729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  biome: {fileID: 11400000, guid: ae67cb49a0bcb4171a90fa2dcd3f6635, type: 2}
+  biome: {fileID: 11400000, guid: c63c2f38037ba4045aa3eda053811822, type: 2}
 --- !u!4 &1601435760
 Transform:
   m_ObjectHideFlags: 0

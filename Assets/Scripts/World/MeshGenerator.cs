@@ -11,13 +11,8 @@ public class MeshGenerator : MonoBehaviour
     private ComputeBuffer triCountBuffer;
 
     private int numPoints => World.Settings.numPoints;
-    private int numVoxelsPerAxis => World.Settings.numVoxelsPerAxis;
-    private int numVoxels => World.Settings.numVoxels;
     private int maxTriangleCount => World.Settings.maxTriangleCount;
     private int numThreadsPerAxis => World.Settings.numThreadsPerAxis;
-    private int boundsSize => World.Settings.boundsSize;
-    private float pointSpacing => World.Settings.pointSpacing;
-    private Vector3 worldBounds => World.Settings.worldBounds;
 
     void Awake()
     {

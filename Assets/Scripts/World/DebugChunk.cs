@@ -41,6 +41,8 @@ public class DebugChunk : MonoBehaviour
         meshRenderer.sharedMaterial = biome.material;
 
         meshCollider.sharedMesh = mesh;
+
+        densityBuffer.Release();
     }
 
     public DensityNode.BaseParameters GetBaseParameters()

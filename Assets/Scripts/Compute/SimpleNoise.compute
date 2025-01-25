@@ -24,7 +24,7 @@ void Density(int3 id : SV_DispatchThreadID)
         return;
     }
 
-    float3 vertPos = float3(id) * spacing - boundsSize/2;
+    float3 vertPos = float3(id) * (boundsSize / (numPointsPerAxis - 1)) - boundsSize/2; //float3 vertPos = float3(id) * spacing - boundsSize/2;
     float3 pos = centre + id * spacing - boundsSize/2;
     float offsetNoise = 0;
 
