@@ -13,16 +13,16 @@ public class SimpleNoiseNode : DensityNode
     public float hardFloor = 1;
     public float hardFloorWeight = 1;
 
-    public override ComputeBuffer GenerateDensity(DebugChunk debugChunk)
+    public override ComputeBuffer GenerateDensity(Vector3 worldPositionForChunk)
     {
-        DynamicParameters dynamicParameters = GenerateDynamicParameters(debugChunk.GetDynamicParameterInput());
+        GenerateDynamicParameters();
 
-        SetBaseParameters(debugChunk.GetBaseParameters());
-        SetDynamicParameters(dynamicParameters);
+        SetBaseParameters();
+        SetDynamicParameters();
 
         SetSimpleNoiseParameters();
 
-        Dispatch(dynamicParameters.numThreadsPerAxis);
+        Dispatch(worldPositionForChunk);
 
         if (buffersToRelease != null) {
             foreach (var b in buffersToRelease) {
@@ -44,21 +44,5 @@ public class SimpleNoiseNode : DensityNode
         shader.SetFloat("weightMultiplier", weightMultiplier);
         shader.SetFloat("hardFloor", hardFloor);
         shader.SetFloat("hardFloorWeight", hardFloorWeight);
-    }
-
-    // FOR DEBUG
-    private void LogBuffer(ComputeBuffer buffer)
-    {
-        Vector4[] data = new Vector4[buffer.count];
-        buffer.GetData(data);
-
-        string s = "";
-
-        for (int i = 0; i < data.Length; i++)
-        {
-            s += data[i].ToString() + "\n";
-        }
-
-        Debug.Log(s);
     }
 }

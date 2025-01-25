@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -6,6 +7,39 @@ public class World : MonoBehaviour
     public static World Instance { get; private set; }
     public static WorldSettings Settings => Instance._worldSettings;
     public static int Seed => Instance._seed;
+    public static GenerationMode WorldGenerationMode => Instance._generationMode;
+
+    public enum GenerationMode
+    {
+        StaticSize,
+        TargetPlayers,
+        MultiplayerServerSide, // TBA
+        MultiplayerClientUnsafe, // TBA
+        MultiplayerClientSafe // is it k-dot is it aubrey or me
+    }
+
+    public GenerationMode _generationMode;
+
+    #region StaticSize Settings
+    public static Vector3Int StaticWorldSize => Instance._staticWorldSize;
+    [ShowInInspector, ShowIf("_generationMode", GenerationMode.StaticSize)] public Vector3Int _staticWorldSize = new Vector3Int(4, 2, 4);
+    #endregion
+
+    #region TargetPlayers Settings
+
+    [ShowInInspector, ShowIf("_generationMode", GenerationMode.TargetPlayers)] public List<Transform> targetPlayers = new List<Transform>();
+
+    #endregion
+
+    #region MultiplayerServerSide Settings
+    
+
+
+    #endregion
+
+    #region MultiplayerClientSide Settings
+
+    #endregion
 
     [Header("World Settings")]
     public int setSeed = 0;
@@ -54,29 +88,6 @@ public class World : MonoBehaviour
         Instance = this;
 
         GenerateConstants();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GenerateWorld();
-        }
-    }
-
-    [Button("Generate")]
-    public void GenerateWorld()
-    {
-        if (setSeed <= 0)
-        {
-            _seed = Random.Range(0, int.MaxValue);
-        }
-        else
-        {
-            _seed = setSeed;
-        }
-
-        DebugChunk.Instance.Generate();
     }
 
     private void GenerateConstants()

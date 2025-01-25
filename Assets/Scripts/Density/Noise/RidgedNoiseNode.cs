@@ -8,16 +8,14 @@ public class RidgedNoiseNode : DensityNode
     public float noiseScale = 1;
     public float ridgeWeight = 1;
 
-    public override ComputeBuffer GenerateDensity(DebugChunk debugChunk)
+    public override ComputeBuffer GenerateDensity(Vector3 worldPositionForChunk)
     {
-        DynamicParameters dynamicParameters = GenerateDynamicParameters(debugChunk.GetDynamicParameterInput());
-
-        SetBaseParameters(debugChunk.GetBaseParameters());
-        SetDynamicParameters(dynamicParameters);
+        SetBaseParameters();
+        SetDynamicParameters();
 
         SetRidgedNoiseParameters();
 
-        Dispatch(dynamicParameters.numThreadsPerAxis);
+        Dispatch(worldPositionForChunk);
 
         if (buffersToRelease != null) {
             foreach (var b in buffersToRelease) {

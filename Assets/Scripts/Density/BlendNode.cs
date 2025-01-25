@@ -22,10 +22,10 @@ public class BlendNode : Node
     [Range(0, 1)]
     public float weight;
 
-    public override ComputeBuffer GenerateDensity(DebugChunk debugChunk)
+    public override ComputeBuffer GenerateDensity(Vector3 worldPositionForChunk)
     {
-        ComputeBuffer bufferA = a.GenerateDensity(debugChunk);
-        ComputeBuffer bufferB = b.GenerateDensity(debugChunk);
+        ComputeBuffer bufferA = a.GenerateDensity(worldPositionForChunk);
+        ComputeBuffer bufferB = b.GenerateDensity(worldPositionForChunk);
 
         int numPointsPerAxis = World.Settings.numPointsPerAxis;
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);

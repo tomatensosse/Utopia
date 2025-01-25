@@ -14,35 +14,19 @@ public abstract class DensityNode : Node
 
     protected List<ComputeBuffer> buffersToRelease = new List<ComputeBuffer>();
 
-    public struct BaseParameters
-    {
-        public float boundsSize;
-        public float spacing;
-        public Vector3 worldSize;
-    }
+#region Dynamic Parameters
+    protected ComputeBuffer offsetsBuffer;
+    protected int numPointsPerAxis;
+    protected int numThreadsPerAxis;
+    protected int threadGroupSize;
+#endregion
 
-    public struct DynamicParameters
-    {
-        public ComputeBuffer offsetsBuffer;
-        public Vector3 centre;
-        public int numPointsPerAxis;
-        public int numThreadsPerAxis;
-    }
-
-    public struct DynamicParameterInput
-    {
-        public int seed;
-        public int numPointsPerAxis;
-        public int threadGroupSize;
-        public Vector3 centre;
-    }
-
-    public void SetBaseParameters(BaseParameters baseParameters)
+    public void SetBaseParameters()
     {
         // Points, numPointsPerAxis, boundsSize, Centre, Offset, Spacing, WorldSize
-        shader.SetFloat("boundsSize", baseParameters.boundsSize);
-        shader.SetFloat("spacing", baseParameters.spacing);
-        shader.SetVector("worldSize", baseParameters.worldSize);
+        shader.SetFloat("boundsSize", World.Settings.boundsSize);
+        shader.SetFloat("spacing", World.Settings.pointSpacing);
+        shader.SetVector("worldSize", World.Settings.worldBounds);
 
         shader.SetVector("offset", offset);
 
@@ -51,18 +35,21 @@ public abstract class DensityNode : Node
         shader.SetInt("octaves", Mathf.Max (1, numOctaves));
     }
 
-    public void SetDynamicParameters(DynamicParameters dynamicParameters)
+    public void SetDynamicParameters()
     {
         shader.SetBuffer(0, "points", pointsBuffer);
-        shader.SetBuffer(0, "offsets", dynamicParameters.offsetsBuffer);
-        shader.SetVector("centre", dynamicParameters.centre);
-        shader.SetInt("numPointsPerAxis", dynamicParameters.numPointsPerAxis);
-        shader.SetInt("numThreadsPerAxis", dynamicParameters.numThreadsPerAxis);
+        shader.SetBuffer(0, "offsets", offsetsBuffer);
+        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
+        shader.SetInt("numThreadsPerAxis", numThreadsPerAxis);
     }
 
-    public DynamicParameters GenerateDynamicParameters(DynamicParameterInput dynamicParameterInput)
+    public void GenerateDynamicParameters()
     {
-        var prng = new System.Random(dynamicParameterInput.seed);
+        numPointsPerAxis = World.Settings.numPointsPerAxis;
+        threadGroupSize = World.Settings.threadGroupSize;
+        numThreadsPerAxis = Mathf.CeilToInt(numPointsPerAxis / (float) threadGroupSize);
+
+        var prng = new System.Random(World.Seed);
         var offsets = new Vector3[numOctaves];
         float offsetRange = 1000;
         for (int i = 0; i < numOctaves; i++) {
@@ -74,22 +61,16 @@ public abstract class DensityNode : Node
 
         buffersToRelease.Add(offsetsBuffer);
 
-        int numThreadsPerAxis = Mathf.CeilToInt(dynamicParameterInput.numPointsPerAxis / (float) dynamicParameterInput.threadGroupSize);
+        this.offsetsBuffer = offsetsBuffer;
 
         // POINTS BUFFER IS IMPORTANT ; RETURNS THE DENSITIES
-        pointsBuffer = new ComputeBuffer(dynamicParameterInput.numPointsPerAxis * dynamicParameterInput.numPointsPerAxis * dynamicParameterInput.numPointsPerAxis, sizeof(float) * 4);
-
-        return new DynamicParameters
-        {
-            offsetsBuffer = offsetsBuffer,
-            centre = dynamicParameterInput.centre,
-            numPointsPerAxis = dynamicParameterInput.numPointsPerAxis,
-            numThreadsPerAxis = numThreadsPerAxis
-        };
+        pointsBuffer = new ComputeBuffer(World.Settings.numPointsPerAxis * World.Settings.numPointsPerAxis * World.Settings.numPointsPerAxis, sizeof(float) * 4);
     }
 
-    public void Dispatch(int numThreadsPerAxis)
+    public void Dispatch(Vector3 worldPositionForChunk)
     {
+        shader.SetVector("centre", worldPositionForChunk);
+
         shader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
     }
 }

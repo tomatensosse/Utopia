@@ -1,3 +1,6 @@
+// WAS USED FOR DEBUGGING PURPOSES ONLY
+
+/*
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -77,3 +80,4 @@ public class DebugChunk : MonoBehaviour
         Gizmos.DrawWireCube(transform.position, new Vector3(World.Settings.chunkSize, World.Settings.chunkSize, World.Settings.chunkSize));
     }
 }
+*/

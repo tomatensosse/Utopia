@@ -3,6 +3,9 @@ using UnityEngine;
 public class MeshGenerator : MonoBehaviour
 {
     public static MeshGenerator Instance { get; private set; }
+    public static bool Ready => Instance._isReady;
+
+    private bool _isReady = false;
 
     public ComputeShader marchingCubesShader;
 
@@ -98,6 +101,9 @@ public class MeshGenerator : MonoBehaviour
             triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 3 * 3, ComputeBufferType.Append);
             pointsBuffer = new ComputeBuffer (numPoints, sizeof (float) * 4);
             triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
+
+            Debug.Log("Created buffers | isReady!");
+            _isReady = true;
         }
     }
 
