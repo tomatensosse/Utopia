@@ -12,34 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2d13ef789f224b93af4b028803ed844, type: 3}
   m_Name: Forest
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 11400000, guid: c932ea4be28b243bfb624bf830d1a92c, type: 2}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: noiseGenerators
-      Entry: 7
-      Data: 0|CSWrapper[], Assembly-CSharp
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: 1|CSWrapper, Assembly-CSharp
-    - Name: container
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+  material: {fileID: 2100000, guid: 0a40dc9ac44984e498892c10d22d84df, type: 2}
+  root:
+    rid: 205417935889235992
+  references:
+    version: 2
+    RefIds:
+    - rid: 205417935889235992
+      type: {class: SimpleNoiseNode, ns: , asm: Assembly-CSharp}
+      data:
+        shader: {fileID: 7200000, guid: 6c565249eb7094caeb45b60238eae943, type: 3}
+        offset: {x: 0, y: 0, z: 0}
+        parameters: {x: 1, y: 0, z: 0, w: 1}
+        numOctaves: 4
+        lacunarity: 2
+        persistence: 1
+        noiseScale: 0.5
+        noiseWeight: 3.64
+        closeEdges: 1
+        floorOffset: 0
+        weightMultiplier: 9.72
+        hardFloor: 0
+        hardFloorWeight: 0
