@@ -122,6 +122,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &193428547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 193428549}
+  - component: {fileID: 193428548}
+  m_Layer: 0
+  m_Name: Biome Blender
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &193428548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193428547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fd3a5cb930464368af994658b771b5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blendShader: {fileID: 7200000, guid: 9bd612d186dfa4468884d6589ae030c2, type: 3}
+--- !u!4 &193428549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193428547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &731330269
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe372b1f100e487884c61de50a7c03f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  biome: {fileID: 11400000, guid: ae67cb49a0bcb4171a90fa2dcd3f6635, type: 2}
+  megaBiome: {fileID: 11400000, guid: d50a695b576b649a58f4c6a55410eb97, type: 2}
 --- !u!4 &1071955006
 Transform:
   m_ObjectHideFlags: 0
@@ -359,13 +404,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed533774dc5142f281b9e1ebbf14f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _generationMode: 1
-  _staticWorldSize: {x: 8, y: 4, z: 8}
-  renderDistanceHorizontal: 8
-  renderDistanceVertical: 8
+  _generationMode: 0
+  _staticWorldSize: {x: 4, y: 2, z: 4}
+  renderDistanceHorizontal: 3
+  renderDistanceVertical: 3
   setSeed: 0
-  chunkSize: 16
-  numPointsPerAxis: 32
+  chunkSize: 32
+  numPointsPerAxis: 64
 --- !u!4 &1483280353
 Transform:
   m_ObjectHideFlags: 0
@@ -394,6 +439,7 @@ GameObject:
   - component: {fileID: 1914997172}
   - component: {fileID: 1914997175}
   - component: {fileID: 1914997176}
+  - component: {fileID: 1914997177}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -536,6 +582,18 @@ MonoBehaviour:
   m_MoveSpeed: 10
   m_MoveSpeedIncrement: 2.5
   m_Turbo: 10
+--- !u!114 &1914997177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914997171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5acb30d7729fe4cb389de4dd41f9f82e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -545,3 +603,4 @@ SceneRoots:
   - {fileID: 1483280353}
   - {fileID: 1329833865}
   - {fileID: 1071955006}
+  - {fileID: 193428549}

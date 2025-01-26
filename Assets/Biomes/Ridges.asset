@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2d13ef789f224b93af4b028803ed844, type: 3}
   m_Name: Ridges
   m_EditorClassIdentifier: 
+  uid: ridges
+  biomeName: Ridges
+  biomeColor: {r: 0.9716981, g: 0.6421375, b: 0.26125845, a: 1}
   material: {fileID: 2100000, guid: 0a40dc9ac44984e498892c10d22d84df, type: 2}
   root:
     rid: 205417940710326272

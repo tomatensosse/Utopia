@@ -98,6 +98,8 @@ public class World : MonoBehaviour
 
     private void GenerateConstants()
     {
+        _seed = setSeed == 0 ? Random.Range(0, 1000000) : setSeed;
+
         int numVoxelsPerAxis = numPointsPerAxis - 1;
         int numVoxels = numPointsPerAxis * numPointsPerAxis * numPointsPerAxis;
         int maxTriangleCount = numVoxels * 5;

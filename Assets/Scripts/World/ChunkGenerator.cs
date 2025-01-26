@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator Instance { get; private set; }
 
-    private List<Chunk> chunks = new List<Chunk>();
-    protected List<Chunk> dirtyChunks = new List<Chunk>();
+    private Dictionary<Vector3Int, Chunk> chunks = new Dictionary<Vector3Int, Chunk>();
+    protected Dictionary<Vector3Int, Chunk> dirtyChunks = new Dictionary<Vector3Int, Chunk>();
 
-    public Biome biome;
+    public MegaBiomeBase megaBiome;
+
+    private int staticSizeState = -1;
+    private bool isBusy = false;
 
     void Awake()
     {
@@ -33,7 +37,6 @@ public class ChunkGenerator : MonoBehaviour
     IEnumerator WaitAndGenerateStatic()
     {
         yield return new WaitUntil(() => MeshGenerator.Ready);
-        StaticSize();
     }
 
     void Update()
@@ -51,7 +54,7 @@ public class ChunkGenerator : MonoBehaviour
         switch (generationMode)
         {
             case World.GenerationMode.StaticSize:
-                // Static world gets generated in start function
+                StaticSizeState();
                 break;
             case World.GenerationMode.TargetTransform:
                 TargetTransform();
@@ -65,6 +68,70 @@ public class ChunkGenerator : MonoBehaviour
             case World.GenerationMode.MultiplayerClientSafe:
                 //MultiplayerClientSide();
                 break;
+        }
+    }
+
+    private void StaticSizeState()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && !isBusy)
+        {
+            switch (staticSizeState)
+            {
+                case -1:
+                    isBusy = false;
+                    Debug.Log($"Idle state | Press space to advance state | Seed: {World.Seed}");
+                    break;
+                case 0:
+                    isBusy = true;
+                    Debug.Log("State 0: Generate Chunks with Biomes assigned from MegaBiome.");
+                    StaticSize();
+                    isBusy = false;
+                    Debug.Log("Done!");
+                    break;
+                case 1:
+                    isBusy = true;
+                    Debug.Log("State 1: Generate Densities for each chunk.");
+                    foreach (Chunk chunk in chunks.Values)
+                    {
+                        chunk.GenerateDensity();
+                    }
+                    isBusy = false;
+                    Debug.Log("Done!");
+                    break;
+                case 2:
+                    isBusy = true;
+                    Debug.Log("State 2: Blend density values between neighboring biomes if different.");
+                    foreach (Chunk chunk in chunks.Values)
+                    {
+                        BlendChunk(chunk);
+                    }
+                    isBusy = false;
+                    Debug.Log("Done!");
+                    break;
+                case 3:
+                    isBusy = true;
+                    Debug.Log("State 3: Generate mesh for each chunk.");
+                    foreach (Chunk chunk in chunks.Values)
+                    {
+                        GenerateChunkMesh(chunk);
+                    }
+                    isBusy = false;
+                    Debug.Log("Done!");
+                    break;
+                case 4:
+                    Debug.Log("State 4: Done!");
+                    break;
+                case 5:
+                    isBusy = true;
+                    Debug.Log("Cleaning up...");
+                    CleanUp();
+                    isBusy = false;
+                    Debug.Log("Done!");
+                    staticSizeState = -1;
+                    break;
+            }
+            
+            staticSizeState++;
         }
     }
 
@@ -112,32 +179,32 @@ public class ChunkGenerator : MonoBehaviour
 
     private void HandleDirtyChunks()
     {
-        foreach (Chunk chunk in chunks)
+        foreach (Chunk chunk in chunks.Values)
         {
             if (!ChunkInRenderDistance(chunk.chunkPosition))
             {
-                dirtyChunks.Add(chunk);
+                dirtyChunks.Add(chunk.chunkPosition, chunk);
             }
         }
 
         while (dirtyChunks.Count > 0)
         {
-            Chunk chunk = dirtyChunks[0];
-            dirtyChunks.RemoveAt(0);
+            KeyValuePair<Vector3Int, Chunk> chunk = dirtyChunks.First();
+            dirtyChunks.Remove(chunk.Key);
 
-            chunks.Remove(chunk);
-            Destroy(chunk.gameObject);
+            if (!ChunkInRenderDistance(chunk.Key))
+            {
+                chunks.Remove(chunk.Key);
+                Destroy(chunk.Value.gameObject);
+            }
         }
     }
 
     private bool ChunkExistsAt(Vector3Int position)
     {
-        foreach (Chunk chunk in chunks)
+        if (chunks.ContainsKey(position))
         {
-            if (chunk.chunkPosition == position)
-            {
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -179,10 +246,61 @@ public class ChunkGenerator : MonoBehaviour
         chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();
 
-        chunkComponent.biome = biome;
+        chunkComponent.biome = megaBiome.GetBiomeAt(position);
 
-        chunkComponent.Generate();
+        chunks.Add(position, chunkComponent);
+    }
 
-        chunks.Add(chunkComponent);
+    private void BlendChunk(Chunk chunk)
+    {
+        Dictionary<Vector3Int, Chunk> neighbors = GetNeighborChunks(chunk.chunkPosition);
+
+        chunk.BlendDensity(neighbors);
+    }
+
+    private void GenerateChunkMesh(Chunk chunk)
+    {
+        chunk.GenerateMesh();
+    }
+
+    private Dictionary<Vector3Int, Chunk> GetNeighborChunks(Vector3Int chunkPosition)
+    {
+        Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
+                    if (x == 0 && y == 0 && z == 0)
+                    {
+                        continue;
+                    }
+
+                    Vector3Int neighborPosition = chunkPosition + new Vector3Int(x, y, z);
+
+                    if (chunks.TryGetValue(neighborPosition, out Chunk neighborChunk))
+                    {
+                        neighbors.Add(neighborPosition, neighborChunk);
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    private void CleanUp() // DANGEROUS METHOD
+    {
+        Debug.LogWarning("CleanUp Method Called | This shouldn't be called unless you are debugging...");
+
+        var chunksToRemove = chunks.Values.ToList();
+
+        foreach (var chunk in chunksToRemove)
+        {
+            chunks.Remove(chunk.chunkPosition);
+            Destroy(chunk.gameObject);
+        }
     }
 }

@@ -8,7 +8,7 @@ public class Biome : ScriptableObject
     [Header("Biome Settings")]
     public string uid;
     public string biomeName;
-    public Color biomeColor;
+    public Color biomeColor = Color.white;
     public Material material;
 
     [SerializeReference]

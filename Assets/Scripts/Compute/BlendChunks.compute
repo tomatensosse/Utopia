@@ -1,0 +1,54 @@
+#pragma kernel BlendChunks
+
+RWStructuredBuffer<float4> centerChunkPoints;
+RWStructuredBuffer<float4> blendedPoints;
+StructuredBuffer<float4> allNeighborPoints;
+StructuredBuffer<float3> neighborPositions;
+StructuredBuffer<int> hasNeighbor;
+int numNeighbors;
+int numPointsPerAxis;
+float blendDistance;
+float blendStrength;
+
+int indexFromCoord(int x, int y, int z) {
+   return z * numPointsPerAxis * numPointsPerAxis + y * numPointsPerAxis + x;
+}
+
+[numthreads(8, 8, 8)]
+void BlendChunks(int3 id : SV_DispatchThreadID)
+{
+   if (id.x >= numPointsPerAxis || id.y >= numPointsPerAxis || id.z >= numPointsPerAxis) {
+       return;
+   }
+   
+   int index = indexFromCoord(id.x, id.y, id.z);
+   float4 current = centerChunkPoints[index];
+   float4 blended = current;
+   float totalWeight = 0;
+   
+   // Check distance to chunk edges for stronger blending
+   float3 localPos = float3(id) / float(numPointsPerAxis - 1);
+   float edgeDist = min(min(min(localPos.x, 1 - localPos.x), 
+                           min(localPos.y, 1 - localPos.y)),
+                           min(localPos.z, 1 - localPos.z));
+   
+   for (int i = 0; i < numNeighbors; i++) {
+       if (hasNeighbor[i] == 1) {
+           float dist = distance(current.xyz, neighborPositions[i]);
+           if (dist <= blendDistance) {
+               float edgeWeight = smoothstep(0, 0.3, edgeDist); // Stronger blend near edges
+               float weight = (1 - dist/blendDistance) * (1 - edgeWeight) * blendStrength;
+               
+               int neighborIndex = i * (numPointsPerAxis * numPointsPerAxis * numPointsPerAxis) + index;
+               blended.w += allNeighborPoints[neighborIndex].w * weight;
+               totalWeight += weight;
+           }
+       }
+   }
+   
+   if (totalWeight > 0) {
+       blended.w = blended.w / (totalWeight + 1);
+   }
+   
+   blendedPoints[index] = blended;
+}
