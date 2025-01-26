@@ -15,6 +15,7 @@ void Density(int3 id : SV_DispatchThreadID) {
         return;
     }
 
+    float3 vertPos = float3(id) * (boundsSize / (numPointsPerAxis - 1)) - boundsSize/2;
     float3 pos = centre + id * spacing - boundsSize / 2;
     float noise = 0;
     float frequency = noiseScale / 100;
@@ -29,5 +30,5 @@ void Density(int3 id : SV_DispatchThreadID) {
 
     float finalVal = -(pos.y) + noise * billowScale;
     int index = indexFromCoord(id.x, id.y, id.z);
-    points[index] = float4(pos, finalVal);
+    points[index] = float4(vertPos, finalVal);
 }

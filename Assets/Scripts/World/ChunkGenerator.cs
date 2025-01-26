@@ -1,9 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator Instance { get; private set; }
+
+    private List<Chunk> chunks = new List<Chunk>();
+    protected List<Chunk> dirtyChunks = new List<Chunk>();
 
     public Biome biome;
 
@@ -39,13 +43,18 @@ public class ChunkGenerator : MonoBehaviour
 
     private void ChooseMode(World.GenerationMode generationMode)
     {
+        if (!MeshGenerator.Ready || !World.Ready)
+        {
+            return;
+        }
+
         switch (generationMode)
         {
             case World.GenerationMode.StaticSize:
                 // Static world gets generated in start function
                 break;
-            case World.GenerationMode.TargetPlayers:
-                //TargetPlayers();
+            case World.GenerationMode.TargetTransform:
+                TargetTransform();
                 break;
             case World.GenerationMode.MultiplayerServerSide:
                 //MultiplayerServerSide();
@@ -75,6 +84,91 @@ public class ChunkGenerator : MonoBehaviour
         }
     }
 
+    private void TargetTransform()
+    {
+        foreach (Transform target in World.TargetedTransforms)
+        {
+            Vector3Int targetPosition = World.WorldToChunkPosition(target.position);
+
+            for (int x = -World.RenderDistanceHorizontal; x < World.RenderDistanceHorizontal; x++)
+            {
+                for (int y = -World.RenderDistanceVertical; y < World.RenderDistanceVertical; y++)
+                {
+                    for (int z = -World.RenderDistanceHorizontal; z < World.RenderDistanceHorizontal; z++)
+                    {
+                        Vector3Int position = targetPosition + new Vector3Int(x, y, z);
+
+                        if (!ChunkExistsAt(position))
+                        {
+                            GenerateChunk(position);
+                        }
+                    }
+                }
+            }
+        }
+
+        HandleDirtyChunks();
+    }
+
+    private void HandleDirtyChunks()
+    {
+        foreach (Chunk chunk in chunks)
+        {
+            if (!ChunkInRenderDistance(chunk.chunkPosition))
+            {
+                dirtyChunks.Add(chunk);
+            }
+        }
+
+        while (dirtyChunks.Count > 0)
+        {
+            Chunk chunk = dirtyChunks[0];
+            dirtyChunks.RemoveAt(0);
+
+            chunks.Remove(chunk);
+            Destroy(chunk.gameObject);
+        }
+    }
+
+    private bool ChunkExistsAt(Vector3Int position)
+    {
+        foreach (Chunk chunk in chunks)
+        {
+            if (chunk.chunkPosition == position)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool ChunkInRenderDistance(Vector3Int position)
+    {
+        foreach (Transform target in World.TargetedTransforms)
+        {
+            Vector3Int targetPosition = World.WorldToChunkPosition(target.position);
+
+            for (int x = -World.RenderDistanceHorizontal; x < World.RenderDistanceHorizontal; x++)
+            {
+                for (int y = -World.RenderDistanceVertical; y < World.RenderDistanceVertical; y++)
+                {
+                    for (int z = -World.RenderDistanceHorizontal; z < World.RenderDistanceHorizontal; z++)
+                    {
+                        Vector3Int renderPosition = targetPosition + new Vector3Int(x, y, z);
+
+                        if (renderPosition == position)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private void GenerateChunk(Vector3Int position)
     {
         GameObject chunk = new GameObject("Chunk " + position);
@@ -82,10 +176,13 @@ public class ChunkGenerator : MonoBehaviour
         chunk.transform.SetParent(transform);
 
         Chunk chunkComponent = chunk.AddComponent<Chunk>();
+        chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();
 
         chunkComponent.biome = biome;
 
         chunkComponent.Generate();
+
+        chunks.Add(chunkComponent);
     }
 }

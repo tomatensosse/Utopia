@@ -4,7 +4,7 @@ using UnityEngine;
 public class Chunk : MonoBehaviour
 {
     [Header("Chunk Parameters")]
-    public Vector3Int chunkPoisiton;
+    public Vector3Int chunkPosition;
     public Biome biome;
 
     [Header("Components")]

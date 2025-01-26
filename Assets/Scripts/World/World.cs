@@ -5,14 +5,17 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public static World Instance { get; private set; }
+    public static bool Ready => Instance._isReady;
     public static WorldSettings Settings => Instance._worldSettings;
     public static int Seed => Instance._seed;
     public static GenerationMode WorldGenerationMode => Instance._generationMode;
 
+    private bool _isReady = false;
+
     public enum GenerationMode
     {
         StaticSize,
-        TargetPlayers,
+        TargetTransform,
         MultiplayerServerSide, // TBA
         MultiplayerClientUnsafe, // TBA
         MultiplayerClientSafe // is it k-dot is it aubrey or me
@@ -22,31 +25,36 @@ public class World : MonoBehaviour
 
     #region StaticSize Settings
     public static Vector3Int StaticWorldSize => Instance._staticWorldSize;
-    [ShowInInspector, ShowIf("_generationMode", GenerationMode.StaticSize)] public Vector3Int _staticWorldSize = new Vector3Int(4, 2, 4);
+    [ShowInInspector, ShowIf("_generationMode", GenerationMode.StaticSize)]
+    public Vector3Int _staticWorldSize = new Vector3Int(4, 2, 4);
     #endregion
 
     #region TargetPlayers Settings
-
-    [ShowInInspector, ShowIf("_generationMode", GenerationMode.TargetPlayers)] public List<Transform> targetPlayers = new List<Transform>();
+    public static List<Transform> TargetedTransforms => Instance._targetedTransforms;
+    [ShowInInspector, ShowIf("_generationMode", GenerationMode.TargetTransform)]
+    private List<Transform> _targetedTransforms = new List<Transform>();
 
     #endregion
 
     #region MultiplayerServerSide Settings
-    
-
 
     #endregion
 
     #region MultiplayerClientSide Settings
 
+
     #endregion
+    
+    [ShowIf("@_generationMode != GenerationMode.StaticSize")]
+    public static int RenderDistanceHorizontal => Instance.renderDistanceHorizontal;
+    public static int RenderDistanceVertical => Instance.renderDistanceVertical;
+    public int renderDistanceHorizontal = 8, renderDistanceVertical = 8;
 
     [Header("World Settings")]
     public int setSeed = 0;
     private int _seed;
 
     public int chunkSize = 16;
-    public int renderDistanceHorizontal = 8, renderDistanceVertical = 8;
     public int numPointsPerAxis = 8;
 
     public const int threadGroupSize = 8;
@@ -54,8 +62,6 @@ public class World : MonoBehaviour
     public struct WorldSettings
     {
         public int chunkSize;
-        public int renderDistanceHorizontal;
-        public int renderDistanceVertical;
 
         // Values that will be used by generators (MeshGenerator, DensityNode, etc...)
 
@@ -96,11 +102,16 @@ public class World : MonoBehaviour
         int numVoxels = numPointsPerAxis * numPointsPerAxis * numPointsPerAxis;
         int maxTriangleCount = numVoxels * 5;
 
+        Vector3 worldBounds = new Vector3(renderDistanceHorizontal, renderDistanceVertical, renderDistanceHorizontal) * chunkSize;
+
+        if (_generationMode == GenerationMode.StaticSize)
+        {
+            worldBounds = new Vector3(StaticWorldSize.x, StaticWorldSize.y, StaticWorldSize.z) * chunkSize;
+        }
+
         _worldSettings = new WorldSettings
         {
             chunkSize = chunkSize,
-            renderDistanceHorizontal = renderDistanceHorizontal,
-            renderDistanceVertical = renderDistanceVertical,
 
             // Shared values
             numPoints = numPointsPerAxis * numPointsPerAxis * numPointsPerAxis,
@@ -111,9 +122,27 @@ public class World : MonoBehaviour
             numThreadsPerAxis = Mathf.CeilToInt(numVoxelsPerAxis / (float) threadGroupSize),
             boundsSize = chunkSize,
             pointSpacing = chunkSize / ((float)numPointsPerAxis - 1),
-            worldBounds = new Vector3(renderDistanceHorizontal, renderDistanceVertical, renderDistanceHorizontal) * chunkSize,
+            worldBounds = worldBounds,
 
             threadGroupSize = threadGroupSize
         };
+
+        Debug.Log("World is ready!");
+        _isReady = true;
+    }
+
+    public static void RegisterTransform(Transform target)
+    {
+        Instance._targetedTransforms.Add(target);
+    }
+
+    public static Vector3 ChunkToWorldPosition(Vector3Int chunkPosition)
+    {
+        return new Vector3(chunkPosition.x * Settings.chunkSize, chunkPosition.y * Settings.chunkSize, chunkPosition.z * Settings.chunkSize);
+    }
+
+    public static Vector3Int WorldToChunkPosition(Vector3 worldPosition)
+    {
+        return new Vector3Int(Mathf.FloorToInt(worldPosition.x / Settings.chunkSize), Mathf.FloorToInt(worldPosition.y / Settings.chunkSize), Mathf.FloorToInt(worldPosition.z / Settings.chunkSize));
     }
 }

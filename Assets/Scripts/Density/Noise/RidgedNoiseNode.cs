@@ -10,6 +10,8 @@ public class RidgedNoiseNode : DensityNode
 
     public override ComputeBuffer GenerateDensity(Vector3 worldPositionForChunk)
     {
+        GenerateDynamicParameters();
+
         SetBaseParameters();
         SetDynamicParameters();
 
