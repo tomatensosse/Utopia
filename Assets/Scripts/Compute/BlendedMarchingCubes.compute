@@ -1,0 +1,131 @@
+// BlendedMarchingCubes.compute
+#pragma kernel BlendMarchingCubes
+#include "\Includes\MarchTables.compute"
+
+static const int numThreads = 8;
+
+struct Triangle {
+    float3 vertexC;
+    float3 vertexB;
+    float3 vertexA;
+};
+
+struct Vertex {
+    float3 position;
+    float padding; // Ensure 16-byte stride
+};
+
+AppendStructuredBuffer<Triangle> triangles;
+RWStructuredBuffer<float4> points;
+RWStructuredBuffer<Vertex> vertices;
+StructuredBuffer<Vertex> neighborVertices;
+StructuredBuffer<int> neighborVertexCounts;
+StructuredBuffer<int> neighborOffsets;
+StructuredBuffer<int> hasNeighbor;
+
+int numPointsPerAxis;
+int numVertices;
+float isoLevel;
+float blendStrength;
+float chunkSize;
+
+float3 interpolateVerts(float4 v1, float4 v2) {
+    float t = (isoLevel - v1.w) / (v2.w - v1.w);
+    return v1.xyz + t * (v2.xyz - v1.xyz);
+}
+
+int indexFromCoord(int x, int y, int z) {
+    return z * numPointsPerAxis * numPointsPerAxis + y * numPointsPerAxis + x;
+}
+
+float3 BlendVertex(float3 vertPos) {
+    float3 normalizedPos = vertPos / chunkSize + 0.5;
+    float3 distFromBoundary = min(normalizedPos, 1 - normalizedPos);
+    float boundaryDist = min(min(distFromBoundary.x, distFromBoundary.y), distFromBoundary.z);
+
+    if (boundaryDist > 0.1) return vertPos;
+
+    float3 blendedPosition = vertPos;
+    float totalWeight = 1;
+
+    for (int i = 0; i < 26; i++) {
+        if (hasNeighbor[i] == 1) {
+            int startIdx = neighborOffsets[i];
+            int count = neighborVertexCounts[i];
+
+            float minDist = 999999;
+            float3 nearestPos = vertPos;
+
+            for (int j = 0; j < count; j++) {
+                float3 neighborPos = neighborVertices[startIdx + j].position;
+                float dist = distance(vertPos, neighborPos);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestPos = neighborPos;
+                }
+            }
+
+            float weight = (1 - boundaryDist * 10) * blendStrength;
+            blendedPosition = lerp(blendedPosition, nearestPos, weight);
+            totalWeight += weight;
+        }
+    }
+
+    return blendedPosition / totalWeight;
+}
+
+[numthreads(numThreads, numThreads, numThreads)]
+void BlendMarchingCubes(int3 id : SV_DispatchThreadID)
+{
+    // Stop one point before the end because voxel includes neighboring points
+    if (id.x >= numPointsPerAxis - 1 || id.y >= numPointsPerAxis - 1 || id.z >= numPointsPerAxis - 1) {
+        return;
+    }
+
+    // 8 corners of the current cube
+    float4 cubeCorners[8] = {
+        points[indexFromCoord(id.x, id.y, id.z)],
+        points[indexFromCoord(id.x + 1, id.y, id.z)],
+        points[indexFromCoord(id.x + 1, id.y, id.z + 1)],
+        points[indexFromCoord(id.x, id.y, id.z + 1)],
+        points[indexFromCoord(id.x, id.y + 1, id.z)],
+        points[indexFromCoord(id.x + 1, id.y + 1, id.z)],
+        points[indexFromCoord(id.x + 1, id.y + 1, id.z + 1)],
+        points[indexFromCoord(id.x, id.y + 1, id.z + 1)]
+    };
+
+    // Calculate unique index for each cube configuration.
+    int cubeIndex = 0;
+    if (cubeCorners[0].w < isoLevel) cubeIndex |= 1;
+    if (cubeCorners[1].w < isoLevel) cubeIndex |= 2;
+    if (cubeCorners[2].w < isoLevel) cubeIndex |= 4;
+    if (cubeCorners[3].w < isoLevel) cubeIndex |= 8;
+    if (cubeCorners[4].w < isoLevel) cubeIndex |= 16;
+    if (cubeCorners[5].w < isoLevel) cubeIndex |= 32;
+    if (cubeCorners[6].w < isoLevel) cubeIndex |= 64;
+    if (cubeCorners[7].w < isoLevel) cubeIndex |= 128;
+
+    // Create triangles for current cube configuration
+    for (int i = 0; triangulation[cubeIndex][i] != -1; i += 3) {
+        int a0 = cornerIndexAFromEdge[triangulation[cubeIndex][i]];
+        int b0 = cornerIndexBFromEdge[triangulation[cubeIndex][i]];
+
+        int a1 = cornerIndexAFromEdge[triangulation[cubeIndex][i + 1]];
+        int b1 = cornerIndexBFromEdge[triangulation[cubeIndex][i + 1]];
+
+        int a2 = cornerIndexAFromEdge[triangulation[cubeIndex][i + 2]];
+        int b2 = cornerIndexBFromEdge[triangulation[cubeIndex][i + 2]];
+
+        Triangle tri;
+        tri.vertexA = interpolateVerts(cubeCorners[a0], cubeCorners[b0]);
+        tri.vertexB = interpolateVerts(cubeCorners[a1], cubeCorners[b1]);
+        tri.vertexC = interpolateVerts(cubeCorners[a2], cubeCorners[b2]);
+
+        // Blend the vertices with neighboring biome vertices
+        tri.vertexA = BlendVertex(tri.vertexA);
+        tri.vertexB = BlendVertex(tri.vertexB);
+        tri.vertexC = BlendVertex(tri.vertexC);
+
+        triangles.Append(tri);
+    }
+}

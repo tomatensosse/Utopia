@@ -8,7 +8,6 @@ public class MeshGenerator : MonoBehaviour
     private bool _isReady = false;
 
     public ComputeShader marchingCubesShader;
-    public ComputeShader blendedMarchingCubesShader;
 
     private ComputeBuffer pointsBuffer;
     private ComputeBuffer triangleBuffer;
