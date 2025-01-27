@@ -115,4 +115,9 @@ public class Chunk : MonoBehaviour
     {
         return _debugInspectorDensities.ContainsKey(point);
     }
+
+    public float GetDensity(Vector3Int point)
+    {
+        return _debugInspectorDensities[point];
+    }
 }
