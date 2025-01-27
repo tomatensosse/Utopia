@@ -14,6 +14,9 @@ public class Chunk : MonoBehaviour
     protected ComputeBuffer blendedBuffer;
     protected bool isBlended = false;
 
+    public Dictionary<Vector3Int, float> debugInspectorDensities => _debugInspectorDensities;
+    private Dictionary<Vector3Int, float> _debugInspectorDensities = new Dictionary<Vector3Int, float>();
+
     [Header("Components")]
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
@@ -32,9 +35,30 @@ public class Chunk : MonoBehaviour
         meshCollider = this.AddComponent<MeshCollider>();
     }
 
-    public void GenerateDensity() // Dont forget to release the density/points buffer for memory leaks
+
+    public void GenerateDensity(bool outputDebugInspectorDensities = false) // Dont forget to release the density/points buffer for memory leaks
     {
         densityBuffer = biome.root.GenerateDensity(transform.position);
+
+        if (outputDebugInspectorDensities)
+        {
+            _debugInspectorDensities = new Dictionary<Vector3Int, float>();
+
+            float[] densityArray = new float[World.Settings.numPoints];
+            densityBuffer.GetData(densityArray);
+
+            for (int x = 0; x < World.Settings.numPointsPerAxis; x++)
+            {
+                for (int y = 0; y < World.Settings.numPointsPerAxis; y++)
+                {
+                    for (int z = 0; z < World.Settings.numPointsPerAxis; z++)
+                    {
+                        Vector3Int point = new Vector3Int(x, y, z);
+                        _debugInspectorDensities.Add(point, densityArray[x + y * World.Settings.numPointsPerAxis + z * World.Settings.numPointsPerAxis * World.Settings.numPointsPerAxis]);
+                    }
+                }
+            }
+        }
     }
 
     public void BlendDensity(Dictionary<Vector3Int, Chunk> neighbors)
@@ -85,5 +109,10 @@ public class Chunk : MonoBehaviour
 
         Gizmos.color = biome.biomeColor;
         Gizmos.DrawWireCube(transform.position, new Vector3(World.Settings.chunkSize, World.Settings.chunkSize, World.Settings.chunkSize));
+    }
+
+    public bool PointInChunk(Vector3Int point)
+    {
+        return _debugInspectorDensities.ContainsKey(point);
     }
 }

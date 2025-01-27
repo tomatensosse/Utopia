@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator Instance { get; private set; }
+    public static Dictionary<Vector3Int, Chunk> Chunks => Instance.chunks;
 
     private Dictionary<Vector3Int, Chunk> chunks = new Dictionary<Vector3Int, Chunk>();
     protected Dictionary<Vector3Int, Chunk> dirtyChunks = new Dictionary<Vector3Int, Chunk>();
@@ -14,6 +16,15 @@ public class ChunkGenerator : MonoBehaviour
 
     private int staticSizeState = -1;
     private bool isBusy = false;
+
+    [Header("Debug")]
+    public bool skipBlending = false;
+    public bool inspectDensities = false;
+    [ShowIf("inspectDensities")]
+    public GameObject densityInspectorPrefab;
+    [ShowIf("inspectDensities")]
+    public int inspectorRenderDistance = 4;
+    private DensityInspector densityInspector;
 
     void Awake()
     {
@@ -93,7 +104,12 @@ public class ChunkGenerator : MonoBehaviour
                     Debug.Log("State 1: Generate Densities for each chunk.");
                     foreach (Chunk chunk in chunks.Values)
                     {
-                        chunk.GenerateDensity();
+                        chunk.GenerateDensity(inspectDensities);
+                    }
+                    if (inspectDensities)
+                    {
+                        densityInspector = Instantiate(densityInspectorPrefab).GetComponent<DensityInspector>();
+                        densityInspector.SetReady();
                     }
                     isBusy = false;
                     Debug.Log("Done!");
@@ -132,6 +148,12 @@ public class ChunkGenerator : MonoBehaviour
             }
             
             staticSizeState++;
+
+            if (skipBlending && staticSizeState == 2)
+            {
+                Debug.Log("Skipping blending...");
+                staticSizeState++;
+            }
         }
     }
 
