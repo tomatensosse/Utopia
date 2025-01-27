@@ -18,7 +18,7 @@ public class ChunkGenerator : MonoBehaviour
     private bool isBusy = false;
 
     [Header("Debug")]
-    public bool skipBlending = false;
+    public bool blendMeshes = false;
     public bool inspectDensities = false;
     [ShowIf("inspectDensities")]
     public GameObject densityInspectorPrefab;
@@ -116,11 +116,8 @@ public class ChunkGenerator : MonoBehaviour
                     break;
                 case 2:
                     isBusy = true;
-                    Debug.Log("State 2: Blend density values between neighboring biomes if different.");
-                    foreach (Chunk chunk in chunks.Values)
-                    {
-                        BlendChunk(chunk);
-                    }
+                    Debug.Log("(OBSOLETE) State 2: Blend density values between neighboring biomes if different.");
+                    
                     isBusy = false;
                     Debug.Log("Done!");
                     break;
@@ -148,12 +145,6 @@ public class ChunkGenerator : MonoBehaviour
             }
             
             staticSizeState++;
-
-            if (skipBlending && staticSizeState == 2)
-            {
-                Debug.Log("Skipping blending...");
-                staticSizeState++;
-            }
         }
     }
 
@@ -273,19 +264,12 @@ public class ChunkGenerator : MonoBehaviour
         chunks.Add(position, chunkComponent);
     }
 
-    private void BlendChunk(Chunk chunk)
-    {
-        Dictionary<Vector3Int, Chunk> neighbors = GetNeighborChunks(chunk.chunkPosition);
-
-        chunk.BlendDensity(neighbors);
-    }
-
     private void GenerateChunkMesh(Chunk chunk)
     {
-        chunk.GenerateMesh();
+        chunk.GenerateMesh(blendMeshes);
     }
 
-    private Dictionary<Vector3Int, Chunk> GetNeighborChunks(Vector3Int chunkPosition)
+    public Dictionary<Vector3Int, Chunk> GetNeighborChunks(Vector3Int chunkPosition)
     {
         Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
 

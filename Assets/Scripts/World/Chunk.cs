@@ -11,21 +11,19 @@ public class Chunk : MonoBehaviour
 
     public ComputeBuffer DensityBuffer => densityBuffer;
     protected ComputeBuffer densityBuffer;
-    protected ComputeBuffer blendedBuffer;
     protected bool isBlended = false;
 
     public Dictionary<Vector3Int, float> debugInspectorDensities => _debugInspectorDensities;
     private Dictionary<Vector3Int, float> _debugInspectorDensities = new Dictionary<Vector3Int, float>();
 
     [Header("Components")]
-    MeshFilter meshFilter;
+    [HideInInspector] public MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
 
     void OnDestroy()
     {
         if (densityBuffer != null) densityBuffer.Release();
-        if (blendedBuffer != null) blendedBuffer.Release();
     }
 
     public void Initialize()
@@ -61,27 +59,18 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public void BlendDensity(Dictionary<Vector3Int, Chunk> neighbors)
-    {
-        if (neighbors.Any(n => n.Value.biome != biome)) {
-            var blendedBuffer = BiomeBlender.Instance.BlendWithNeighbors(this, neighbors);
-
-            this.blendedBuffer = blendedBuffer;
-            isBlended = true;
-        }
-    }
-
-    public void GenerateMesh()
+    public void GenerateMesh(bool blendMesh = false)
     {
         Mesh mesh = new Mesh();
-
-        if (isBlended)
-        {
-            mesh = MeshGenerator.Instance.GenerateMesh(blendedBuffer, 1);
-        }
-        if (!isBlended)
+        
+        if (!blendMesh)
         {
             mesh = MeshGenerator.Instance.GenerateMesh(densityBuffer, 1);
+        }
+
+        if (blendMesh)
+        {
+            mesh = BlendedMeshGenerator.Instance.GenerateBlendedMesh(densityBuffer, 1);
         }
 
         meshFilter.mesh = mesh;
@@ -93,11 +82,6 @@ public class Chunk : MonoBehaviour
         meshCollider.sharedMesh = mesh;
 
         densityBuffer.Release();
-
-        if (isBlended)
-        {
-            blendedBuffer.Release();
-        }
     }
 
     private void OnDrawGizmos()

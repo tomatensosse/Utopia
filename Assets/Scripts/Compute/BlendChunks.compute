@@ -1,54 +1,61 @@
-#pragma kernel BlendChunks
+// MeshBlend.compute
+#pragma kernel BlendMesh
 
-RWStructuredBuffer<float4> centerChunkPoints;
-RWStructuredBuffer<float4> blendedPoints;
-StructuredBuffer<float4> allNeighborPoints;
-StructuredBuffer<float3> neighborPositions;
+struct Vertex {
+    float3 position;
+};
+
+RWStructuredBuffer<Vertex> vertices;
+StructuredBuffer<Vertex> neighborVertex;
+StructuredBuffer<int> neighborVertexCounts;
+StructuredBuffer<int> neighborOffsets;
 StructuredBuffer<int> hasNeighbor;
-int numNeighbors;
-int numPointsPerAxis;
-float blendDistance;
+int numVertices;
 float blendStrength;
+float chunkSize;
 
-int indexFromCoord(int x, int y, int z) {
-   return z * numPointsPerAxis * numPointsPerAxis + y * numPointsPerAxis + x;
-}
-
-[numthreads(8, 8, 8)]
-void BlendChunks(int3 id : SV_DispatchThreadID)
+[numthreads(64, 1, 1)]
+void BlendMesh(uint3 id : SV_DispatchThreadID)
 {
-   if (id.x >= numPointsPerAxis || id.y >= numPointsPerAxis || id.z >= numPointsPerAxis) {
-       return;
-   }
-   
-   int index = indexFromCoord(id.x, id.y, id.z);
-   float4 current = centerChunkPoints[index];
-   float4 blended = current;
-   float totalWeight = 0;
-   
-   // Check distance to chunk edges for stronger blending
-   float3 localPos = float3(id) / float(numPointsPerAxis - 1);
-   float edgeDist = min(min(min(localPos.x, 1 - localPos.x), 
-                           min(localPos.y, 1 - localPos.y)),
-                           min(localPos.z, 1 - localPos.z));
-   
-   for (int i = 0; i < numNeighbors; i++) {
-       if (hasNeighbor[i] == 1) {
-           float dist = distance(current.xyz, neighborPositions[i]);
-           if (dist <= blendDistance) {
-               float edgeWeight = smoothstep(0, 0.3, edgeDist); // Stronger blend near edges
-               float weight = (1 - dist/blendDistance) * (1 - edgeWeight) * blendStrength;
-               
-               int neighborIndex = i * (numPointsPerAxis * numPointsPerAxis * numPointsPerAxis) + index;
-               blended.w += allNeighborPoints[neighborIndex].w * weight;
-               totalWeight += weight;
-           }
-       }
-   }
-   
-   if (totalWeight > 0) {
-       blended.w = blended.w / (totalWeight + 1);
-   }
-   
-   blendedPoints[index] = blended;
+    if (id.x >= numVertices) return;
+    
+    Vertex vert = vertices[id.x];
+    
+    float3 normalizedPos = vert.position / chunkSize + 0.5;
+    float3 distFromBoundary = min(normalizedPos, 1 - normalizedPos);
+    float boundaryDist = min(min(distFromBoundary.x, distFromBoundary.y), distFromBoundary.z);
+    
+    if (boundaryDist > 0.1) return;
+    
+    float3 blendedPosition = vert.position;
+    float totalWeight = 1;
+    
+    for (int i = 0; i < 26; i++)
+    {
+        if (hasNeighbor[i] == 1)
+        {
+            int startIdx = neighborOffsets[i];
+            int count = neighborVertexCounts[i];
+            
+            float minDist = 999999;
+            float3 nearestPos = vert.position;
+            
+            for (int j = 0; j < count; j++)
+            {
+                float3 neighborPos = neighborVertex[startIdx + j].position;
+                float dist = distance(vert.position, neighborPos);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearestPos = neighborPos;
+                }
+            }
+            
+            float weight = (1 - boundaryDist * 10) * blendStrength;
+            blendedPosition = lerp(blendedPosition, nearestPos, weight);
+            totalWeight += weight;
+        }
+    }
+    
+    vertices[id.x].position = blendedPosition / totalWeight;
 }
