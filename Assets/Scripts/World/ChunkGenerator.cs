@@ -283,10 +283,7 @@ public class ChunkGenerator : MonoBehaviour
             return;
         }
 
-        foreach (var neighbor in neighbors)
-        {
-            chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
-        }
+        chunk.BlendWithNeighbors(neighbors);
     }
 
     public Dictionary<Vector3Int, Chunk> GetNeighborChunks_FilterBiome(Vector3Int chunkPosition, bool diagonal = true)

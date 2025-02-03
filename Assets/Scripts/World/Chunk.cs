@@ -12,8 +12,8 @@ public class Chunk : MonoBehaviour
 
     public ComputeBuffer DensityBuffer => densityBuffer;
     protected ComputeBuffer densityBuffer;
-    public ComputeBuffer BlendedBuffer => blendedBuffer;
-    protected ComputeBuffer blendedBuffer;
+    public ComputeBuffer BlendedBuffer => finalizedBlendedBuffer;
+    protected ComputeBuffer finalizedBlendedBuffer;
     protected ComputeBuffer ongoingBlendedBuffer;
     public bool isBlended = false;
 
@@ -60,13 +60,13 @@ public class Chunk : MonoBehaviour
         }
         else
         {
-            if (blendedBuffer == null)
+            if (finalizedBlendedBuffer == null)
             {
                 Debug.LogError($"Chunk({chunkPosition}) | Mesh is blended but no blendedBuffer?!");
                 return;
             }
             
-            mesh = MeshGenerator.Instance.GenerateMesh(blendedBuffer, 1);
+            mesh = MeshGenerator.Instance.GenerateMesh(finalizedBlendedBuffer, 1);
 
             Debug.Log($"Chunk({chunkPosition}) | Generated mesh from blended buffer");
         }
@@ -94,6 +94,19 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    public void BlendWithNeighbors(Dictionary<Vector3Int, Chunk> relativeNeighbors)
+    {
+        ongoingBlendedBuffer = densityBuffer;
+
+        foreach (var neighbor in relativeNeighbors)
+        {
+            BlendWithNeighbor(neighbor.Value, neighbor.Key);
+        }
+
+        finalizedBlendedBuffer = ongoingBlendedBuffer;
+        isBlended = true;
+    }
+
     public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
     {
         if (densityBuffer == null || neighborChunk.DensityBuffer == null)
@@ -103,13 +116,12 @@ public class Chunk : MonoBehaviour
         }
 
         var blendedBuffer = BlendGenerator.Instance.BlendWithNeighbor(
-            densityBuffer, 
+            ongoingBlendedBuffer, 
             neighborChunk.DensityBuffer,
             neighborRelative
         );
 
-        this.blendedBuffer = blendedBuffer;
-        isBlended = true;
+        this.ongoingBlendedBuffer = blendedBuffer;
 
         Debug.Log($"Chunk({chunkPosition}) | Blended with neighbor at {neighborRelative} | NeighborChunk Pos : {neighborChunk.chunkPosition}; NeighborRelative: {neighborRelative}");
     }

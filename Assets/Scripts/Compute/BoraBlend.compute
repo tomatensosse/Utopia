@@ -40,8 +40,8 @@ float getBlendStrength(int x, int y, int z) {
     int distanceFromEdge = 0;
     
     if (neighborRelativity.x != 0) distanceFromEdge = x;
-    if (neighborRelativity.y != 0) distanceFromEdge = y;
-    if (neighborRelativity.z != 0) distanceFromEdge = z;
+    if (neighborRelativity.y != 0) distanceFromEdge = max(distanceFromEdge, y);
+    if (neighborRelativity.z != 0) distanceFromEdge = max(distanceFromEdge, z);
     
     // If beyond blend distance, no blend
     if (distanceFromEdge >= blendDistance) return 0;
