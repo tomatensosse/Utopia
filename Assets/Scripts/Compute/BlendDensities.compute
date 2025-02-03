@@ -67,6 +67,12 @@ float4 GetNeighborPoint(int neighborIndex, int pointIndex) {
     }
 }
 
+bool IsEdgePoint(int3 id) {
+    return id.x == 0 || id.x == numPointsPerAxis - 1 ||
+           id.y == 0 || id.y == numPointsPerAxis - 1 ||
+           id.z == 0 || id.z == numPointsPerAxis - 1;
+}
+
 [numthreads(8, 8, 8)]
 void BlendDensities(int3 id : SV_DispatchThreadID)
 {
@@ -74,31 +80,31 @@ void BlendDensities(int3 id : SV_DispatchThreadID)
         return;
     }
 
-    int index = indexFromCoord(id.x, id.y, id.z);
-    float4 currentPoint = points[index];
-    
-    bool isNearBoundary = 
-        id.x == 0 || id.x == numPointsPerAxis - 1 ||
-        id.y == 0 || id.y == numPointsPerAxis - 1 ||
-        id.z == 0 || id.z == numPointsPerAxis - 1;
-
-    if (!isNearBoundary) {
+    // Only process edge points
+    if (!IsEdgePoint(id)) {
         return;
     }
 
-    float totalDensity = currentPoint.w;
-    float totalWeight = 1.0;
+    int index = indexFromCoord(id.x, id.y, id.z);
+    float4 currentPoint = points[index];
+    
+    // Determine which neighbors to check based on position
+    float totalValue = currentPoint.w;
+    int count = 1;
 
     [unroll]
     for (int i = 0; i < 26; i++) {
         if (hasNeighbor[i] == 1) {
             float4 neighborPoint = GetNeighborPoint(i, index);
-            float weight = blendStrength;
-            totalDensity += neighborPoint.w * weight;
-            totalWeight += weight;
+            
+            // Force strong blending at edges
+            if (IsEdgePoint(id)) {
+                totalValue += neighborPoint.w;
+                count++;
+            }
         }
     }
 
-    float blendedDensity = totalDensity / totalWeight;
-    points[index] = float4(currentPoint.xyz, blendedDensity);
+    // Direct averaging at edges
+    points[index] = float4(currentPoint.xyz, totalValue / count);
 }

@@ -29,6 +29,6 @@ MonoBehaviour:
         parameters: {x: 1, y: 0, z: 0, w: 0}
         numOctaves: 2
         lacunarity: 4
-        persistence: 6
-        noiseScale: 1
+        persistence: 4
+        noiseScale: 0.25
         ridgeWeight: 1

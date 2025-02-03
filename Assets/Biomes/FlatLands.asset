@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2d13ef789f224b93af4b028803ed844, type: 3}
-  m_Name: Forest
+  m_Name: FlatLands
   m_EditorClassIdentifier: 
-  uid: forest
-  biomeName: Forest
-  biomeColor: {r: 0.3370723, g: 1, b: 0.07075471, a: 1}
+  uid: flatland
+  biomeName: Flatlands
+  biomeColor: {r: 0.03671235, g: 0.27942893, b: 0.5188679, a: 1}
   material: {fileID: 2100000, guid: 0a40dc9ac44984e498892c10d22d84df, type: 2}
   root:
-    rid: 205417935889235992
+    rid: 205418074208206848
   references:
     version: 2
     RefIds:
-    - rid: 205417935889235992
+    - rid: 205418074208206848
       type: {class: SimpleNoiseNode, ns: , asm: Assembly-CSharp}
       data:
         shader: {fileID: 7200000, guid: 6c565249eb7094caeb45b60238eae943, type: 3}
         offset: {x: 0, y: 0, z: 0}
         parameters: {x: 1, y: 0, z: 0, w: 0}
         numOctaves: 2
-        lacunarity: 10
-        persistence: 10
-        noiseScale: 0.5
+        lacunarity: 16
+        persistence: 16
+        noiseScale: 0.1
         noiseWeight: 1
         closeEdges: 0
-        floorOffset: 1
-        weightMultiplier: 0.25
-        hardFloor: 1
-        hardFloorWeight: 1
+        floorOffset: 0
+        weightMultiplier: 4
+        hardFloor: 0
+        hardFloorWeight: 0

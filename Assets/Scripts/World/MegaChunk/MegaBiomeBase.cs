@@ -18,7 +18,8 @@ public abstract class MegaBiomeBase : ScriptableObject
     {
         int seed = World.Seed;
 
-        float noise = Mathf.PerlinNoise((seed + chunkPosition.x) * 0.1f, (seed + chunkPosition.z) * 0.1f);
+        //float noise = Mathf.PerlinNoise((seed + chunkPosition.x) * 0.1f, (seed + chunkPosition.z) * 0.1f);
+        float noise = Random.Range(0f, 1f);
 
         foreach (BiomeGeneration biome in biomes)
         {

@@ -190,7 +190,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &518723529
+--- !u!1 &472777681
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,37 +198,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 518723531}
-  - component: {fileID: 518723530}
+  - component: {fileID: 472777683}
+  - component: {fileID: 472777682}
   m_Layer: 0
-  m_Name: Mesh Generator++
+  m_Name: Blend Generator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &518723530
+--- !u!114 &472777682
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 518723529}
+  m_GameObject: {fileID: 472777681}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c35f340c97bd47349f8a90b874da05b, type: 3}
+  m_Script: {fileID: 11500000, guid: cdbc043ed63b74cd7bf4193761872c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendedMarchingCubesShader: {fileID: 7200000, guid: c7b12c34aa27b46939a74075fc1fc98d,
-    type: 3}
-  blendStrength: 1
---- !u!4 &518723531
+  blendShader: {fileID: 7200000, guid: c9732204343ed448d9c04f0471aa0462, type: 3}
+  blendDistance: 4
+  falloffBegin: 2
+--- !u!4 &472777683
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 518723529}
+  m_GameObject: {fileID: 472777681}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -385,11 +385,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   megaBiome: {fileID: 11400000, guid: d50a695b576b649a58f4c6a55410eb97, type: 2}
-  blendMeshes: 1
-  inspectDensities: 0
+  inspectDensities: 1
   densityInspectorPrefab: {fileID: 8149918472959035482, guid: 855febec483034e6b988c3f4a5e25b82,
     type: 3}
-  inspectorRenderDistance: 3
 --- !u!4 &1071955006
 Transform:
   m_ObjectHideFlags: 0
@@ -480,12 +478,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _generationMode: 0
-  _staticWorldSize: {x: 4, y: 2, z: 4}
+  _staticWorldSize: {x: 2, y: 1, z: 2}
   renderDistanceHorizontal: 3
   renderDistanceVertical: 3
-  setSeed: 420
-  chunkSize: 8
-  numPointsPerAxis: 16
+  setSeed: 0
+  chunkSize: 4
+  numPointsPerAxis: 8
 --- !u!4 &1483280353
 Transform:
   m_ObjectHideFlags: 0
@@ -678,5 +676,5 @@ SceneRoots:
   - {fileID: 1483280353}
   - {fileID: 1329833865}
   - {fileID: 1071955006}
+  - {fileID: 472777683}
   - {fileID: 404385620}
-  - {fileID: 518723531}

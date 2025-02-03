@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MB_Debug
   m_EditorClassIdentifier: 
   defaultBiome:
-    biome: {fileID: 11400000, guid: ae67cb49a0bcb4171a90fa2dcd3f6635, type: 2}
-    threshold: {x: 0, y: 0}
+    biome: {fileID: 11400000, guid: c63c2f38037ba4045aa3eda053811822, type: 2}
+    threshold: {x: 0, y: 1}
   biomes:
-  - biome: {fileID: 11400000, guid: c63c2f38037ba4045aa3eda053811822, type: 2}
-    threshold: {x: 0.082348235, y: 0.42296132}
+  - biome: {fileID: 11400000, guid: ae67cb49a0bcb4171a90fa2dcd3f6635, type: 2}
+    threshold: {x: 0, y: 0.49167228}

@@ -18,13 +18,13 @@ public class ChunkGenerator : MonoBehaviour
     private bool isBusy = false;
 
     [Header("Debug")]
-    public bool blendMeshes = false;
     public bool inspectDensities = false;
     [ShowIf("inspectDensities")]
     public GameObject densityInspectorPrefab;
-    [ShowIf("inspectDensities")]
-    public int inspectorRenderDistance = 4;
     private DensityInspector densityInspector;
+
+    public delegate void BlendFinished();
+    public BlendFinished OnBlendFinished;
 
     void Awake()
     {
@@ -104,26 +104,30 @@ public class ChunkGenerator : MonoBehaviour
                     Debug.Log("State 1: Generate Densities for each chunk.");
                     foreach (Chunk chunk in chunks.Values)
                     {
-                        chunk.GenerateDensity(inspectDensities);
-                    }
-                    if (inspectDensities)
-                    {
-                        densityInspector = Instantiate(densityInspectorPrefab).GetComponent<DensityInspector>();
-                        densityInspector.SetReady();
+                        chunk.GenerateDensity();
                     }
                     isBusy = false;
                     Debug.Log("Done!");
                     break;
                 case 2:
                     isBusy = true;
-                    Debug.Log("(OBSOLETE) State 2: Blend density values between neighboring biomes if different.");
-                    
+                    Debug.Log("State 2 (TBA): Blend density values between neighboring biomes if different.");
+                    foreach (Chunk chunk in chunks.Values)
+                    {
+                        BlendChunk(chunk);
+                    }
+                    OnBlendFinished?.Invoke();
                     isBusy = false;
                     Debug.Log("Done!");
                     break;
                 case 3:
                     isBusy = true;
                     Debug.Log("State 3: Generate mesh for each chunk.");
+                    if (inspectDensities)
+                    {
+                        densityInspector = Instantiate(densityInspectorPrefab).GetComponent<DensityInspector>();
+                        densityInspector.SetReady();
+                    }
                     foreach (Chunk chunk in chunks.Values)
                     {
                         GenerateChunkMesh(chunk);
@@ -266,10 +270,26 @@ public class ChunkGenerator : MonoBehaviour
 
     private void GenerateChunkMesh(Chunk chunk)
     {
-        chunk.GenerateMesh(blendMeshes);
+        chunk.GenerateMesh(!inspectDensities);
     }
 
-    public Dictionary<Vector3Int, Chunk> GetNeighborChunks(Vector3Int chunkPosition)
+    private void BlendChunk(Chunk chunk)
+    {
+        Dictionary<Vector3Int, Chunk> neighbors = GetNeighborChunks_FilterBiome(chunk.chunkPosition, true);
+
+        if (neighbors.Count == 0)
+        {
+            Debug.Log($"No neighbors found for chunk at {chunk.chunkPosition}");
+            return;
+        }
+
+        foreach (var neighbor in neighbors)
+        {
+            chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+        }
+    }
+
+    public Dictionary<Vector3Int, Chunk> GetNeighborChunks_FilterBiome(Vector3Int chunkPosition, bool diagonal = true)
     {
         Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
 
@@ -288,7 +308,13 @@ public class ChunkGenerator : MonoBehaviour
 
                     if (chunks.TryGetValue(neighborPosition, out Chunk neighborChunk))
                     {
-                        neighbors.Add(neighborPosition, neighborChunk);
+                        Debug.Log($"Chunk ({chunkPosition}) | Neighbor found at {neighborPosition}");
+
+                        if (neighborChunk.biome != chunks[chunkPosition].biome)
+                        {
+                            Debug.Log($"Chunk ({chunkPosition}) | Neighbor at {neighborPosition} has different biome");
+                            neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
+                        }
                     }
                 }
             }
