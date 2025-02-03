@@ -12,8 +12,12 @@ public class World : MonoBehaviour
 
     private bool _isReady = false;
 
+    public delegate void OnWorldReady();
+    public OnWorldReady onWorldReady;
+
     public enum GenerationMode
     {
+        WorldEditor,
         StaticSize,
         TargetTransform,
         MultiplayerServerSide, // TBA

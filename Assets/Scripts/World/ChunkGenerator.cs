@@ -39,6 +39,11 @@ public class ChunkGenerator : MonoBehaviour
 
     void Start()
     {
+        if (World.WorldGenerationMode == World.GenerationMode.WorldEditor)
+        {
+            Debug.LogWarning("WorldEditor ACTIVE.");
+        }
+
         if (World.WorldGenerationMode == World.GenerationMode.StaticSize)
         {
             StartCoroutine(WaitAndGenerateStatic());
@@ -64,6 +69,9 @@ public class ChunkGenerator : MonoBehaviour
 
         switch (generationMode)
         {
+            case World.GenerationMode.WorldEditor:
+                // WorldEditor();
+                break;
             case World.GenerationMode.StaticSize:
                 StaticSizeState();
                 break;
@@ -253,7 +261,7 @@ public class ChunkGenerator : MonoBehaviour
         return false;
     }
 
-    private void GenerateChunk(Vector3Int position)
+    public void GenerateChunk(Vector3Int position)
     {
         GameObject chunk = new GameObject("Chunk " + position);
         chunk.transform.position = position * World.Settings.chunkSize;
@@ -263,7 +271,7 @@ public class ChunkGenerator : MonoBehaviour
         chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();
 
-        chunkComponent.biome = megaBiome.GetBiomeAt(position);
+        //chunkComponent.biome = megaBiome.GetBiomeAt(position);
 
         chunks.Add(position, chunkComponent);
     }
@@ -275,18 +283,17 @@ public class ChunkGenerator : MonoBehaviour
 
     private void BlendChunk(Chunk chunk)
     {
-        Dictionary<Vector3Int, Chunk> neighbors = GetNeighborChunks_FilterBiome(chunk.chunkPosition, true);
-
-        if (neighbors.Count == 0)
+        if (!chunk.blendCanidate)
         {
-            Debug.Log($"No neighbors found for chunk at {chunk.chunkPosition}");
             return;
         }
 
-        chunk.BlendWithNeighbors(neighbors);
+        Dictionary<Vector3Int, Chunk> blendNeighbors = chunk.blendNeighbors;
+
+        chunk.BlendWithNeighbors(blendNeighbors);
     }
 
-    public Dictionary<Vector3Int, Chunk> GetNeighborChunks_FilterBiome(Vector3Int chunkPosition, bool diagonal = true)
+    public Dictionary<Vector3Int, Chunk> GetNeighbors(Vector3Int chunkPosition, bool filterBiome)
     {
         Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
 
@@ -306,6 +313,12 @@ public class ChunkGenerator : MonoBehaviour
                     if (chunks.TryGetValue(neighborPosition, out Chunk neighborChunk))
                     {
                         Debug.Log($"Chunk ({chunkPosition}) | Neighbor found at {neighborPosition}");
+
+                        if (!filterBiome)
+                        {
+                            neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
+                            continue;
+                        }
 
                         if (neighborChunk.biome != chunks[chunkPosition].biome)
                         {

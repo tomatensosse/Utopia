@@ -14,8 +14,16 @@ public class Chunk : MonoBehaviour
     protected ComputeBuffer densityBuffer;
     public ComputeBuffer BlendedBuffer => finalizedBlendedBuffer;
     protected ComputeBuffer finalizedBlendedBuffer;
+    public ComputeBuffer OngoingBlendedBuffer => ongoingBlendedBuffer;
     protected ComputeBuffer ongoingBlendedBuffer;
+    public bool isDensityGenerated = false;
+    public bool isMeshGenerated = false;
     public bool isBlended = false;
+    public bool blendCanidate = false;
+    public Dictionary<Vector3Int, Chunk> blendNeighbors = new Dictionary<Vector3Int, Chunk>();
+    public Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
+    public List<Vector3Int> blendOffsets = new List<Vector3Int>();
+    public List<Vector3Int> brokenOffsets = new List<Vector3Int>();
 
     [Header("Components")]
     [HideInInspector] public MeshFilter meshFilter;
@@ -46,6 +54,8 @@ public class Chunk : MonoBehaviour
     public void GenerateDensity() // Dont forget to release the density/points buffer for memory leaks
     {
         densityBuffer = biome.root.GenerateDensity(transform.position);
+
+        isDensityGenerated = true;
     }
 
     public void GenerateMesh(bool releaseAfterComplete)
@@ -92,19 +102,36 @@ public class Chunk : MonoBehaviour
         {
             densityBuffer.Release();
         }
+
+        isMeshGenerated = true;
     }
 
-    public void BlendWithNeighbors(Dictionary<Vector3Int, Chunk> relativeNeighbors)
+    public void BlendWithNeighbors(Dictionary<Vector3Int, Chunk> blendNeighbors)
     {
         ongoingBlendedBuffer = densityBuffer;
 
-        foreach (var neighbor in relativeNeighbors)
+        foreach (var blendNeighbor in blendNeighbors)
         {
-            BlendWithNeighbor(neighbor.Value, neighbor.Key);
+            if (blendNeighbor.Value.blendOffsets.Contains(-blendNeighbor.Key))
+            {
+                continue;
+            }
+
+            // Blend with neighbor
         }
 
-        finalizedBlendedBuffer = ongoingBlendedBuffer;
-        isBlended = true;
+        foreach (var neighbor in neighbors)
+        {
+            if (!blendNeighbors.ContainsKey(neighbor.Key))
+            {
+                brokenOffsets.Add(neighbor.Key);
+            }
+        }
+
+        foreach (Vector3Int brokenOffset in brokenOffsets)
+        {
+            
+        }
     }
 
     public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
@@ -121,19 +148,46 @@ public class Chunk : MonoBehaviour
             neighborRelative
         );
 
+        blendOffsets.Add(neighborRelative);
+        neighborChunk.blendOffsets.Add(-neighborRelative);
+
         this.ongoingBlendedBuffer = blendedBuffer;
 
         Debug.Log($"Chunk({chunkPosition}) | Blended with neighbor at {neighborRelative} | NeighborChunk Pos : {neighborChunk.chunkPosition}; NeighborRelative: {neighborRelative}");
     }
 
+    public bool OffsetBlended(Vector3Int offset)
+    {
+        return blendOffsets.Contains(offset);
+    }
+
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying || biome == null)
+        if (!Application.isPlaying)
         {
             return;
         }
 
-        Gizmos.color = biome.biomeColor;
-        Gizmos.DrawWireCube(transform.position, new Vector3(World.Settings.chunkSize, World.Settings.chunkSize, World.Settings.chunkSize));
+        if (biome == null)
+        {
+            Gizmos.color = new Color(1f, 1f, 1f, 0.3f);
+        }
+        else if (!isDensityGenerated)
+        {
+            Gizmos.color = biome.biomeColor;
+        }
+        else
+        {
+            Gizmos.color = new Color(biome.biomeColor.r, biome.biomeColor.g, biome.biomeColor.b, 0.3f);
+        }
+
+        if (!isDensityGenerated)
+        {
+            Gizmos.DrawWireCube(transform.position, new Vector3(World.Settings.chunkSize, World.Settings.chunkSize, World.Settings.chunkSize));
+        }
+        else if (!isMeshGenerated)
+        {
+            Gizmos.DrawCube(transform.position, new Vector3(World.Settings.chunkSize, World.Settings.chunkSize, World.Settings.chunkSize));
+        }
     }
 }

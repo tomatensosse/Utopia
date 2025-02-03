@@ -40,7 +40,8 @@ public class DensityInspector : MonoBehaviour
 
         pointContainer = new GameObject("Density Points");
 
-        offset = new Vector3(World.Settings.chunkSize / 2, World.Settings.chunkSize / 2, World.Settings.chunkSize / 2) * (-1);
+        float offsetint = (int)World.Settings.chunkSize / 2;
+        offset = new Vector3(offsetint, offsetint, offsetint) * (-1);
     }
 
     void Update()
