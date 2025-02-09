@@ -6,6 +6,8 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
+/*
+
 public class DensityInspector : MonoBehaviour
 {
     public static DensityInspector Instance { get; private set; }
@@ -219,3 +221,5 @@ public class DensityInspector : MonoBehaviour
         Gizmos.DrawCube(transform.position, new Vector3(World.Settings.chunkSize + 1, World.Settings.chunkSize + 1, World.Settings.chunkSize + 1));
     }
 }
+
+*/

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WorldEditor : MonoBehaviour
@@ -7,24 +8,28 @@ public class WorldEditor : MonoBehaviour
     public static WorldEditor Instance { get; private set; }
     
     public List<Biome> biomes = new List<Biome>();
+    public GameObject densityPointPrefab;
     public Color chunkInspectColor = Color.white;
     public Color emptyInspectColor = Color.white;
 
     public Vector3Int chunkPosition;
-    public Chunk currentChunk;
+    public Vector3Int pointPosition; // Density point position
+    public EditorChunk currentChunk;
     public Biome addingBiome;
     private Vector3Int input;
 
-    private List<DensityInspectorPoint> densityPoints = new List<DensityInspectorPoint>();
+    private Dictionary<Vector3Int, DensityEditCache> densityEditCaches = new Dictionary<Vector3Int, DensityEditCache>();
+    private Dictionary<Vector3Int, WorldEditorPoint> densityPoints = new Dictionary<Vector3Int, WorldEditorPoint>();
 
-    private const float lerp = 32f;
+    private const float lerp = 32f; // Lerp speed for movement and gizmos
     private float gizmoScale;
     private Color gizmoColor;
-    private bool isWorking => IsWorking();
+    private bool isWorking => IsWorking(); // Check if any of the working flags are true
     private bool isMoving;
     private bool isCreating;
     private bool isChangingGizmos;
     private bool isReady;
+    private bool finalizedChunks = false;
 
     private float offset;
     private Vector3 offsetVector;
@@ -115,6 +120,7 @@ public class WorldEditor : MonoBehaviour
         {
             if (ChunkGenerator.Chunks.TryGetValue(chunkPosition, out Chunk chunk))
             {
+                CycleBiome();
                 AssignBiome();
                 return;
             }
@@ -122,19 +128,26 @@ public class WorldEditor : MonoBehaviour
             GenerateNewChunk();
         }
 
-        if (Input.GetKeyDown(KeyCode.L) && input == Vector3Int.zero)
+        if (Input.GetKeyDown(KeyCode.J) && input == Vector3Int.zero && !finalizedChunks)
         {
-            CycleBiome();
+            ChunkGenerator.Instance.GenerateDensities();
+
+            finalizedChunks = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.J) && input == Vector3Int.zero)
+        if (Input.GetKeyDown(KeyCode.J) && input == Vector3Int.zero && finalizedChunks)
         {
-            GenerateDensity();
+            ChunkGenerator.Instance.RenderDensities();
         }
 
-        if (Input.GetKeyDown(KeyCode.M) && input == Vector3Int.zero)
+        if (Input.GetKeyDown(KeyCode.B) && input == Vector3Int.zero)
         {
-            GenerateMesh();
+            BlendChunk();
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            ChunkGenerator.Instance.GenerateMeshes();
         }
     }
 
@@ -150,16 +163,21 @@ public class WorldEditor : MonoBehaviour
             return;
         }
 
+        MoveChunk();
+    }
+
+    private void MoveChunk(bool force = false)
+    {
         Vector3Int newChunkPosition = chunkPosition + input;
 
-        if (newChunkPosition != chunkPosition || force)
+        if (newChunkPosition != chunkPosition || !force)
         {
             chunkPosition = newChunkPosition;
             StartCoroutine(SmoothMove());
 
             if (ChunkGenerator.Chunks.TryGetValue(newChunkPosition, out Chunk chunk))
             {
-                currentChunk = chunk;
+                currentChunk = (EditorChunk)chunk;
                 StartCoroutine(SmoothGizmos(World.Settings.chunkSize, chunkInspectColor));
             }
             else
@@ -225,44 +243,27 @@ public class WorldEditor : MonoBehaviour
         }
     }
 
-    private void GenerateDensity()
+    private void BlendChunk()
     {
         if (currentChunk == null)
         {
-            Debug.LogWarning("No current chunk to generate density points for!");
+            Debug.LogWarning("No current chunk to blend!");
             return;
         }
 
         if (currentChunk.biome == null)
         {
-            Debug.LogWarning("Current chunk has no biome to generate density points for!");
+            Debug.LogWarning("Current chunk has no biome to blend!");
             return;
         }
 
-        if (currentChunk.isDensityGenerated)
+        if (!currentChunk.isDensityGenerated)
         {
-            Debug.LogWarning("Current chunk already has density points generated!");
+            Debug.LogWarning("Current chunk has no density points to blend!");
             return;
         }
 
-        currentChunk.GenerateDensity();
-    }
-
-    private void GenerateMesh()
-    {
-        if (currentChunk == null)
-        {
-            Debug.LogWarning("No current chunk to generate mesh for!");
-            return;
-        }
-
-        if (currentChunk.biome == null)
-        {
-            Debug.LogWarning("Current chunk has no biome to generate mesh for!");
-            return;
-        }
-
-        currentChunk.GenerateMesh(false); // Releasing buffers after complete !!!
+        ChunkGenerator.Instance.BlendChunk(currentChunk);
     }
 
     private IEnumerator SmoothMove()

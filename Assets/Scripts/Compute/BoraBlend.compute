@@ -14,44 +14,103 @@ int indexFromCoord(int x, int y, int z) {
 int3 neighborPointIndex(int x, int y, int z) {
     int3 ppoint = int3(x, y, z);
     
+    // When reading from a positive neighbor (x > 0), read from their left side (x = 0)
+    // When reading from a negative neighbor (x < 0), read from their right side (x = numPointsPerAxis-1)
     if (neighborRelativity.x > 0) {
-        ppoint.x = x;
+        ppoint.x = 0;
     } else if (neighborRelativity.x < 0) {
-        ppoint.x = numPointsPerAxis - 1 - x;
+        ppoint.x = numPointsPerAxis - 1;
     }
     
     if (neighborRelativity.y > 0) {
-        ppoint.y = y;
+        ppoint.y = 0;
     } else if (neighborRelativity.y < 0) {
-        ppoint.y = numPointsPerAxis - 1 - y;
+        ppoint.y = numPointsPerAxis - 1;
     }
     
     if (neighborRelativity.z > 0) {
-        ppoint.z = z;
+        ppoint.z = 0;
     } else if (neighborRelativity.z < 0) {
-        ppoint.z = numPointsPerAxis - 1 - z;
+        ppoint.z = numPointsPerAxis - 1;
     }
     
     return ppoint;
 }
 
 float getBlendStrength(int x, int y, int z) {
-    // Calculate distance from edge based on neighbor relativity
-    int distanceFromEdge = 0;
+    if (neighborRelativity.x != 0) {
+        // Get distance from relevant edge
+        int edgeDistance = neighborRelativity.x < 0 ? x : (numPointsPerAxis - 1 - x);
+        
+        // First layer - all points get blended
+        if (edgeDistance == 0) {
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+        // Subsequent layers
+        else {
+            // Calculate required padding from edges based on distance from edge
+            int padding = edgeDistance;
+            
+            // Check if point is within shrinking square
+            if (y < padding || y >= numPointsPerAxis - padding ||
+                z < padding || z >= numPointsPerAxis - padding) {
+                return 0;
+            }
+            
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+    }
+    else if (neighborRelativity.y != 0) {
+        int edgeDistance = neighborRelativity.y < 0 ? y : (numPointsPerAxis - 1 - y);
+        
+        if (edgeDistance == 0) {
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+        else {
+            int padding = edgeDistance;
+            if (x < padding || x >= numPointsPerAxis - padding ||
+                z < padding || z >= numPointsPerAxis - padding) {
+                return 0;
+            }
+            
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+    }
+    else if (neighborRelativity.z != 0) {
+        int edgeDistance = neighborRelativity.z < 0 ? z : (numPointsPerAxis - 1 - z);
+        
+        if (edgeDistance == 0) {
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+        else {
+            int padding = edgeDistance;
+            if (x < padding || x >= numPointsPerAxis - padding ||
+                y < padding || y >= numPointsPerAxis - padding) {
+                return 0;
+            }
+            
+            if (edgeDistance >= blendDistance) return 0;
+            if (edgeDistance <= falloffBegin) return 1;
+        }
+    }
     
-    if (neighborRelativity.x != 0) distanceFromEdge = x;
-    if (neighborRelativity.y != 0) distanceFromEdge = max(distanceFromEdge, y);
-    if (neighborRelativity.z != 0) distanceFromEdge = max(distanceFromEdge, z);
-    
-    // If beyond blend distance, no blend
-    if (distanceFromEdge >= blendDistance) return 0;
-    
-    // If within falloff begin, full blend
-    if (distanceFromEdge <= falloffBegin) return 1;
-    
-    // Calculate falloff
     float falloffRange = blendDistance - falloffBegin;
-    float falloffDistance = distanceFromEdge - falloffBegin;
+    float edgeDistance = 0;
+    
+    if (neighborRelativity.x != 0) {
+        edgeDistance = neighborRelativity.x < 0 ? x : (numPointsPerAxis - 1 - x);
+    } else if (neighborRelativity.y != 0) {
+        edgeDistance = neighborRelativity.y < 0 ? y : (numPointsPerAxis - 1 - y);
+    } else {
+        edgeDistance = neighborRelativity.z < 0 ? z : (numPointsPerAxis - 1 - z);
+    }
+    
+    float falloffDistance = edgeDistance - falloffBegin;
     return 1 - (falloffDistance / falloffRange);
 }
 
@@ -72,6 +131,12 @@ void BlendDensities(int3 id : SV_DispatchThreadID) {
     float4 neighborPoint = neighborPoints[neighborIndex];
 
     // Blend densities based on strength
-    float blendedDensity = lerp(currentPoint.w, neighborPoint.w, strength);
+    // FOR DEBUGGING => points[currentIndex] = float4(currentPoint.xyz, neighborPoint.w);
+    // FOR DEBUGGING => points[currentIndex] = float4(currentPoint.xyz, strength);
+
+    float blendedDensity = (currentPoint.w + neighborPoint.w) * strength;
     points[currentIndex] = float4(currentPoint.xyz, blendedDensity);
+
+    //float blendedDensity = lerp(currentPoint.w, neighborPoint.w, strength);
+    //points[currentIndex] = float4(currentPoint.xyz, blendedDensity);
 }

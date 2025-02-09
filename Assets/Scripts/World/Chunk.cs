@@ -30,15 +30,6 @@ public class Chunk : MonoBehaviour
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
 
-    public struct FaceDensities
-    {
-        public ComputeBuffer densityBuffer;
-        public int width;
-        public int depth;
-        public int blendDepth;
-        public Vector3Int startPoint;
-    }
-
     void OnDestroy()
     {
         if (densityBuffer != null) densityBuffer.Release();
@@ -51,7 +42,7 @@ public class Chunk : MonoBehaviour
         meshCollider = this.AddComponent<MeshCollider>();
     }
 
-    public void GenerateDensity() // Dont forget to release the density/points buffer for memory leaks
+    public virtual void GenerateDensity() // Dont forget to release the density/points buffer for memory leaks
     {
         densityBuffer = biome.root.GenerateDensity(transform.position);
 
@@ -106,36 +97,10 @@ public class Chunk : MonoBehaviour
         isMeshGenerated = true;
     }
 
-    public void BlendWithNeighbors(Dictionary<Vector3Int, Chunk> blendNeighbors)
+    public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
     {
         ongoingBlendedBuffer = densityBuffer;
 
-        foreach (var blendNeighbor in blendNeighbors)
-        {
-            if (blendNeighbor.Value.blendOffsets.Contains(-blendNeighbor.Key))
-            {
-                continue;
-            }
-
-            // Blend with neighbor
-        }
-
-        foreach (var neighbor in neighbors)
-        {
-            if (!blendNeighbors.ContainsKey(neighbor.Key))
-            {
-                brokenOffsets.Add(neighbor.Key);
-            }
-        }
-
-        foreach (Vector3Int brokenOffset in brokenOffsets)
-        {
-            
-        }
-    }
-
-    public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
-    {
         if (densityBuffer == null || neighborChunk.DensityBuffer == null)
         {
             Debug.LogError("Cannot blend - density buffers not available");
@@ -156,9 +121,10 @@ public class Chunk : MonoBehaviour
         Debug.Log($"Chunk({chunkPosition}) | Blended with neighbor at {neighborRelative} | NeighborChunk Pos : {neighborChunk.chunkPosition}; NeighborRelative: {neighborRelative}");
     }
 
-    public bool OffsetBlended(Vector3Int offset)
+    public virtual void FinalizeBlending()
     {
-        return blendOffsets.Contains(offset);
+        finalizedBlendedBuffer = ongoingBlendedBuffer;
+        isBlended = true;
     }
 
     private void OnDrawGizmos()

@@ -21,7 +21,7 @@ public class ChunkGenerator : MonoBehaviour
     public bool inspectDensities = false;
     [ShowIf("inspectDensities")]
     public GameObject densityInspectorPrefab;
-    private DensityInspector densityInspector;
+    //private DensityInspector densityInspector;
 
     public delegate void BlendFinished();
     public BlendFinished OnBlendFinished;
@@ -131,11 +131,13 @@ public class ChunkGenerator : MonoBehaviour
                 case 3:
                     isBusy = true;
                     Debug.Log("State 3: Generate mesh for each chunk.");
+                    /*
                     if (inspectDensities)
                     {
                         densityInspector = Instantiate(densityInspectorPrefab).GetComponent<DensityInspector>();
                         densityInspector.SetReady();
                     }
+                    */
                     foreach (Chunk chunk in chunks.Values)
                     {
                         GenerateChunkMesh(chunk);
@@ -267,13 +269,68 @@ public class ChunkGenerator : MonoBehaviour
         chunk.transform.position = position * World.Settings.chunkSize;
         chunk.transform.SetParent(transform);
 
-        Chunk chunkComponent = chunk.AddComponent<Chunk>();
+        Chunk chunkComponent;
+
+        if (World.WorldGenerationMode == World.GenerationMode.WorldEditor)
+        {
+            chunkComponent = chunk.AddComponent<EditorChunk>();
+        }
+        else
+        {
+            chunkComponent = chunk.AddComponent<Chunk>();
+        }
+
         chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();
 
-        //chunkComponent.biome = megaBiome.GetBiomeAt(position);
+        chunkComponent.biome = megaBiome.GetBiomeAt(position);
 
         chunks.Add(position, chunkComponent);
+    }
+
+    public void GenerateDensities()
+    {
+        foreach (var kvp in chunks)
+        {
+            if (kvp.Value.biome == null)
+            {
+                Debug.LogError($"{kvp.Value.chunkPosition} | Chunk has no biome");
+                continue;
+            }
+
+            kvp.Value.GenerateDensity();
+        }
+    }
+
+    public void RenderDensities()
+    {
+        foreach (var kvp in chunks)
+        {
+            if (!kvp.Value.isDensityGenerated)
+            {
+                Debug.LogError($"{kvp.Value.chunkPosition} | Densities can't be visualised");
+                continue;
+            }
+
+            if (kvp.Value.TryGetComponent<EditorChunk>(out EditorChunk editorChunk))
+            {
+                editorChunk.RenderDensity();
+            }
+        }
+    }
+
+    public void GenerateMeshes()
+    {
+        foreach (var kvp in chunks)
+        {
+            if (!kvp.Value.isDensityGenerated)
+            {
+                Debug.LogError($"{kvp.Value.chunkPosition} | Mesh can't be generated");
+                continue;
+            }
+
+            GenerateChunkMesh(kvp.Value);
+        }
     }
 
     private void GenerateChunkMesh(Chunk chunk)
@@ -281,16 +338,22 @@ public class ChunkGenerator : MonoBehaviour
         chunk.GenerateMesh(!inspectDensities);
     }
 
-    private void BlendChunk(Chunk chunk)
+    public void BlendChunk(Chunk chunk, bool force = false)
     {
-        if (!chunk.blendCanidate)
+        Dictionary<Vector3Int, Chunk> neighbors = GetNeighbors(chunk.chunkPosition, true);
+
+        if (neighbors.Count == 0)
         {
+            Debug.Log($"No neighbors found for chunk at {chunk.chunkPosition}");
             return;
         }
 
-        Dictionary<Vector3Int, Chunk> blendNeighbors = chunk.blendNeighbors;
+        foreach (var neighbor in neighbors)
+        {
+            chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+        }
 
-        chunk.BlendWithNeighbors(blendNeighbors);
+        chunk.FinalizeBlending();
     }
 
     public Dictionary<Vector3Int, Chunk> GetNeighbors(Vector3Int chunkPosition, bool filterBiome)

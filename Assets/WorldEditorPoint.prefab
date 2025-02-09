@@ -124,9 +124,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1571330860917198757}
-  - component: {fileID: 1728372710552079193}
+  - component: {fileID: 5177433761970062054}
   m_Layer: 0
-  m_Name: DensityInspectorPoint
+  m_Name: WorldEditorPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ Transform:
   - {fileID: 549916767530307618}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1728372710552079193
+--- !u!114 &5177433761970062054
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,6 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 7066651920239505723}
+  meshRenderer: {fileID: 216178750109247676}
   chunkIndex: {x: 0, y: 0, z: 0}
   pointIndex: {x: 0, y: 0, z: 0}
   density: 0

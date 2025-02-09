@@ -13,10 +13,12 @@ public class FaceActiveCamera : MonoBehaviour
             activeCamera = Camera.main.transform;
         }
 
+        /*
         if (DensityInspector.Instance != null && DensityInspector.Instance.inspectorCamera != null)
         {
             activeCamera = DensityInspector.Instance.inspectorCamera.transform;
         }
+        */
         
         transform.LookAt(activeCamera);
     }
