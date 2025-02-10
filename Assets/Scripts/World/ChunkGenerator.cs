@@ -18,10 +18,7 @@ public class ChunkGenerator : MonoBehaviour
     private bool isBusy = false;
 
     [Header("Debug")]
-    public bool inspectDensities = false;
-    [ShowIf("inspectDensities")]
-    public GameObject densityInspectorPrefab;
-    //private DensityInspector densityInspector;
+    public bool showDensities = false;
 
     public delegate void BlendFinished();
     public BlendFinished OnBlendFinished;
@@ -304,6 +301,11 @@ public class ChunkGenerator : MonoBehaviour
 
     public void RenderDensities()
     {
+        if (!showDensities)
+        {
+            return;
+        }
+
         foreach (var kvp in chunks)
         {
             if (!kvp.Value.isDensityGenerated)
@@ -335,28 +337,52 @@ public class ChunkGenerator : MonoBehaviour
 
     private void GenerateChunkMesh(Chunk chunk)
     {
-        chunk.GenerateMesh(!inspectDensities);
+        chunk.GenerateMesh();
     }
 
     public void BlendChunk(Chunk chunk, bool force = false)
     {
-        Dictionary<Vector3Int, Chunk> neighbors = GetNeighbors(chunk.chunkPosition, true);
-
-        if (neighbors.Count == 0)
+        // First pass: blend with face neighbors
+        Dictionary<Vector3Int, Chunk> faceNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Face);
+        if (faceNeighbors.Count > 0)
         {
-            Debug.Log($"No neighbors found for chunk at {chunk.chunkPosition}");
-            return;
+            foreach (var neighbor in faceNeighbors)
+            {
+                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+            }
         }
 
-        foreach (var neighbor in neighbors)
+        // Second pass: blend with edge neighbors
+        Dictionary<Vector3Int, Chunk> edgeNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Edge);
+        if (edgeNeighbors.Count > 0)
         {
-            chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+            foreach (var neighbor in edgeNeighbors)
+            {
+                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+            }
         }
 
-        chunk.FinalizeBlending();
+        // Third pass: blend with corner neighbors
+        Dictionary<Vector3Int, Chunk> cornerNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Corner);
+        if (cornerNeighbors.Count > 0)
+        {
+            foreach (var neighbor in cornerNeighbors)
+            {
+                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
+            }
+        }
+
+        chunk.FinalizeBlending(showDensities);
     }
 
-    public Dictionary<Vector3Int, Chunk> GetNeighbors(Vector3Int chunkPosition, bool filterBiome)
+    public enum NeighborType
+    {
+        Face,   // One non-zero component (1,0,0)
+        Edge,   // Two non-zero components (1,1,0)
+        Corner  // Three non-zero components (1,1,1)
+    }
+
+    public Dictionary<Vector3Int, Chunk> GetNeighbors(Vector3Int chunkPosition, bool filterBiome, NeighborType neighborType)
     {
         Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
 
@@ -366,17 +392,26 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = -1; z <= 1; z++)
                 {
-                    if (x == 0 && y == 0 && z == 0)
+                    if (x == 0 && y == 0 && z == 0) continue;
+                    
+                    // Count non-zero components to determine neighbor type
+                    int nonZeroComponents = (x != 0 ? 1 : 0) + (y != 0 ? 1 : 0) + (z != 0 ? 1 : 0);
+                    
+                    // Skip if not the desired neighbor type
+                    bool isCorrectType = neighborType switch
                     {
-                        continue;
-                    }
+                        NeighborType.Face => nonZeroComponents == 1,
+                        NeighborType.Edge => nonZeroComponents == 2,
+                        NeighborType.Corner => nonZeroComponents == 3,
+                        _ => false
+                    };
+                    
+                    if (!isCorrectType) continue;
 
                     Vector3Int neighborPosition = chunkPosition + new Vector3Int(x, y, z);
 
                     if (chunks.TryGetValue(neighborPosition, out Chunk neighborChunk))
                     {
-                        Debug.Log($"Chunk ({chunkPosition}) | Neighbor found at {neighborPosition}");
-
                         if (!filterBiome)
                         {
                             neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
@@ -385,7 +420,6 @@ public class ChunkGenerator : MonoBehaviour
 
                         if (neighborChunk.biome != chunks[chunkPosition].biome)
                         {
-                            Debug.Log($"Chunk ({chunkPosition}) | Neighbor at {neighborPosition} has different biome");
                             neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
                         }
                     }

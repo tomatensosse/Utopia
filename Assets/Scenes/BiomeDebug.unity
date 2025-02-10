@@ -508,8 +508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdbc043ed63b74cd7bf4193761872c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendShader: {fileID: 7200000, guid: c9732204343ed448d9c04f0471aa0462, type: 3}
-  blendDistance: 4
+  blendShader: {fileID: 7200000, guid: b70431aa0a21840ab9a9ee54abd2a14b, type: 3}
+  blendDistance: 3
   falloffBegin: 2
 --- !u!4 &472777683
 Transform:

@@ -35,7 +35,7 @@ public class EditorChunk : Chunk
         }
     }
 
-    public override void FinalizeBlending()
+    public override void FinalizeBlending(bool showDensities)
     {
         finalizedBlendedBuffer = ongoingBlendedBuffer;
 
@@ -44,6 +44,12 @@ public class EditorChunk : Chunk
 
         Vector4[] _blendedDensities = new Vector4[totalPoints];
         finalizedBlendedBuffer.GetData(_blendedDensities);
+
+        if (!showDensities)
+        {
+            isBlended = true;
+            return;
+        }
 
         for (int x = 0; x < numPointsPerAxis; x++)
         {

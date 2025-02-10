@@ -12,7 +12,7 @@ public class BlendGenerator : MonoBehaviour
 
     void Awake() => Instance = this;
 
-    public ComputeBuffer BlendWithNeighbor(ComputeBuffer centerDensities, ComputeBuffer neighborDensities, Vector3Int neighborRelative)
+    public ComputeBuffer BlendWithNeighbor(ComputeBuffer centerDensities, ComputeBuffer neighborDensities, ComputeBuffer originalDensities, Vector3Int neighborRelative)
     {
         int numPointsPerAxis = World.Settings.numPointsPerAxis;
         int totalPoints = numPointsPerAxis * numPointsPerAxis * numPointsPerAxis;
@@ -32,6 +32,7 @@ public class BlendGenerator : MonoBehaviour
             // Set shader parameters
             blendShader.SetBuffer(kernelIndex, "points", outputBuffer);
             blendShader.SetBuffer(kernelIndex, "neighborPoints", neighborDensities);
+            blendShader.SetBuffer(kernelIndex, "originalPoints", originalDensities);
             blendShader.SetVector("neighborRelativity", new Vector4(neighborRelative.x, neighborRelative.y, neighborRelative.z));
             blendShader.SetInt("numPointsPerAxis", numPointsPerAxis);
             blendShader.SetInt("blendDistance", blendDistance);

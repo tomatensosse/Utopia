@@ -49,7 +49,7 @@ public class Chunk : MonoBehaviour
         isDensityGenerated = true;
     }
 
-    public void GenerateMesh(bool releaseAfterComplete)
+    public void GenerateMesh()
     {
         Mesh mesh;
         
@@ -89,17 +89,18 @@ public class Chunk : MonoBehaviour
             meshCollider.sharedMesh = mesh;
         }
 
-        if (releaseAfterComplete)
-        {
-            densityBuffer.Release();
-        }
+        densityBuffer.Release();
 
         isMeshGenerated = true;
     }
 
     public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
     {
-        ongoingBlendedBuffer = densityBuffer;
+        // For first blend, start with density buffer
+        if (ongoingBlendedBuffer == null)
+        {
+            ongoingBlendedBuffer = densityBuffer;
+        }
 
         if (densityBuffer == null || neighborChunk.DensityBuffer == null)
         {
@@ -110,6 +111,7 @@ public class Chunk : MonoBehaviour
         var blendedBuffer = BlendGenerator.Instance.BlendWithNeighbor(
             ongoingBlendedBuffer, 
             neighborChunk.DensityBuffer,
+            densityBuffer,
             neighborRelative
         );
 
@@ -121,7 +123,7 @@ public class Chunk : MonoBehaviour
         Debug.Log($"Chunk({chunkPosition}) | Blended with neighbor at {neighborRelative} | NeighborChunk Pos : {neighborChunk.chunkPosition}; NeighborRelative: {neighborRelative}");
     }
 
-    public virtual void FinalizeBlending()
+    public virtual void FinalizeBlending(bool showDensities)
     {
         finalizedBlendedBuffer = ongoingBlendedBuffer;
         isBlended = true;
