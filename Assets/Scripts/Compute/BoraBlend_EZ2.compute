@@ -73,7 +73,7 @@ void BlendDensities(int3 id : SV_DispatchThreadID) {
 
     // Only blend if the point hasn't been blended before
     if (currentPoint.w == originalPoint.w) {
-        float blendedDensity = (currentPoint.w + neighborPoint.w) * strength;
+        float blendedDensity = ((currentPoint.w * strength) + (neighborPoint.w / strength));
         points[currentIndex] = float4(currentPoint.xyz, blendedDensity);
     }
 }

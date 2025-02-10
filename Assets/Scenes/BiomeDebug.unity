@@ -508,8 +508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdbc043ed63b74cd7bf4193761872c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendShader: {fileID: 7200000, guid: b70431aa0a21840ab9a9ee54abd2a14b, type: 3}
-  blendDistance: 3
+  blendShader: {fileID: 7200000, guid: 8d2ecc053bc464d2faf6fa413567a831, type: 3}
+  blendDistance: 16
   falloffBegin: 2
 --- !u!4 &472777683
 Transform:
@@ -808,9 +808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   megaBiome: {fileID: 11400000, guid: d50a695b576b649a58f4c6a55410eb97, type: 2}
-  inspectDensities: 0
-  densityInspectorPrefab: {fileID: 8149918472959035482, guid: 855febec483034e6b988c3f4a5e25b82,
-    type: 3}
+  showDensities: 0
 --- !u!4 &1071955006
 Transform:
   m_ObjectHideFlags: 0
@@ -1381,8 +1379,8 @@ MonoBehaviour:
   renderDistanceHorizontal: 3
   renderDistanceVertical: 3
   setSeed: 0
-  chunkSize: 3
-  numPointsPerAxis: 6
+  chunkSize: 16
+  numPointsPerAxis: 32
 --- !u!4 &1483280353
 Transform:
   m_ObjectHideFlags: 0
