@@ -8,9 +8,14 @@ using UnityEngine.SceneManagement;
 public class Player : Entity
 {
     public static Player LocalPlayer { get { return GameManager.Instance.localPlayer; } }
+    public static List<Item> LocalInventory { get { return LocalPlayer.inventory; } }
 
     [Header("Player Components")]
     public PlayerMovement movement;
+    public PlayerAbilities abilities;
+
+    [Header("Inventory (DEMO)")]
+    public List<Item> inventory = new List<Item>();
 
     [Header("Camera Variables")]
     public Transform cameraPosition;
@@ -35,6 +40,7 @@ public class Player : Entity
         if (isLocalPlayer)
         {
             movement.Initialize(this);
+            abilities.Initialize(this);
 
             StartCoroutine(WaitForPlayerCamera());
         }

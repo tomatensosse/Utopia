@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 3431393077904123511}
   - component: {fileID: 5789676677127572099}
   - component: {fileID: 2625859269812122710}
+  - component: {fileID: 1912154514134846541}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -268,6 +269,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   movement: {fileID: 2625859269812122710}
+  abilities: {fileID: 1912154514134846541}
+  inventory:
+  - {fileID: 11400000, guid: 0a7936e9fa7d34d538201c6c1669a9f4, type: 2}
   cameraPosition: {fileID: 3931167335059046756}
   playerCamera: {fileID: 0}
   mouseSensX: 4
@@ -301,6 +305,18 @@ MonoBehaviour:
   groundDrag: 8
   airDrag: 6
   decelerateDrag: 15
+--- !u!114 &1912154514134846541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3554692523542447211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a4369bcb1534947b2ec4fa1f80cbeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3885161053466818623
 GameObject:
   m_ObjectHideFlags: 0

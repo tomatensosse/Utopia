@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed = 3f;
     public float sprintSpeed = 6f;
     public float acceleration = 8f;
-    private float speedMultiplier = 8f;
+    private float speedMultiplier = 2f;
     private float currentSpeed;
     private Vector3 moveDirection;
     private Vector3 previousPosition;
@@ -40,6 +40,17 @@ public class PlayerMovement : MonoBehaviour
     public float decelerateDrag = 30.0f;
     private float dragMultiplier = 0.2f;
 
+    #region Callbacks for Movement Abilities
+    public delegate void OnPlayerJump(bool isGroundedBeforeJump);
+    public OnPlayerJump onPlayerJump;
+
+    public delegate void OnPlayerLand();
+    public OnPlayerLand onPlayerLand;
+
+    public delegate void OnPlayerSpacebar();
+    public OnPlayerSpacebar onPlayerSpacebar;
+    #endregion
+
     public void Initialize(Player playerRef)
     {
         player = playerRef;
@@ -66,6 +77,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            onPlayerSpacebar?.Invoke();
         }
     }
 
@@ -136,6 +152,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
+        onPlayerJump?.Invoke(isGrounded);
+
+        Debug.Log(isGrounded);
+
         if (!isGrounded)
         {
             return;
@@ -153,6 +173,8 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.25f); // Hardcoded for jump lagback
         yield return new WaitUntil(() => isGrounded);
         isJumping = false;
+
+        onPlayerLand?.Invoke();
     }
 
     private Vector3 PlayerMovingInDirection()
@@ -164,4 +186,13 @@ public class PlayerMovement : MonoBehaviour
     {
         return horizontalMovement != 0 || verticalMovement != 0;
     }
+
+    #region Ability Public Methods
+
+    public void AddForce(Vector3 force, ForceMode forceMode)
+    {
+        rb.AddForce(force, forceMode);
+    }
+
+    #endregion
 }
