@@ -8,14 +8,13 @@ using UnityEngine.SceneManagement;
 public class Player : Entity
 {
     public static Player LocalPlayer { get { return GameManager.Instance.localPlayer; } }
-    public static List<Item> LocalInventory { get { return LocalPlayer.inventory; } }
 
     [Header("Player Components")]
+    public PlayerInteraction interaction;
     public PlayerMovement movement;
     public PlayerAbilities abilities;
 
-    [Header("Inventory (DEMO)")]
-    public List<Item> inventory = new List<Item>();
+    public readonly SyncList<Item> inventory = new SyncList<Item>();
 
     [Header("Camera Variables")]
     public Transform cameraPosition;
@@ -39,6 +38,8 @@ public class Player : Entity
         // Client-specific player setup
         if (isLocalPlayer)
         {
+            inventory.OnChange += OnInventoryChanged;
+            interaction.Initialize(this);
             movement.Initialize(this);
             abilities.Initialize(this);
 
@@ -61,6 +62,7 @@ public class Player : Entity
         if (IsOwnerOrSinglePlayer())
         {
             HandleInput();
+            interaction.HandleInteraction();
             movement.UpdateMovement();
         }
     }
@@ -92,4 +94,39 @@ public class Player : Entity
 
         orientationRotation = movement.orientation.rotation.eulerAngles;
     }
+
+    #region Inventory Management
+
+    private void OnInventoryChanged(SyncList<Item>.Operation op, int index, Item item)
+    {
+        Debug.Log("Inventory changed: " + op + " | " + item.itemName);
+    }
+
+    void OnDestroy()
+    {
+        if (isLocalPlayer)
+        {
+            inventory.OnChange -= OnInventoryChanged;
+        }   
+    }
+
+    [Command]
+    public void CmdAddItem(Item item)
+    {
+        if (!inventory.Contains(item))
+        {
+            inventory.Add(item);
+        }
+    }
+
+    [Command]
+    public void CmdRemoveItem(Item item)
+    {
+        if (inventory.Contains(item))
+        {
+            inventory.Remove(item);
+        }
+    }
+
+    #endregion
 }

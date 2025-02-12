@@ -10,16 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c57249853763d4fa8a8b196c544ff217, type: 3}
-  m_Name: Hermes Boots
+  m_Name: Potato
   m_EditorClassIdentifier: 
-  uid: hermes_boots
-  itemName: Hermes' Boots
-  abilities:
-  - rid: 521615172362043392
+  uid: potato
+  itemName: Potato
+  abilities: []
   references:
     version: 2
-    RefIds:
-    - rid: 521615172362043392
-      type: {class: DoubleJump, ns: , asm: Assembly-CSharp}
-      data:
-        jumpForce: 10
+    RefIds: []

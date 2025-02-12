@@ -367,7 +367,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 325365630389019336, guid: ede0b446bf07e4854a67b85903526cdf, type: 3}
+  - {fileID: 6780633809268773891, guid: 7752ce313a4064ec093d433803472015, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -383,6 +383,8 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
+  lootBoxPrefab: {fileID: 6780633809268773891, guid: 7752ce313a4064ec093d433803472015,
+    type: 3}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
