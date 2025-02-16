@@ -6,8 +6,6 @@ using UnityEngine.Rendering;
 public class PlayerCamera : MonoBehaviour
 {
     public static PlayerCamera Instance { get; private set; }
-
-    public Camera mainCamera;
     public Transform cameraContainer;
 
     private Player targetPlayer;

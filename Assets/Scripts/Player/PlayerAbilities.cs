@@ -19,9 +19,9 @@ public class PlayerAbilities : MonoBehaviour
         abilityModes = PlayerAbilityMode.GetDefaultModes();
         string set = abilityModes[0].uid;
 
-        foreach (Item item in player.inventory)
+        foreach (ItemInstance itemInstance in player.inventory)
         {
-            foreach (PlayerAbilityType ability in item.abilities)
+            foreach (PlayerAbilityType ability in itemInstance.itemReference.abilities)
             {
                 abilitiesInInventory.Add(ability);
             }

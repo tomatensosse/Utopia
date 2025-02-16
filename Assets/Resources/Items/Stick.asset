@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c57249853763d4fa8a8b196c544ff217, type: 3}
-  m_Name: Potato
+  m_Name: Stick
   m_EditorClassIdentifier: 
-  uid: potato
-  itemName: Potato
+  uid: stick
+  itemName: Stick
+  icon: {fileID: 21300000, guid: b9c42cba154d849b8afdc2a550800927, type: 3}
+  isStackable: 1
+  maxStack: 16
   abilities: []
   references:
     version: 2

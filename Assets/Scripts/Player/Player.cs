@@ -14,7 +14,7 @@ public class Player : Entity
     public PlayerMovement movement;
     public PlayerAbilities abilities;
 
-    public readonly SyncList<Item> inventory = new SyncList<Item>();
+    public readonly SyncList<ItemInstance> inventory = new SyncList<ItemInstance>();
 
     [Header("Camera Variables")]
     public Transform cameraPosition;
@@ -42,6 +42,8 @@ public class Player : Entity
             interaction.Initialize(this);
             movement.Initialize(this);
             abilities.Initialize(this);
+
+            InventoryUI.Instance.Initialize();
 
             StartCoroutine(WaitForPlayerCamera());
         }
@@ -97,9 +99,87 @@ public class Player : Entity
 
     #region Inventory Management
 
-    private void OnInventoryChanged(SyncList<Item>.Operation op, int index, Item item)
+    public void AddToInventory(string itemUID, int amount)
     {
-        Debug.Log("Inventory changed: " + op + " | " + item.itemName);
+        Debug.Log("Adding " + amount + " of " + itemUID + " to inventory.");
+
+        // First try to fill existing stacks
+        ItemInstance existingItemInstance = inventory.FirstOrDefault(i => i.itemReferenceUID == itemUID && i.amount < i.itemReference.maxStack);
+
+        if (existingItemInstance != null)
+        {
+            int maxStack = existingItemInstance.itemReference.maxStack;
+            int spaceInStack = maxStack - existingItemInstance.amount;
+            
+            if (amount <= spaceInStack)
+            {
+                // Can fit entirely in this stack
+                existingItemInstance.amount += amount;
+            }
+            else
+            {
+                // Fill this stack and create new one(s) for remainder
+                existingItemInstance.amount = maxStack;
+                int remaining = amount - spaceInStack;
+            
+                // Create new stack(s) instead of recursive call
+                while (remaining > 0)
+                {
+                    int stackAmount = Mathf.Min(remaining, maxStack);
+                    ItemInstance newItemInstance = new ItemInstance(itemUID, stackAmount, -1);
+                    inventory.Add(newItemInstance);
+                    remaining -= stackAmount;
+                }
+            }
+        }
+        else
+        {
+            // No existing stack, create new stack(s)
+            Item itemRef = ItemDatabase.Instance.GetItem(itemUID);
+            int maxStack = itemRef.maxStack;
+            
+            while (amount > 0)
+            {
+                int stackAmount = Mathf.Min(amount, maxStack);
+                ItemInstance newItemInstance = new ItemInstance(itemUID, stackAmount, -1);
+                inventory.Add(newItemInstance);
+                amount -= stackAmount;
+            }
+        }
+    }
+
+    private void OnInventoryChanged(SyncList<ItemInstance>.Operation op, int index, ItemInstance itemInstance)
+    {
+        if (isLocalPlayer)
+        {
+            switch (op)
+            {
+                case SyncList<ItemInstance>.Operation.OP_ADD:
+                    InventoryUI.Instance.AddNewItem(itemInstance);
+                    break;
+                    
+                case SyncList<ItemInstance>.Operation.OP_SET:
+                    // Use the item's inventorySlotIndex instead of SyncList index
+                    InventoryUI.Instance.UpdateItem(itemInstance.inventorySlotIndex, itemInstance);
+                    break;
+                    
+                case SyncList<ItemInstance>.Operation.OP_REMOVEAT:
+                    // We need to find the UI slot index for the removed item
+                    if (index < inventory.Count)
+                    {
+                        InventoryUI.Instance.RemoveItem(inventory[index].inventorySlotIndex);
+                    }
+                    break;
+                    
+                case SyncList<ItemInstance>.Operation.OP_INSERT:
+                    InventoryUI.Instance.InsertItem(itemInstance.inventorySlotIndex, itemInstance);
+                    break;
+
+                case SyncList<ItemInstance>.Operation.OP_CLEAR:
+                    InventoryUI.Instance.Initialize();
+                    break;
+            }
+        }
     }
 
     void OnDestroy()
@@ -108,24 +188,6 @@ public class Player : Entity
         {
             inventory.OnChange -= OnInventoryChanged;
         }   
-    }
-
-    [Command]
-    public void CmdAddItem(Item item)
-    {
-        if (!inventory.Contains(item))
-        {
-            inventory.Add(item);
-        }
-    }
-
-    [Command]
-    public void CmdRemoveItem(Item item)
-    {
-        if (inventory.Contains(item))
-        {
-            inventory.Remove(item);
-        }
     }
 
     #endregion

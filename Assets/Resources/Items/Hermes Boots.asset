@@ -10,11 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c57249853763d4fa8a8b196c544ff217, type: 3}
-  m_Name: Stick
+  m_Name: Hermes Boots
   m_EditorClassIdentifier: 
-  uid: stick
-  itemName: Stick
-  abilities: []
+  uid: hermes_boots
+  itemName: Hermes' Boots
+  icon: {fileID: 21300000, guid: e69c6ffb8cfe4428d8e4d4d51b17e876, type: 3}
+  isStackable: 0
+  maxStack: 0
+  abilities:
+  - rid: 521615172362043392
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 521615172362043392
+      type: {class: DoubleJump, ns: , asm: Assembly-CSharp}
+      data:
+        jumpForce: 8

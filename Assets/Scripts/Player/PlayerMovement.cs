@@ -59,6 +59,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void MyInput()
     {
+        if (UIManager.IsPaused)
+        {
+            return;
+        }
+
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovement = Input.GetAxisRaw("Vertical");
 
