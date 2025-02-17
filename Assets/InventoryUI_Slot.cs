@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventoryUI_Slot : MonoBehaviour
+public class InventoryUI_Slot : MonoBehaviour, IDropHandler
 {
     public enum SlotType
     {
@@ -23,6 +24,18 @@ public class InventoryUI_Slot : MonoBehaviour
     public SlotType slotType;
     public int slotIndex = -1;
     public InventoryUI_Item uiItem;
+
+    #region Drag and Drop
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        if (transform.childCount == 0) {
+            InventoryUI_Item uiItem = eventData.pointerDrag.GetComponent<InventoryUI_Item>();
+            uiItem.parentAfterDrag = transform;
+        }
+    }
+
+    #endregion
 
     public void Initialize(int slotIndex)
     {

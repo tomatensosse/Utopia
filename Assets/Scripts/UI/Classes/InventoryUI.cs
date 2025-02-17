@@ -18,6 +18,20 @@ public class InventoryUI : UISubclass
         Instance = this;
     }
 
+    public override void EnableUI()
+    {
+        base.EnableUI();
+
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    public override void DisableUI()
+    {
+        base.DisableUI();
+
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     public void Initialize(List<ItemInstance> itemInstances = null)
     {
         if (itemInstances == null)
@@ -56,58 +70,8 @@ public class InventoryUI : UISubclass
         }
     }
 
-    public void UpdateItem(int index, ItemInstance itemInstance)
+    public void UpdateItem(int index, int oldAmount, int newAmount)
     {
-        if (index >= 0 && index < slots.Count)
-        {
-            if (slots[index].uiItem != null)
-            {
-                slots[index].uiItem.Initialize(itemInstance);
-            }
-            else
-            {
-                slots[index].SpawnUIItem(uiItemPrefab, itemInstance);
-            }
-        }
-    }
-
-    public void RemoveItem(int index)
-    {
-        if (index >= 0 && index < slots.Count)
-        {
-            slots[index].ClearSlot();
-        }
-    }
-
-    public void InsertItem(int index, ItemInstance itemInstance)
-    {
-        if (index >= 0 && index < slots.Count)
-        {
-            // First shift items if needed
-            for (int i = slots.Count - 1; i > index; i--)
-            {
-                if (slots[i-1].uiItem != null)
-                {
-                    if (slots[i].uiItem == null)
-                    {
-                        slots[i].SpawnUIItem(uiItemPrefab, slots[i-1].uiItem.itemInstance);
-                    }
-                    else
-                    {
-                        slots[i].uiItem.Initialize(slots[i-1].uiItem.itemInstance);
-                    }
-                }
-            }
-            
-            // Then insert the new item
-            if (slots[index].uiItem == null)
-            {
-                slots[index].SpawnUIItem(uiItemPrefab, itemInstance);
-            }
-            else
-            {
-                slots[index].uiItem.Initialize(itemInstance);
-            }
-        }
+        slots[index].uiItem.UpdateAmount(oldAmount, newAmount);
     }
 }
