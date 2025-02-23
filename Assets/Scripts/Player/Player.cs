@@ -23,7 +23,7 @@ public class Player : Entity
     public float mouseSensY = 2f;
     private float xRotation;
     private float yRotation;
-    [SyncVar] private Vector3 orientationRotation;
+    [SyncVar] private Vector3 orientationRotation; // TBA
 
     protected override void AuthorityInitialize()
     {
@@ -39,6 +39,7 @@ public class Player : Entity
         if (isLocalPlayer)
         {
             inventory.OnChange += OnInventoryChanged;
+
             interaction.Initialize(this);
             movement.Initialize(this);
             abilities.Initialize(this);
@@ -51,10 +52,10 @@ public class Player : Entity
 
     private IEnumerator WaitForPlayerCamera()
     {
-        Debug.Log("Waiting for player camera...");
+        //Debug.Log("Waiting for player camera...");
         yield return new WaitUntil(() => PlayerCamera.Instance != null);
         PlayerCamera.Instance.Initialize(this);
-        Debug.Log("Player camera initialized!");
+        //Debug.Log("Player camera initialized!");
     }
 
     protected override void LocalUpdate()
@@ -101,34 +102,41 @@ public class Player : Entity
 
     public void AddToInventory(ItemInstance itemInstance)
     {
+        itemInstance.Deserialize();
+
         int amountRemaining = itemInstance.amount;
 
-        itemInstance.Deserialize();
+        Debug.Log($"Adding a total of {amountRemaining} {itemInstance.itemReference.name} to inventory.");
 
         while (amountRemaining > 0)
         {
-            ItemInstance existingItemInstance = inventory.FirstOrDefault(i => i.itemReferenceUID == itemInstance.itemReferenceUID && i.amount < itemInstance.itemReference.maxStack);
+            int index = inventory.FindIndex(i => i.itemReferenceUID == itemInstance.itemReferenceUID && i.amount < itemInstance.itemReference.maxStack);
 
-            if (existingItemInstance != null)
+            if (index >= 0)
             {
-                int oldAmount = existingItemInstance.amount;
+                ItemInstance existingItemInstance = inventory[index];
+
+                Debug.Log($"ExistingItemInstance Old Amount = {existingItemInstance.amount}");
+
                 int amountToAdd = Mathf.Min(itemInstance.itemReference.maxStack - existingItemInstance.amount, amountRemaining);
-                existingItemInstance.amount += amountToAdd;
+                int newAmount = existingItemInstance.amount + amountToAdd;
+                existingItemInstance.amount = newAmount;
                 amountRemaining -= amountToAdd;
 
-                existingItemInstance.OnAmountChanged(oldAmount, existingItemInstance.amount);
+                Debug.Log($"ExistingItemInstance New Amount = {existingItemInstance.amount}");
 
-                Debug.Log($"Added {amountToAdd} of uid {itemInstance.itemReferenceUID} to inventory.");  
+                inventory[index] = existingItemInstance; // Triggers OP_SET on Clients
+
+                Debug.Log($"Inventory[index] ItemInstance Amount = {inventory[index].amount}");
             }
             else
             {
-                ItemInstance newItemInstance = new ItemInstance(itemInstance.itemReferenceUID, 0, -1);
                 int amountToAdd = Mathf.Min(itemInstance.itemReference.maxStack, amountRemaining);
-                newItemInstance.amount = amountToAdd;
                 amountRemaining -= amountToAdd;
-                inventory.Add(newItemInstance);  
 
-                Debug.Log($"Added {amountToAdd} of uid {itemInstance.itemReferenceUID} to inventory.");              
+                ItemInstance newItemInstance = new ItemInstance(itemInstance.itemReferenceUID, amountToAdd);
+
+                inventory.Add(newItemInstance);           
             }
         }
     }
@@ -144,7 +152,10 @@ public class Player : Entity
                     break;
                     
                 case SyncList<ItemInstance>.Operation.OP_SET:
-                    Debug.Log("OP_SET");
+                    InventoryUI.Instance.UpdateItem(inventory[index]); // Is this being passed the old itemInstance ?
+
+                    Debug.Log($"OnInventoryChanged ItemInstance Amount = {itemInstance.amount}"); // Returns 2 (Which is the old amount)
+                    Debug.Log($"OnInventoryChanged Inventory[index] ItemInstance Amount = {inventory[index].amount}"); // Returns 4 (Which is the new and correct amount)
                     break;
                     
                 case SyncList<ItemInstance>.Operation.OP_REMOVEAT:

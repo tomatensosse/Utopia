@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class InventoryUI : UISubclass
@@ -40,6 +41,7 @@ public class InventoryUI : UISubclass
             {
                 slots[i].Initialize(i);
             }
+
             return;
         }
 
@@ -70,8 +72,39 @@ public class InventoryUI : UISubclass
         }
     }
 
-    public void UpdateItem(int index, int oldAmount, int newAmount)
+    public void UpdateItem(ItemInstance itemInstance)
     {
-        slots[index].uiItem.UpdateAmount(oldAmount, newAmount);
+        itemInstance.Deserialize();
+
+        InventoryUI_Slot slot = GetSlotWithItem(itemInstance);
+
+        if (slot != null)
+        {
+            slot.uiItem.UpdateAmount(itemInstance.amount);
+
+            Debug.Log($"Updated item amount to {itemInstance.amount}.");
+
+            return;
+        }
+
+        Debug.LogError("Failed to update item amount.");
+    }
+
+    private InventoryUI_Slot GetSlotWithItem(ItemInstance itemInstance)
+    {
+        foreach (InventoryUI_Slot slot in slots)
+        {
+            if (slot.uiItem != null)
+            {
+                if (slot.uiItem.itemInstance.instanceUID == itemInstance.instanceUID)
+                {
+                    return slot;
+                }
+            }
+        }
+
+        Debug.LogWarning("No slot found with itemInstance.");
+
+        return null;
     }
 }

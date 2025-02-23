@@ -46,7 +46,7 @@ public class InventoryUI_Slot : MonoBehaviour, IDropHandler
     {
         GameObject uiItemGO = Instantiate(uiItemPrefab, transform);
         uiItem = uiItemGO.GetComponent<InventoryUI_Item>();
-        uiItem.Initialize(slotIndex, itemInstance);
+        uiItem.Initialize(itemInstance);
     }
 
     public void ClearSlot()

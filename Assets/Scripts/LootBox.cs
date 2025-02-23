@@ -33,7 +33,7 @@ public class LootBox : Entity, IInteractable
             {
                 int randomAmount = Random.Range(1, itemInBox.maxStack);
                 
-                ItemInstance itemInstance = new ItemInstance(itemInBox.uid, randomAmount, -1);
+                ItemInstance itemInstance = new ItemInstance(itemInBox.uid, randomAmount);
 
                 player.AddToInventory(itemInstance);
             }

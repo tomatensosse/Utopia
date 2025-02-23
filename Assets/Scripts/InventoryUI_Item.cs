@@ -8,8 +8,7 @@ public class InventoryUI_Item : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public ItemInstance itemInstance;
     public Image image;
     public TMP_Text amountText;
-
-    public int slotIndex = -1;
+    public bool isNull = true;
 
     #region Drag and Drop
 
@@ -35,40 +34,16 @@ public class InventoryUI_Item : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     #endregion
 
-    public void Initialize(int slotIndex, ItemInstance itemInstance = null)
-    {
-        this.slotIndex = slotIndex;
-
-        if (itemInstance == null)
-        {
-            image.sprite = null;
-            amountText.text = "";
-            return;
-        }
-
-        this.itemInstance = itemInstance;
-        image.sprite = itemInstance.itemReference.icon;
-        amountText.text = itemInstance.amount.ToString();
-
-        itemInstance.inventorySlotIndex = slotIndex;
-    }
-
     public void Initialize(ItemInstance itemInstance)
     {
-        if (slotIndex == -1)
-        {
-            Debug.LogError("Slot index not set for InventoryUI_Item");
-            return;
-        }
+        isNull = false;
 
         this.itemInstance = itemInstance;
         image.sprite = itemInstance.itemReference.icon;
         amountText.text = itemInstance.amount.ToString();
-
-        itemInstance.inventorySlotIndex = slotIndex;
     }
 
-    public void UpdateAmount(int oldAmount, int newAmount)
+    public void UpdateAmount(int newAmount)
     {
         amountText.text = newAmount.ToString();
     }
