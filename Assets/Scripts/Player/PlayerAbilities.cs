@@ -9,7 +9,7 @@ using UnityEngine;
 public class PlayerAbilities : MonoBehaviour
 {
     public List<PlayerAbilityMode> abilityModes = new List<PlayerAbilityMode>();
-    public List<PlayerAbilityType> abilitiesInInventory = new List<PlayerAbilityType>();
+    public List<PlayerAbilityType> activeAbilities = new List<PlayerAbilityType>();
     public PlayerAbilityMode currentMode;
     private Player player;
 
@@ -18,14 +18,6 @@ public class PlayerAbilities : MonoBehaviour
         player = playerRef;
         abilityModes = PlayerAbilityMode.GetDefaultModes();
         string set = abilityModes[0].uid;
-
-        foreach (ItemInstance itemInstance in player.inventory)
-        {
-            foreach (PlayerAbilityType ability in itemInstance.itemReference.abilities)
-            {
-                abilitiesInInventory.Add(ability);
-            }
-        }
 
         SetMode(set);
     }
@@ -40,7 +32,7 @@ public class PlayerAbilities : MonoBehaviour
                 currentMode = mode;
                 Debug.Log("Player ability mode set to: " + uid);
 
-                foreach (PlayerAbilityType ability in abilitiesInInventory)
+                foreach (PlayerAbilityType ability in activeAbilities)
                 {
                     Type abilityType = ability.GetType();
 
@@ -79,5 +71,54 @@ public class PlayerAbilities : MonoBehaviour
         }
 
         Debug.Log(s);
+    }
+
+    private void UpdateAbilitiesInCurrentMode()
+    {
+        foreach (PlayerAbilityType ability in activeAbilities)
+        {
+            Type abilityType = ability.GetType();
+
+            bool enable = false;
+
+            foreach (Type type in currentMode.abilitiesToEnable)
+            {
+                if (abilityType.IsSubclassOf(type))
+                {
+                    enable = true;
+                    break;
+                }
+            }
+
+            if (enable)
+            {
+                ability.Enable(player);
+                Debug.Log("Enabling ability: " + abilityType.Name);
+            }
+            else
+            {
+                ability.Disable();
+                Debug.Log("Disabling ability: " + abilityType.Name);
+            }
+        }
+    }
+
+    public void AddAbilitiesFromItem(Item item)
+    {
+        foreach (PlayerAbilityType ability in item.abilities)
+        {
+            activeAbilities.Add(ability);
+        }
+
+        UpdateAbilitiesInCurrentMode();
+    }
+
+    public void RemoveAbilitiesFromItem(Item item)
+    {
+        foreach (PlayerAbilityType ability in item.abilities)
+        {
+            activeAbilities.Remove(ability);
+        }
+        UpdateAbilitiesInCurrentMode();
     }
 }

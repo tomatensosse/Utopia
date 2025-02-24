@@ -29,14 +29,11 @@ public class LootBox : Entity, IInteractable
         Item itemInBox = GetRandomItem();
         if (itemInBox != null)
         {
-            if (itemInBox.isStackable)
-            {
-                int randomAmount = Random.Range(1, itemInBox.maxStack);
+            int randomAmount = Random.Range(1, itemInBox.maxStack);
                 
-                ItemInstance itemInstance = new ItemInstance(itemInBox.uid, randomAmount);
+            ItemInstance itemInstance = new ItemInstance(itemInBox.uid, randomAmount);
 
-                player.AddToInventory(itemInstance);
-            }
+            player.AddToInventory(itemInstance);
         }
     }
 

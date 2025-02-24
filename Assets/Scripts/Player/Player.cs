@@ -85,11 +85,17 @@ public class Player : Entity
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
+        if (UIManager.IsPaused || UIManager.IsInventoryOpen)
+        {
+            mouseX = 0;
+            mouseY = 0;
+        }
+
         yRotation += mouseX * mouseSensX;
         xRotation -= mouseY * mouseSensY;
 
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        
+
         if (playerCamera != null)
         {
             playerCamera.UpdateCamera(xRotation, yRotation);
@@ -106,7 +112,11 @@ public class Player : Entity
 
         int amountRemaining = itemInstance.amount;
 
-        Debug.Log($"Adding a total of {amountRemaining} {itemInstance.itemReference.name} to inventory.");
+        if (itemInstance.itemReference.maxStack == 1 || !itemInstance.itemReference.isStackable) // Non Stackable Items
+        {
+            inventory.Add(itemInstance);
+            return;
+        }
 
         while (amountRemaining > 0)
         {
@@ -116,18 +126,12 @@ public class Player : Entity
             {
                 ItemInstance existingItemInstance = inventory[index];
 
-                Debug.Log($"ExistingItemInstance Old Amount = {existingItemInstance.amount}");
-
                 int amountToAdd = Mathf.Min(itemInstance.itemReference.maxStack - existingItemInstance.amount, amountRemaining);
                 int newAmount = existingItemInstance.amount + amountToAdd;
                 existingItemInstance.amount = newAmount;
                 amountRemaining -= amountToAdd;
 
-                Debug.Log($"ExistingItemInstance New Amount = {existingItemInstance.amount}");
-
                 inventory[index] = existingItemInstance; // Triggers OP_SET on Clients
-
-                Debug.Log($"Inventory[index] ItemInstance Amount = {inventory[index].amount}");
             }
             else
             {
@@ -153,9 +157,6 @@ public class Player : Entity
                     
                 case SyncList<ItemInstance>.Operation.OP_SET:
                     InventoryUI.Instance.UpdateItem(inventory[index]); // Is this being passed the old itemInstance ?
-
-                    Debug.Log($"OnInventoryChanged ItemInstance Amount = {itemInstance.amount}"); // Returns 2 (Which is the old amount)
-                    Debug.Log($"OnInventoryChanged Inventory[index] ItemInstance Amount = {inventory[index].amount}"); // Returns 4 (Which is the new and correct amount)
                     break;
                     
                 case SyncList<ItemInstance>.Operation.OP_REMOVEAT:

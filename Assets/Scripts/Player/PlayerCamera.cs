@@ -41,6 +41,11 @@ public class PlayerCamera : MonoBehaviour
     {
         cameraContainer.position = targetPlayer.cameraPosition.position;
 
+        if (UIManager.IsPaused || UIManager.IsInventoryOpen)
+        {
+            return;
+        }
+
         transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         cameraContainer.localRotation = Quaternion.Euler(0, yRotation, 0);
         targetPlayer.movement.orientation.rotation = cameraContainer.rotation;

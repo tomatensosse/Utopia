@@ -24,6 +24,7 @@ public class InventoryUI : UISubclass
         base.EnableUI();
 
         Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
 
     public override void DisableUI()
@@ -31,6 +32,7 @@ public class InventoryUI : UISubclass
         base.DisableUI();
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void Initialize(List<ItemInstance> itemInstances = null)

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     public static Type CurrentUIState => Instance.currentState;
     public static bool IsPaused => Instance.currentState == typeof(PauseUI);
+    public static bool IsInventoryOpen => Instance.currentState == typeof(InventoryUI);
     private Type currentState;
 
     public List<UISubclass> uiStates;

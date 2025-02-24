@@ -10,21 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c57249853763d4fa8a8b196c544ff217, type: 3}
-  m_Name: Hermes Boots
+  m_Name: Hammer
   m_EditorClassIdentifier: 
-  uid: hermes_boots
-  itemName: Hermes' Boots
-  icon: {fileID: 21300000, guid: e5d0263fadee749c28ba270e63a95168, type: 3}
+  uid: hammer
+  itemName: Hammer
+  icon: {fileID: 21300000, guid: 043d1207828a24e0d80b25c2e9821fea, type: 3}
   isStackable: 0
   maxStack: 0
-  isEquippable: 1
-  equipSlot: 7
-  abilities:
-  - rid: 521615172362043392
+  isEquippable: 0
+  equipSlot: 0
+  isHoldable: 1
+  isTwoHanded: 1
+  abilities: []
   references:
     version: 2
-    RefIds:
-    - rid: 521615172362043392
-      type: {class: DoubleJump, ns: , asm: Assembly-CSharp}
-      data:
-        jumpForce: 8
+    RefIds: []

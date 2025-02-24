@@ -8,7 +8,16 @@ public class Item : ScriptableObject
     public string uid;
     public string itemName;
     public Sprite icon;
+
     public bool isStackable;
     [ShowIf("isStackable")] public int maxStack;
+
+    public bool isEquippable;
+    [ShowIf("isEquippable")] public SlotType equipSlot = SlotType.Storage;
+
+    public bool isHoldable;
+    [ShowIf("isHoldable")] public bool isTwoHanded;
+
     [SerializeReference] public List<PlayerAbilityType> abilities = new List<PlayerAbilityType>();
+    // List<ItemModification> modifications; bla bla bla
 }

@@ -59,8 +59,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void MyInput()
     {
-        if (UIManager.IsPaused)
+        if (UIManager.IsPaused || UIManager.IsInventoryOpen)
         {
+            horizontalMovement = 0;
+            verticalMovement = 0;
             return;
         }
 
