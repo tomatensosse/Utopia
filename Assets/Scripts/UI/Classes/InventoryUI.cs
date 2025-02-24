@@ -83,6 +83,7 @@ public class InventoryUI : UISubclass
         if (slot != null)
         {
             slot.uiItem.UpdateAmount(itemInstance.amount);
+            slot.gameUISlot?.UpdateAmount(itemInstance.amount);
 
             Debug.Log($"Updated item amount to {itemInstance.amount}.");
 

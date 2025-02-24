@@ -44,6 +44,7 @@ public class Player : Entity
             movement.Initialize(this);
             abilities.Initialize(this);
 
+            GameUI.Instance.Initialize();
             InventoryUI.Instance.Initialize();
 
             StartCoroutine(WaitForPlayerCamera());

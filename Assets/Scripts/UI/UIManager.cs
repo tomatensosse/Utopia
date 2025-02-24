@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     private Type currentState;
 
     public List<UISubclass> uiStates;
+    public GameUI gameUI;
 
     void Awake()
     {
@@ -66,6 +67,15 @@ public class UIManager : MonoBehaviour
                 Debug.Log($"Disabling {uiState.GetType()}");
                 uiState.DisableUI();
             }
+        }
+
+        if (state == null)
+        {
+            gameUI.EnableUI();
+        }
+        else
+        {
+            gameUI.DisableUI();
         }
     }
 }

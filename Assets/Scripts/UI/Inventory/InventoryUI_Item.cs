@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class InventoryUI_Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public InventoryUI_Slot CurrentSlot { get; private set; }
+    public InventoryUI_Slot CurrentSlot { get; set; }
     public ItemInstance itemInstance;
     public Image image;
     public TMP_Text amountText;
@@ -53,11 +53,6 @@ public class InventoryUI_Item : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         }
 
         CurrentSlot = currentSlot;
-    }
-
-    public void SetNewSlot(InventoryUI_Slot newSlot)
-    {
-        CurrentSlot = newSlot;
     }
 
     public void UpdateAmount(int newAmount)

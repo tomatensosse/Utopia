@@ -13,7 +13,7 @@ public class Item : ScriptableObject
     [ShowIf("isStackable")] public int maxStack;
 
     public bool isEquippable;
-    [ShowIf("isEquippable")] public SlotType equipSlot = SlotType.Storage;
+    [ShowIf("isEquippable")] public InventorySlotType equipSlot = InventorySlotType.Storage;
 
     public bool isHoldable;
     [ShowIf("isHoldable")] public bool isTwoHanded;

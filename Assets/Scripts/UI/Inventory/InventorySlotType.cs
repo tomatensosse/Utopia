@@ -1,4 +1,4 @@
-public enum SlotType
+public enum InventorySlotType
 {
     Storage, Accessory,
     Head, Chest, Legs, Feet,

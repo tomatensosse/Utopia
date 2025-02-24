@@ -7,45 +7,79 @@ using UnityEngine.UI;
 
 public class InventoryUI_Slot : MonoBehaviour, IDropHandler
 {
-    public SlotType slotType;
+    public InventorySlotType slotType;
     public int slotIndex = -1;
     public InventoryUI_Item uiItem; // When UI Item Changes, Check for abilities...
+
+    public GameUI_Slot gameUISlot = null;
 
     #region Drag and Drop
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (transform.childCount == 0) // Later, add swapping with childCount != 0...
+        InventoryUI_Item draggedUiItem = eventData.pointerDrag.GetComponent<InventoryUI_Item>();
+
+        if (uiItem == null) // If dragged slot is empty
         {
-            InventoryUI_Item uiItem = eventData.pointerDrag.GetComponent<InventoryUI_Item>();
-            if (uiItem.itemInstance.itemReference.isEquippable)
+            if (draggedUiItem.itemInstance.itemReference.isEquippable)
             {
-                if (slotType != uiItem.itemInstance.itemReference.equipSlot
-                    && slotType != SlotType.Storage)
+                if (slotType != draggedUiItem.itemInstance.itemReference.equipSlot
+                    && slotType != InventorySlotType.Storage) // Equip dragged to wrong equip slot
                 {
                     return;
                 }
 
-                if (slotType == SlotType.Storage)
-                {
-                    uiItem.parentAfterDrag = transform;
-                    uiItem.DetatchAbility();
+                // Maybe combine these methods ???
 
+                if (slotType == InventorySlotType.Storage) // If equip dragged to storage slot:
+                {
+                    draggedUiItem.CurrentSlot.gameUISlot?.ClearSlot(); // Update hotbar slot
+
+                    draggedUiItem.parentAfterDrag = transform;
+                    draggedUiItem.CurrentSlot.uiItem = null; // Set old slot item to null
+                    draggedUiItem.CurrentSlot = this; // Set new slot as this
+                    uiItem = draggedUiItem; // Set new slot item to dragged item
+
+                    gameUISlot?.UpdateSlot(uiItem.itemInstance); // Update hotbar slot
                     return;
                 }
 
-                uiItem.parentAfterDrag = transform;
-                uiItem.AppendAbility();
+                if (slotType == draggedUiItem.itemInstance.itemReference.equipSlot) // If equip dragged to equip slot:
+                {
+                    draggedUiItem.CurrentSlot.gameUISlot?.ClearSlot(); // Update hotbar slot
+
+                    draggedUiItem.parentAfterDrag = transform;
+                    draggedUiItem.CurrentSlot.uiItem = null; // Set old slot item to null
+                    draggedUiItem.CurrentSlot = this; // Set new slot as this
+                    uiItem = draggedUiItem; // Set new slot item to dragged item
+                    Debug.Log($"EQUIP {draggedUiItem.itemInstance.itemReference.itemName}");
+
+                    gameUISlot?.UpdateSlot(uiItem.itemInstance); // Update hotbar slot
+                    return;
+                }
             }
-            else
+            else // If not equippable, transfer as long as slot is storage.
             {
-                if (slotType != SlotType.Storage)
+                if (slotType != InventorySlotType.Storage)
                 {
                     return;
                 }
 
-                uiItem.parentAfterDrag = transform;
+                draggedUiItem.CurrentSlot.gameUISlot?.ClearSlot(); // Update hotbar slot
+
+                draggedUiItem.parentAfterDrag = transform;
+                draggedUiItem.CurrentSlot.uiItem = null; // Set old slot item to null
+                draggedUiItem.CurrentSlot = this; // Set new slot as this
+                uiItem = draggedUiItem; // Set new slot item to dragged item
+
+                gameUISlot?.UpdateSlot(uiItem.itemInstance); // Update hotbar slot
+                return;
             }
+        }
+
+        if (uiItem != null) // If dragged slot is not empty
+        {
+            Debug.Log("Swapping not yet implemented.");
         }
     }
 
@@ -61,6 +95,8 @@ public class InventoryUI_Slot : MonoBehaviour, IDropHandler
         GameObject uiItemGO = Instantiate(uiItemPrefab, transform);
         uiItem = uiItemGO.GetComponent<InventoryUI_Item>();
         uiItem.Initialize(itemInstance, this);
+
+        gameUISlot?.UpdateSlot(uiItem.itemInstance); // Update hotbar slot
     }
 
     public void ClearSlot()
