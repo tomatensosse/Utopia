@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: rightMask
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Cube
+    m_Weight: 1
+  - m_Path: Waist
+    m_Weight: 0
+  - m_Path: Waist/Bone
+    m_Weight: 0
+  - m_Path: Waist/Bone/Low.L
+    m_Weight: 0
+  - m_Path: Waist/Bone/Low.L/High.L
+    m_Weight: 0
+  - m_Path: Waist/Bone/Low.L/High.L/High.L_end
+    m_Weight: 0
+  - m_Path: Waist/Bone/Low.R
+    m_Weight: 1
+  - m_Path: Waist/Bone/Low.R/High.R
+    m_Weight: 1
+  - m_Path: Waist/Bone/Low.R/High.R/High.R_end
+    m_Weight: 1

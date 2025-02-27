@@ -8,11 +8,13 @@ using UnityEngine.SceneManagement;
 public class Player : Entity
 {
     public static Player LocalPlayer { get { return GameManager.Instance.localPlayer; } }
+    public Vector3 Velocity { get { return Movement.rb.velocity; } }
 
     [Header("Player Components")]
-    public PlayerInteraction interaction;
-    public PlayerMovement movement;
-    public PlayerAbilities abilities;
+    public PlayerInteraction Interaction;
+    public PlayerMovement Movement;
+    public PlayerAbilities Abilities;
+    public PlayerAnimation Animation;
 
     public readonly SyncList<ItemInstance> inventory = new SyncList<ItemInstance>();
 
@@ -40,9 +42,10 @@ public class Player : Entity
         {
             inventory.OnChange += OnInventoryChanged;
 
-            interaction.Initialize(this);
-            movement.Initialize(this);
-            abilities.Initialize(this);
+            Interaction.Initialize(this);
+            Movement.Initialize(this);
+            Abilities.Initialize(this);
+            Animation.Initialize(this);
 
             GameUI.Instance.Initialize();
             InventoryUI.Instance.Initialize();
@@ -66,8 +69,9 @@ public class Player : Entity
         if (IsOwnerOrSinglePlayer())
         {
             HandleInput();
-            interaction.HandleInteraction();
-            movement.UpdateMovement();
+            Interaction.HandleInteraction();
+            Movement.UpdateMovement();
+            Animation.UpdateAnimation();
         }
     }
 
@@ -77,7 +81,7 @@ public class Player : Entity
 
         if (IsOwnerOrSinglePlayer())
         {
-            movement.FixedUpdateMovement();
+            Movement.FixedUpdateMovement();
         }
     }
 
@@ -102,7 +106,7 @@ public class Player : Entity
             playerCamera.UpdateCamera(xRotation, yRotation);
         }
 
-        orientationRotation = movement.orientation.rotation.eulerAngles;
+        orientationRotation = Movement.orientation.rotation.eulerAngles;
     }
 
     #region Inventory Management

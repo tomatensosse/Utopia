@@ -24,7 +24,7 @@ public class MovementAbility : PlayerAbilityType
             return;
         }
 
-        PlayerMovement playerMovement = player.movement;
+        PlayerMovement playerMovement = player.Movement;
 
         Debug.Log("Enabling Movement Ability");
 
@@ -43,7 +43,7 @@ public class MovementAbility : PlayerAbilityType
             return;
         }
 
-        PlayerMovement playerMovement = player.movement;
+        PlayerMovement playerMovement = player.Movement;
 
         Debug.Log("Disabling Movement Ability");
 

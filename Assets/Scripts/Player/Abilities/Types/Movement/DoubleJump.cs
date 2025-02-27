@@ -16,7 +16,7 @@ public class DoubleJump : MovementAbility
 
             Debug.Log($"Double Jump! Force: {jumpForce}");
 
-            player.movement.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            player.Movement.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             doubleJumped = true;
         }
     }

@@ -63,12 +63,12 @@ public class InventoryUI_Item : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public void AppendAbility()
     {
         Debug.Log("Attatching Ability");
-        Player.LocalPlayer.abilities.AddAbilitiesFromItem(itemInstance.itemReference);
+        Player.LocalPlayer.Abilities.AddAbilitiesFromItem(itemInstance.itemReference);
     }
 
     public void DetatchAbility()
     {
         Debug.Log("Detatching Ability");
-        Player.LocalPlayer.abilities.RemoveAbilitiesFromItem(itemInstance.itemReference);
+        Player.LocalPlayer.Abilities.RemoveAbilitiesFromItem(itemInstance.itemReference);
     }
 }
