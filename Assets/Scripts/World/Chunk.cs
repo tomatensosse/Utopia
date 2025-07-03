@@ -12,18 +12,9 @@ public class Chunk : MonoBehaviour
 
     public ComputeBuffer DensityBuffer => densityBuffer;
     protected ComputeBuffer densityBuffer;
-    public ComputeBuffer BlendedBuffer => finalizedBlendedBuffer;
-    protected ComputeBuffer finalizedBlendedBuffer;
-    public ComputeBuffer OngoingBlendedBuffer => ongoingBlendedBuffer;
-    protected ComputeBuffer ongoingBlendedBuffer;
+
     public bool isDensityGenerated = false;
     public bool isMeshGenerated = false;
-    public bool isBlended = false;
-    public bool blendCanidate = false;
-    public Dictionary<Vector3Int, Chunk> blendNeighbors = new Dictionary<Vector3Int, Chunk>();
-    public Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
-    public List<Vector3Int> blendOffsets = new List<Vector3Int>();
-    public List<Vector3Int> brokenOffsets = new List<Vector3Int>();
 
     [Header("Components")]
     [HideInInspector] public MeshFilter meshFilter;
@@ -53,30 +44,7 @@ public class Chunk : MonoBehaviour
     {
         Mesh mesh;
         
-        if (!isBlended)
-        {
-            mesh = MeshGenerator.Instance.GenerateMesh(densityBuffer, 1);
-
-            Debug.Log($"Chunk({chunkPosition}) | Generated mesh");
-        }
-        else
-        {
-            if (finalizedBlendedBuffer == null)
-            {
-                Debug.LogError($"Chunk({chunkPosition}) | Mesh is blended but no blendedBuffer?!");
-                return;
-            }
-            
-            mesh = MeshGenerator.Instance.GenerateMesh(finalizedBlendedBuffer, 1);
-
-            Debug.Log($"Chunk({chunkPosition}) | Generated mesh from blended buffer");
-        }
-
-        if (mesh == null || mesh.vertexCount < 3)
-        {
-            Debug.LogWarning($"Chunk({chunkPosition}) | Invalid mesh generated for chunk at");
-            return;
-        }
+        mesh = MeshGenerator.Instance.GenerateMesh(densityBuffer, 1);
 
         meshFilter.mesh = mesh;
         meshFilter.sharedMesh = mesh;
@@ -92,41 +60,6 @@ public class Chunk : MonoBehaviour
         densityBuffer.Release();
 
         isMeshGenerated = true;
-    }
-
-    public void BlendWithNeighbor(Chunk neighborChunk, Vector3Int neighborRelative)
-    {
-        // For first blend, start with density buffer
-        if (ongoingBlendedBuffer == null)
-        {
-            ongoingBlendedBuffer = densityBuffer;
-        }
-
-        if (densityBuffer == null || neighborChunk.DensityBuffer == null)
-        {
-            Debug.LogError("Cannot blend - density buffers not available");
-            return;
-        }
-
-        var blendedBuffer = BlendGenerator.Instance.BlendWithNeighbor(
-            ongoingBlendedBuffer, 
-            neighborChunk.DensityBuffer,
-            densityBuffer,
-            neighborRelative
-        );
-
-        blendOffsets.Add(neighborRelative);
-        neighborChunk.blendOffsets.Add(-neighborRelative);
-
-        this.ongoingBlendedBuffer = blendedBuffer;
-
-        Debug.Log($"Chunk({chunkPosition}) | Blended with neighbor at {neighborRelative} | NeighborChunk Pos : {neighborChunk.chunkPosition}; NeighborRelative: {neighborRelative}");
-    }
-
-    public virtual void FinalizeBlending(bool showDensities)
-    {
-        finalizedBlendedBuffer = ongoingBlendedBuffer;
-        isBlended = true;
     }
 
     private void OnDrawGizmos()

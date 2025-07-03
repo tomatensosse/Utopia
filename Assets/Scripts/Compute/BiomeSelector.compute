@@ -1,0 +1,48 @@
+#pragma kernel CSMain
+
+// Low‑frequency selector: writes (selectorRes+1)^3 RGBAHalf where
+//   rgb = weights for Desert / Forest / Tundra (change to taste)
+//   a   = unused
+
+RWTexture3D<float4> _OutWeights;
+uint   _GridSize;          // selectorRes+1 (e.g. 17)
+float3 _ChunkOriginWS;     // world‑space origin of this chunk
+float  _ChunkSizeWS;       // world‑space length of a chunk edge
+float  _BlendFreq;         // ~0.002 for gentle transitions
+
+// ───── value‑noise helper (replace with simplex if you wish) ─────
+float hash31(float3 p)
+{
+    p  = frac(p * 0.1031);
+    p += dot(p, p.yzx + 33.33);
+    return frac((p.x + p.y) * p.z);
+}
+
+float valueNoise(float3 p)
+{
+    float3 i = floor(p);
+    float3 f = frac(p);
+    f = f*f*(3.0 - 2.0*f);
+
+    float n = lerp(lerp(lerp(hash31(i + float3(0,0,0)), hash31(i + float3(1,0,0)), f.x),
+                        lerp(hash31(i + float3(0,1,0)), hash31(i + float3(1,1,0)), f.x), f.y),
+                   lerp(lerp(hash31(i + float3(0,0,1)), hash31(i + float3(1,0,1)), f.x),
+                        lerp(hash31(i + float3(0,1,1)), hash31(i + float3(1,1,1)), f.x), f.y), f.z);
+    return n * 2.0 - 1.0;       // [-1,1]
+}
+
+[numthreads(4,4,4)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    float3 pWS = _ChunkOriginWS + (id / (float)(_GridSize - 1)) * _ChunkSizeWS;
+    float n    = valueNoise(pWS * _BlendFreq);
+
+    // 3‑way smooth‑step blend
+    float3 w;
+    w.x = saturate(1.0 - smoothstep(-0.3, 0.3, n));  // Desert
+    w.z = saturate(    smoothstep(-0.3, 0.3, n));    // Tundra
+    w.y = max(0.0, 1.0 - (w.x + w.z));               // Forest
+    w   /= max(1e-4, w.x + w.y + w.z);               // normalise
+
+    _OutWeights[id] = float4(w, 0);
+}

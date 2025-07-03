@@ -105,17 +105,6 @@ public class ChunkGenerator : MonoBehaviour
                     break;
                 case 2:
                     isBusy = true;
-                    Debug.Log("State 2 (TBA): Blend density values between neighboring biomes if different.");
-                    foreach (Chunk chunk in chunks.Values)
-                    {
-                        BlendChunk(chunk);
-                    }
-                    OnBlendFinished?.Invoke();
-                    isBusy = false;
-                    Debug.Log("Done!");
-                    break;
-                case 3:
-                    isBusy = true;
                     Debug.Log("State 3: Generate mesh for each chunk.");
                     /*
                     if (inspectDensities)
@@ -325,96 +314,6 @@ public class ChunkGenerator : MonoBehaviour
     private void GenerateChunkMesh(Chunk chunk)
     {
         chunk.GenerateMesh();
-    }
-
-    public void BlendChunk(Chunk chunk, bool force = false)
-    {
-        // First pass: blend with face neighbors
-        Dictionary<Vector3Int, Chunk> faceNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Face);
-        if (faceNeighbors.Count > 0)
-        {
-            foreach (var neighbor in faceNeighbors)
-            {
-                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
-            }
-        }
-
-        // Second pass: blend with edge neighbors
-        Dictionary<Vector3Int, Chunk> edgeNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Edge);
-        if (edgeNeighbors.Count > 0)
-        {
-            foreach (var neighbor in edgeNeighbors)
-            {
-                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
-            }
-        }
-
-        // Third pass: blend with corner neighbors
-        Dictionary<Vector3Int, Chunk> cornerNeighbors = GetNeighbors(chunk.chunkPosition, true, NeighborType.Corner);
-        if (cornerNeighbors.Count > 0)
-        {
-            foreach (var neighbor in cornerNeighbors)
-            {
-                chunk.BlendWithNeighbor(neighbor.Value, neighbor.Key);
-            }
-        }
-
-        chunk.FinalizeBlending(showDensities);
-    }
-
-    public enum NeighborType
-    {
-        Face,   // One non-zero component (1,0,0)
-        Edge,   // Two non-zero components (1,1,0)
-        Corner  // Three non-zero components (1,1,1)
-    }
-
-    public Dictionary<Vector3Int, Chunk> GetNeighbors(Vector3Int chunkPosition, bool filterBiome, NeighborType neighborType)
-    {
-        Dictionary<Vector3Int, Chunk> neighbors = new Dictionary<Vector3Int, Chunk>();
-
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                for (int z = -1; z <= 1; z++)
-                {
-                    if (x == 0 && y == 0 && z == 0) continue;
-                    
-                    // Count non-zero components to determine neighbor type
-                    int nonZeroComponents = (x != 0 ? 1 : 0) + (y != 0 ? 1 : 0) + (z != 0 ? 1 : 0);
-                    
-                    // Skip if not the desired neighbor type
-                    bool isCorrectType = neighborType switch
-                    {
-                        NeighborType.Face => nonZeroComponents == 1,
-                        NeighborType.Edge => nonZeroComponents == 2,
-                        NeighborType.Corner => nonZeroComponents == 3,
-                        _ => false
-                    };
-                    
-                    if (!isCorrectType) continue;
-
-                    Vector3Int neighborPosition = chunkPosition + new Vector3Int(x, y, z);
-
-                    if (chunks.TryGetValue(neighborPosition, out Chunk neighborChunk))
-                    {
-                        if (!filterBiome)
-                        {
-                            neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
-                            continue;
-                        }
-
-                        if (neighborChunk.biome != chunks[chunkPosition].biome)
-                        {
-                            neighbors.Add(new Vector3Int(x, y, z), neighborChunk);
-                        }
-                    }
-                }
-            }
-        }
-
-        return neighbors;
     }
 
     private void CleanUp() // DANGEROUS METHOD

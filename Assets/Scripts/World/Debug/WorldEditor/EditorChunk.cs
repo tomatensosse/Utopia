@@ -35,51 +35,6 @@ public class EditorChunk : Chunk
         }
     }
 
-    public override void FinalizeBlending(bool showDensities)
-    {
-        finalizedBlendedBuffer = ongoingBlendedBuffer;
-
-        int numPointsPerAxis = World.Settings.numPointsPerAxis;
-        int totalPoints = numPointsPerAxis * numPointsPerAxis * numPointsPerAxis;
-
-        Vector4[] _blendedDensities = new Vector4[totalPoints];
-        finalizedBlendedBuffer.GetData(_blendedDensities);
-
-        if (!showDensities)
-        {
-            isBlended = true;
-            return;
-        }
-
-        for (int x = 0; x < numPointsPerAxis; x++)
-        {
-            for (int y = 0; y < numPointsPerAxis; y++)
-            {
-                for (int z = 0; z < numPointsPerAxis; z++)
-                {
-                    Vector3Int point = new Vector3Int(x, y, z);
-                    float density = _blendedDensities[IndexFromCoord(point)].w;
-
-                    if (densities[point] != density)
-                    {
-                        blendedDensities[point] = density;
-
-                        WorldEditorPoint editorPoint = worldEditorPoints[point];
-                        editorPoint.SetDensity(density);
-                        editorPoint.SetColor(Color.red);
-                    }
-                }
-            }
-        }
-
-        isBlended = true;
-    }
-
-    public void OverridePointDensity(Vector3 point, float density)
-    {
-        // TBA
-    }
-
     public void RenderDensity()
     {
         for (int x = 0; x < World.Settings.numPointsPerAxis; x++)

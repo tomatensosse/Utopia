@@ -262,8 +262,6 @@ public class WorldEditor : MonoBehaviour
             Debug.LogWarning("Current chunk has no density points to blend!");
             return;
         }
-
-        ChunkGenerator.Instance.BlendChunk(currentChunk);
     }
 
     private IEnumerator SmoothMove()
