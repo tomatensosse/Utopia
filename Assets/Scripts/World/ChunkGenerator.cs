@@ -106,13 +106,6 @@ public class ChunkGenerator : MonoBehaviour
                 case 2:
                     isBusy = true;
                     Debug.Log("State 3: Generate mesh for each chunk.");
-                    /*
-                    if (inspectDensities)
-                    {
-                        densityInspector = Instantiate(densityInspectorPrefab).GetComponent<DensityInspector>();
-                        densityInspector.SetReady();
-                    }
-                    */
                     foreach (Chunk chunk in chunks.Values)
                     {
                         GenerateChunkMesh(chunk);
@@ -254,6 +247,8 @@ public class ChunkGenerator : MonoBehaviour
         {
             chunkComponent = chunk.AddComponent<Chunk>();
         }
+
+        chunkComponent.biome = World.Instance.SampleBiomeForChunk(position);
 
         chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();

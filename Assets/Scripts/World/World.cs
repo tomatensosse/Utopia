@@ -8,6 +8,9 @@ public class World : MonoBehaviour
     public static WorldSettings Settings => Instance._worldSettings;
     public static GenerationMode WorldGenerationMode => Instance._generationMode;
 
+    public List<Biome> biomes = new List<Biome>();
+    public float biomeNoiseScale = 0.1f;
+
     public static bool Ready => Instance._isReady;
     public static int Seed => Instance._seed;
 
@@ -154,5 +157,26 @@ public class World : MonoBehaviour
     public static Vector3Int WorldToChunkPosition(Vector3 worldPosition)
     {
         return new Vector3Int(Mathf.FloorToInt(worldPosition.x / Settings.chunkSize), Mathf.FloorToInt(worldPosition.y / Settings.chunkSize), Mathf.FloorToInt(worldPosition.z / Settings.chunkSize));
+    }
+
+    public Biome SampleBiomeForChunk(Vector3Int chunkPosition)
+    {
+        float treshold = 1.0f / biomes.Count;
+        float noise = Mathf.PerlinNoise(chunkPosition.x * biomeNoiseScale, chunkPosition.z * biomeNoiseScale);
+
+        Debug.Log(treshold);
+        Debug.Log(noise);
+
+        for (int i = 0; i < biomes.Count; i++)
+        {
+            if (noise < treshold * (i + 1))
+            {
+                return biomes[i];
+            }
+        }
+
+        Debug.LogWarning("No biome found for chunk position: " + chunkPosition + ". Returning null.");
+
+        return null;
     }
 }
