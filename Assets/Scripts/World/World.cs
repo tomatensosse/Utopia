@@ -5,10 +5,11 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public static World Instance { get; private set; }
-    public static bool Ready => Instance._isReady;
     public static WorldSettings Settings => Instance._worldSettings;
-    public static int Seed => Instance._seed;
     public static GenerationMode WorldGenerationMode => Instance._generationMode;
+
+    public static bool Ready => Instance._isReady;
+    public static int Seed => Instance._seed;
 
     private bool _isReady = false;
 
@@ -20,9 +21,6 @@ public class World : MonoBehaviour
         WorldEditor,
         StaticSize,
         TargetTransform,
-        MultiplayerServerSide, // TBA
-        MultiplayerClientUnsafe, // TBA
-        MultiplayerClientSafe // is it k-dot is it aubrey or me
     }
 
     public GenerationMode _generationMode;
@@ -30,28 +28,22 @@ public class World : MonoBehaviour
     #region StaticSize Settings
     public static Vector3Int StaticWorldSize => Instance._staticWorldSize;
     [ShowInInspector, ShowIf("_generationMode", GenerationMode.StaticSize)]
-    public Vector3Int _staticWorldSize = new Vector3Int(4, 2, 4);
+    private Vector3Int _staticWorldSize = new Vector3Int(4, 2, 4);
     #endregion
 
     #region TargetPlayers Settings
     public static List<Transform> TargetedTransforms => Instance._targetedTransforms;
     [ShowInInspector, ShowIf("_generationMode", GenerationMode.TargetTransform)]
     private List<Transform> _targetedTransforms = new List<Transform>();
-
-    #endregion
-
-    #region MultiplayerServerSide Settings
-
-    #endregion
-
-    #region MultiplayerClientSide Settings
-
-
     #endregion
     
-    [ShowIf("@_generationMode != GenerationMode.StaticSize")]
+    [ShowIf("@_generationMode == GenerationMode.WorldEditor")]
+    public GameObject worldEditorPrefab;
+
     public static int RenderDistanceHorizontal => Instance.renderDistanceHorizontal;
     public static int RenderDistanceVertical => Instance.renderDistanceVertical;
+
+    [ShowIf("@_generationMode != GenerationMode.StaticSize && _generationMode != GenerationMode.WorldEditor")]
     public int renderDistanceHorizontal = 8, renderDistanceVertical = 8;
 
     [Header("World Settings")]
@@ -98,6 +90,18 @@ public class World : MonoBehaviour
         Instance = this;
 
         GenerateConstants();
+
+        if (_generationMode == GenerationMode.WorldEditor)
+        {
+            if (worldEditorPrefab != null)
+            {
+                Instantiate(worldEditorPrefab);
+            }
+            else
+            {
+                Debug.LogError("World Editor prefab is not set!");
+            }
+        }
     }
 
     private void GenerateConstants()

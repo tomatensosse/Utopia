@@ -12,8 +12,6 @@ public class ChunkGenerator : MonoBehaviour
     private Dictionary<Vector3Int, Chunk> chunks = new Dictionary<Vector3Int, Chunk>();
     protected Dictionary<Vector3Int, Chunk> dirtyChunks = new Dictionary<Vector3Int, Chunk>();
 
-    public MegaBiomeBase megaBiome;
-
     private int staticSizeState = -1;
     private bool isBusy = false;
 
@@ -74,15 +72,6 @@ public class ChunkGenerator : MonoBehaviour
                 break;
             case World.GenerationMode.TargetTransform:
                 TargetTransform();
-                break;
-            case World.GenerationMode.MultiplayerServerSide:
-                //MultiplayerServerSide();
-                break;
-            case World.GenerationMode.MultiplayerClientUnsafe:
-                //MultiplayerClientSide();
-                break;
-            case World.GenerationMode.MultiplayerClientSafe:
-                //MultiplayerClientSide();
                 break;
         }
     }
@@ -279,8 +268,6 @@ public class ChunkGenerator : MonoBehaviour
 
         chunkComponent.chunkPosition = position;
         chunkComponent.Initialize();
-
-        chunkComponent.biome = megaBiome.GetBiomeAt(position);
 
         chunks.Add(position, chunkComponent);
     }
